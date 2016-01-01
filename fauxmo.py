@@ -85,7 +85,7 @@ class Poller:
 # but it supports either specified or automatic IP address and port
 # selection.
 
-class UpnpDevice(object):
+class UpnpDevice:
     this_host_ip = None
 
     @staticmethod
@@ -271,7 +271,7 @@ class Fauxmo(UpnpDevice):
 # support the more common root device general search. The Echo
 # doesn't search for root devices.
 
-class UpnpBroadcastResponder(object):
+class UpnpBroadcastResponder:
     TIMEOUT = 0
 
     def __init__(self):
@@ -351,7 +351,7 @@ class UpnpBroadcastResponder(object):
         logger.debug("UPnP broadcast listener: new device registered")
 
 
-class RestApiHandler(object):
+class RestApiHandler:
     """Rest API handler class.
 
     The Fauxmo class expects handlers to be instances of objects that have on()
@@ -384,7 +384,7 @@ class RestApiHandler(object):
         return r.status_code in [200, 201]
 
 
-class HassApiHandler(object):
+class HassApiHandler:
     """Handler for Home Assistant (hass) Python API.
 
     Allows users to specify Home Assistant services in their config.json and
