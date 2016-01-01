@@ -197,12 +197,11 @@ class Fauxmo(UpnpDevice):
         self.root_url = "http://{}:{}/setup.xml"
         other_headers = ['X-User-Agent: Fauxmo']
 
-        UpnpDevice.__init__(self, listener=self.listener, poller=self.poller,
-                            port=self.port, root_url=self.root_url,
-                            server_version="Unspecified, UPnP/1.0, "
-                            "Unspecified", serial=self.serial,
-                            other_headers=other_headers,
-                            ip_address=self.ip_address)
+        super().__init__(listener=self.listener, poller=self.poller,
+                         port=self.port, root_url=self.root_url,
+                         server_version="Unspecified, UPnP/1.0, Unspecified",
+                         serial=self.serial, other_headers=other_headers,
+                         ip_address=self.ip_address)
         logger.debug("Device {} ready on "
                      "{}:{}".format(self.name, self.ip_address, self.port))
 
