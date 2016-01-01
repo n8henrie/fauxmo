@@ -220,7 +220,7 @@ class Fauxmo(UpnpDevice):
                        "DATE: {}\r\n"
                        "LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT\r\n"
                        "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-                       "X-User-Agent: redsonic\r\n"
+                       "X-User-Agent: Fauxmo\r\n"
                        "CONNECTION: close\r\n"
                        "\r\n"
                        "{}".format(len(xml), date_str, xml))
@@ -252,7 +252,7 @@ class Fauxmo(UpnpDevice):
                            "DATE: {}\r\n"
                            "EXT:\r\n"
                            "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-                           "X-User-Agent: redsonic\r\n"
+                           "X-User-Agent: Fauxmo\r\n"
                            "CONNECTION: close\r\n"
                            "\r\n"
                            "{}".format(len(soap), date_str, soap))
