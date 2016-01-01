@@ -506,7 +506,7 @@ def main(args):
             poller.poll(100)
             time.sleep(0.1)
         except Exception:
-            logger.exception("Exception during polling")
+            logger.error("Exception during polling")
             raise
 
 
