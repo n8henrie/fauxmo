@@ -6,6 +6,7 @@ Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 """
 
 from email.utils import formatdate
+import os.path
 import requests
 import select
 import socket
@@ -451,8 +452,22 @@ def main(args):
     # when a broadcast is received.
     poller.add(listener)
 
-    with open('config.json') as config_file:
-        config = json.load(config_file)
+    config_path = args.config
+    if not config_path:
+        config_dirs = ['.', os.path.expanduser("~/.fauxmo"), "/etc/fauxmo"]
+        for config_dir in config_dirs:
+            config_path = os.path.join(config_dir, 'config.json')
+            if os.path.isfile(config_path):
+                logger.info("Using config: {}".format(config_path))
+                break
+
+    try:
+        with open(config_path) as config_file:
+            config = json.load(config_file)
+    except FileNotFoundError:
+        logger.error("Could not find config file in default search path. "
+                     "Try specifying your file with `-c` flag.\n")
+        raise
 
     # Initialize Fauxmo devices
     for device in config.get('DEVICES'):
@@ -503,6 +518,7 @@ def _cli():
                                      "for use with Amaazon Echo")
     parser.add_argument("-v", "--verbose", help="toggle verbose output",
                         action="store_true")
+    parser.add_argument("-c", "--config", help="specify alternate config file")
     args = parser.parse_args(arguments)
     main(args)
 
