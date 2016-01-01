@@ -1,0 +1,23 @@
+{
+    "FAUXMO": {
+        "DEBUG": false
+    },
+    "DEVICES": [
+        {
+            "port": 12345,
+            "handler": [
+                "http://192.168.5.4/ha-api?cmd=on&a=office",
+                "http://192.168.5.4/ha-api?cmd=off&a=office"
+            ],
+            "description": "office lights"
+        },
+        {
+            "port": 54321,
+            "handler": [
+                "http://192.168.5.4/ha-api?cmd=on&a=kitchen",
+                "http://192.168.5.4/ha-api?cmd=off&a=kitchen"
+            ],
+            "description": "kitchen lights"
+        }
+    ]
+}
