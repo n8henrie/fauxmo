@@ -141,9 +141,6 @@ class UpnpDevice(object):
             else:
                 self.handle_request(data, sender, self.client_sockets[fileno])
 
-    def handle_request(self, data, sender, socket):
-                pass
-
     def respond_to_search(self, destination, search_target):
         logger.debug("Responding to search")
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
