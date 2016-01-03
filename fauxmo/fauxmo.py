@@ -8,6 +8,7 @@ from email.utils import formatdate
 import logging
 import os.path
 import time
+import uuid
 import json
 from .upnp import Poller, UpnpDevice, UpnpBroadcastResponder
 from .handlers.rest import RestApiHandler
@@ -22,18 +23,6 @@ except ImportError:
 logger = logging.getLogger("fauxmo")
 
 # Minimum xml needed to define a virtual switches for the Amazon Echo
-SETUP_XML = """<?xml version="1.0"?>
-<root>
-  <device>
-    <deviceType>urn:MakerMusings:device:controllee:1</deviceType>
-    <friendlyName>{device_name}</friendlyName>
-    <manufacturer>Belkin International Inc.</manufacturer>
-    <modelName>Emulated Socket</modelName>
-    <modelNumber>3.1415</modelNumber>
-    <UDN>uuid:Socket-1_0-{device_serial}</UDN>
-  </device>
-</root>
-"""
 
 
 class Fauxmo(UpnpDevice):
@@ -42,8 +31,7 @@ class Fauxmo(UpnpDevice):
     @staticmethod
     def make_uuid(name):
         """Create a persistent UUID from the device description"""
-        return name[:3]
-        # return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
+        return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
 
     def __init__(self, name, listener, poller, ip_address, port,
                  action_handler=None):
@@ -67,71 +55,79 @@ class Fauxmo(UpnpDevice):
                      "{}:{}".format(self.name, self.ip_address, self.port))
 
     def handle_request(self, data, sender, socket):
+        setup_xml = (
+               '<?xml version="1.0"?>\n'
+               '<root>\n'
+               '<device>\n'
+               '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>\n'
+               '<friendlyName>{}</friendlyName>\n'
+               '<manufacturer>Belkin International Inc.</manufacturer>\n'
+               '<modelName>Emulated Socket</modelName>\n'
+               '<modelNumber>3.1415</modelNumber>\n'
+               '<UDN>uuid:Socket-1_0-{}</UDN>\n'
+               '</device>\n'
+               '</root>'.format(self.name, self.serial)
+               )
         if data.find('GET /setup.xml HTTP/1.1') == 0:
-            xml_dict = {'device_name': self.name,
-                        'device_serial': self.serial}
-            logger.debug("Responding to setup.xml with {}".format(xml_dict))
-            xml = SETUP_XML.format(**xml_dict)
-            logger.debug(xml)
+            logger.debug("setup.xml requested by Echo")
+
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-            message = ("HTTP/1.1 200 OK\r\n"
-                       "CONTENT-LENGTH: {}\r\n"
-                       "CONTENT-TYPE: text/xml\r\n"
-                       "DATE: {}\r\n"
-                       "LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT\r\n"
-                       "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-                       "X-User-Agent: Fauxmo\r\n"
-                       "CONNECTION: close\r\n"
-                       "\r\n"
-                       "{}".format(len(xml), date_str, xml))
-            logger.debug(message)
-            socket.send(message.encode('utf8'))
+            msg = (
+               "HTTP/1.1 200 OK\r\n"
+               "CONTENT-LENGTH: {}\r\n"
+               "CONTENT-TYPE: text/xml\r\n"
+               "DATE: {}\r\n"
+               "LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT\r\n"
+               "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
+               "X-User-Agent: Fauxmo\r\n"
+               "CONNECTION: close\r\n"
+               "\r\n"
+               "{}".format(len(setup_xml), date_str, setup_xml)
+               )
+            logger.debug("Responding to setup request with:\n{}".format(msg))
+            socket.send(msg.encode('utf8'))
         elif data.find('SOAPACTION: "urn:Belkin:service:basicevent:1#'
                        'SetBinaryState"') != -1:
             success = False
+
+            # Turn device ON
             if data.find('<BinaryState>1</BinaryState>') != -1:
-                # on
                 logger.debug("Responding to ON for {}".format(self.name))
                 success = self.action_handler.on()
+
+            # Turn device OFF
             elif data.find('<BinaryState>0</BinaryState>') != -1:
-                # off
                 logger.debug("Responding to OFF for {}".format(self.name))
                 success = self.action_handler.off()
+
             else:
                 logger.debug("Unknown Binary State request:")
                 logger.debug(data)
+
             if success:
                 # The echo is happy with the 200 status code and doesn't
                 # appear to care about the SOAP response body
                 soap = ""
                 date_str = formatdate(timeval=None, localtime=False,
                                       usegmt=True)
-                message = ("HTTP/1.1 200 OK\r\n"
-                           "CONTENT-LENGTH: {}\r\n"
-                           "CONTENT-TYPE: text/xml charset=\"utf-8\"\r\n"
-                           "DATE: {}\r\n"
-                           "EXT:\r\n"
-                           "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-                           "X-User-Agent: Fauxmo\r\n"
-                           "CONNECTION: close\r\n"
-                           "\r\n"
-                           "{}".format(len(soap), date_str, soap))
-                logger.debug(message)
-                socket.send(message.encode('utf8'))
+                msg = ("HTTP/1.1 200 OK\r\n"
+                       "CONTENT-LENGTH: {}\r\n"
+                       "CONTENT-TYPE: text/xml charset=\"utf-8\"\r\n"
+                       "DATE: {}\r\n"
+                       "EXT:\r\n"
+                       "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
+                       "X-User-Agent: Fauxmo\r\n"
+                       "CONNECTION: close\r\n"
+                       "\r\n"
+                       "{}".format(len(soap), date_str, soap))
+                logger.debug(msg)
+                socket.send(msg.encode('utf8'))
         else:
             logger.debug(data)
 
 
-def main(args=None):
-    if args is None:
-        args = {}
-
-    # logging.basicConfig(
-    #         level=logging.WARNING,
-    #         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-    #         datefmt='%Y-%m-%d %H:%M:%S'
-    #         )
-
+def main(config_path=None, verbosity=20):
+    logger.setLevel(verbosity)
 
     # Set up our singleton for polling the sockets for data ready
     poller = Poller()
@@ -144,7 +140,6 @@ def main(args=None):
     # when a broadcast is received.
     poller.add(listener)
 
-    config_path = args.config
     if not config_path:
         config_dirs = ['.', os.path.expanduser("~/.fauxmo"), "/etc/fauxmo"]
         for config_dir in config_dirs:
