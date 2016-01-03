@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 try:
     from setuptools import setup
 except ImportError:
@@ -39,14 +38,13 @@ setup(
     install_requires=requirements,
     license="MIT",
     zip_safe=False,
-    keywords="fauxmo",
+    keywords=["fauxmo", "alexa", "amazon echo"],
     classifiers=[
         "Natural Language :: English",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5"
     ],
     test_suite="tests",
-    tests_require=test_requirements
+    tests_require=test_requirements,
+    entry_points={'console_scripts': ['fauxmo=fauxmo.cli:cli']}
 )
