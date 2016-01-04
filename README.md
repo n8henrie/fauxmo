@@ -21,19 +21,41 @@ to link their on and off actions to any code you want.
 
 ## Usage
 
+### Simple install: From PyPI
+
+1. `python3 -m pip install fauxmo`
+1. Make a `config.json` based on
+   [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
+1. `fauxmo -c config.json [-v]`
+
+### Install for development: From GitHub
+
+1. `git clone https://github.com/n8henrie/fauxmo.git`
+1. `cd fauxmo`
+1. `python3 -m venv venv`
+1. `source venv/bin/activate`
+1. `pip install -e .`
 1. `cp config-sample.json config.json`
-1. Edit config.json
-1. `python3 fauxmo.py [-v]`
+1. Edit `config.json`
+1. `fauxmo [-v]`
+
+### Set up the Echo
+
 1. Have the Echo "find connected devices"
 1. Test: "Alexa turn on [the kitchen light]"
 
-Currently all the code is in `fauxmo.py`, but I hope to refactor it into a
-module soon. It has an example REST handler class that reacts to on
+Fauxmo has an example REST handler class that reacts to on
 and off commands using the
 [python-requests](http://docs.python-requests.org/en/latest/) library as well
 as a handler for the [Home Assistant Python
 API](https://home-assistant.io/developers/python_api); these are examples of a
-multitude of ways that you could have the Echo trigger an action.
+multitude of ways that you could have the Echo trigger an action. In
+`config-sample.json`, you'll see examples of:
+
+- A `GET` request to a local server
+- A `POST` request to the [Home Assistant REST
+API](https://home-assistant.io/developers/rest_api/)
+- Requests to Home Asssistant's Python API
 
 **Note:** unless you specify port numbers in the creation of your fauxmo
 objetcs, your virtual switch devices will use a different port every time you
