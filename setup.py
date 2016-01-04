@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -21,17 +22,21 @@ test_requirements = [
     'pytest>=2.6.4'
 ]
 
+version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
+with open('fauxmo/__init__.py') as f:
+    vlines = f.readlines()
+__version__ = next(re.match(version_regex, line).group(1) for line in vlines
+               if re.match(version_regex, line))
+
 setup(
     name="fauxmo",
-    version="0.1.0",
+    version=__version__,
     description="Emulated Belkin WeMo devices that work with the Amazon Echo",
     long_description=readme + "\n\n" + history,
     author="Nathan Henrie",
     author_email="nate@n8henrie.com",
     url="https://github.com/n8henrie/fauxmo",
-    packages=[
-        "fauxmo",
-    ],
+    packages=find_packages(),
     package_dir={"fauxmo":
                  "fauxmo"},
     include_package_data=True,
