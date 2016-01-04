@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 :: 20160104
+
+- Fix MANIFEST.in to include `sample-config.json` and other dev files
+- Update setup.py to extract version from `fauxmo/__init__.py`
+
+## 0.1.1 :: 20160104
+
+- Fix ReST from Markdown rendering issue for PyPI
+
 ## 0.1.0 :: 20151231
 
 - Continue to convert to python3 code
