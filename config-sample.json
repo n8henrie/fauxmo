@@ -5,19 +5,36 @@
     "DEVICES": [
         {
             "port": 12345,
-            "handler": [
-                "http://192.168.5.4/ha-api?cmd=on&a=office",
-                "http://192.168.5.4/ha-api?cmd=off&a=office"
-            ],
-            "description": "office lights"
+            "handler": {
+                "on_cmd": "http://192.168.1.104/myserver/fakeswitches/01/on",
+                "off_cmd": "http://192.168.1.104/myserver/fakeswitches/01/off",
+                "method": "GET"
+            },
+            "description": "fake switch one"
         },
         {
-            "port": 54321,
-            "handler": [
-                "http://192.168.5.4/ha-api?cmd=on&a=kitchen",
-                "http://192.168.5.4/ha-api?cmd=off&a=kitchen"
-            ],
-            "description": "kitchen lights"
+            "port": 12346,
+            "handler": {
+                "on_cmd": "http://192.168.1.104:8123/api/services/switch/turn_on",
+                "off_cmd": "http://192.168.1.104:8123/api/services/switch/turn_off",
+                "method": "POST",
+                "headers": {"x-ha-access": "your_hass_password"},
+                "json": {"entity_id": "switch.fake_hass_switch"}
+            },
+            "description": "fake hass switch by REST API"
         }
-    ]
+    ],
+    "HOMEASSISTANT": {
+        "enable": true,
+        "host": "192.168.1.104",
+        "port": 8123,
+        "password": "your_hass_password",
+        "DEVICES": [
+            {
+                "description": "hass switch by python API",
+                "port": 12347,
+                "entity_id": "switch.fake_hass_switch"
+            }
+        ]
+    }
 }
