@@ -4,6 +4,9 @@ include HISTORY.md
 include LICENSE
 include README.md
 include requirements.txt
+include requirements-dev.txt
+include config-sample.json
+exclude config.json
 
 recursive-include tests *
 recursive-exclude * __pycache__
