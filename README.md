@@ -2,15 +2,15 @@
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
-Updates 20151231 by @n8henrie:
+## Updates 20151231 by @n8henrie:
 
 - see
 [HISTORY.md](https://github.com/n8henrie/fauxmo/blob/master/HISTORY.md)
 - All credit goes to @makermusings for [the original version
   of Fauxmo](https://github.com/makermusings/fauxmo)!
-  - Also thanks to @DoWhileGeek for commits towards python 3 compatibility
+    - Also thanks to @DoWhileGeek for commits towards python 3 compatibility
 
-### Summary
+## Summary
 
 The Amazon Echo will allow you to control a limited number of home automation
 devices by voice. If you want to control device types that it doesn't know
@@ -19,7 +19,7 @@ native options. This code emulates the Belkin WeMo devices in software,
 allowing you to have it appear that any number of them are on your network and
 to link their on and off actions to any code you want.
 
-### Usage
+## Usage
 
 1. `cp config-sample.json config.json`
 1. Edit config.json
