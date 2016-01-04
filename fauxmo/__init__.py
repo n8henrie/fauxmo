@@ -3,7 +3,7 @@ import logging
 
 __author__ = 'Nathan Henrie'
 __email__ = 'nate@n8henrie.com'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 logging.basicConfig(
         level=logging.WARNING,
