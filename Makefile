@@ -1,6 +1,8 @@
+SHELL := /bin/bash
 PYTHON = /usr/bin/env python3
 
 .PHONY: clean-pyc clean-build docs clean register release
+
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
