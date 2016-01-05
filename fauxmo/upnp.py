@@ -67,11 +67,7 @@ class UpnpDevice:
         self.uuid = uuid.uuid4()
         self.other_headers = other_headers
 
-        if ip_address:
-            self.ip_address = ip_address
-        else:
-            hostname = socket.gethostname()
-            self.ip_address = socket.gethostbyname(hostname)
+        self.ip_address = UpnpDevice.get_local_ip(ip_address)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         logger.debug("Attempting to bind: {}:{}".format(self.ip_address,
@@ -83,6 +79,21 @@ class UpnpDevice:
         self.poller.add(self)
         self.client_sockets = {}
         self.listener.add_device(self)
+
+    @staticmethod
+    def get_local_ip(ip_address=None):
+        if not ip_address:
+            hostname = socket.gethostname()
+            ip_address = socket.gethostbyname(hostname)
+
+            # Workaround for Linux returning localhost
+            # See: SO question #166506 by @UnkwnTech
+            if ip_address in ['127.0.1.1', '127.0.0.1', 'localhost']:
+                tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                tempsock.connect(('8.8.8.8', 0))
+                ip_address = tempsock.getsockname()[0]
+                tempsock.close()
+        return ip_address
 
     def fileno(self):
         return self.socket.fileno()
@@ -106,13 +117,13 @@ class UpnpDevice:
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         location_url = self.root_url.format(self.ip_address, self.port)
         message_dict = {
-                "date_str": date_str,
-                "location_url": location_url,
-                "uuid": self.uuid,
-                "server_version": self.server_version,
-                "search_target": search_target,
-                "serial": self.serial
-                }
+            "date_str": date_str,
+            "location_url": location_url,
+            "uuid": self.uuid,
+            "server_version": self.server_version,
+            "search_target": search_target,
+            "serial": self.serial
+            }
 
         message = ('HTTP/1.1 200 OK\r\n'
                    'CACHE-CONTROL: max-age=86400\r\n'
