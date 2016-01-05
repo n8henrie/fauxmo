@@ -1,1 +1,4 @@
 recommonmark==0.2.0
+wheel==0.26.0
+twine==1.6.5
+docutils==0.12
