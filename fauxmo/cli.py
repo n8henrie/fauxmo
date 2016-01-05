@@ -30,7 +30,7 @@ def cli():
     logger.addHandler(handler)
 
     # args.verbose defaults to 1 -> 30 == logging.WARNING
-    verbosity = max(40 - 10 * args.verbose, 0)
-    # logger.setLevel(verbosity)
+    verbosity = max(40 - 10 * args.verbose, 10)
+    logger.setLevel(verbosity)
 
     main(config_path=args.config, verbosity=verbosity)
