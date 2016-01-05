@@ -3,6 +3,10 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.1.4 :: 20151231
+
+- Fix default verbosity bug introduced in 1.1.3
+
 ## 0.1.0 :: 20151231
 
 - Continue to convert to python3 code
