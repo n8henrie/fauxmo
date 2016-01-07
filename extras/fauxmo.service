@@ -5,7 +5,7 @@ Wants=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/fauxmo
+WorkingDirectory=/abs/path/to/dir/fauxmo
 # Fix the paths below:
 ExecStart=/abs/path/to/venv/bin/fauxmo -c /abs/path/to/fauxmo/config.json -v
 Restart=on-failure
