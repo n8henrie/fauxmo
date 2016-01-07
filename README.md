@@ -44,6 +44,25 @@ to link their on and off actions to any code you want.
 1. Have the Echo "find connected devices"
 1. Test: "Alexa turn on [the kitchen light]"
 
+### Set fauxmo to run automatically in the background
+
+#### systemd (e.g. Raspbian Jessie)
+
+1. Recommended: add an unprivileged user to run Fauxmo: `sudo useradd -r
+   -s /bin/false fauxmo`
+    - NB: Fauxmo may require root privileges if you're using ports below 1024
+1. Edit the paths in `extras/fauxmo.service`
+1. Copy the service file to `/etc/systemd/system/fauxmo.service`
+1. `sudo systemctl enable fauxmo.service`
+1. `sudo systemctl start fauxmo.service`
+
+Once fauxmo.py is running, simply tell your Echo to "find connected devices" or
+open a browser to or your mobile device to the [connected home
+settings](http://alexa.amazon.com/#settings/connected-home) page and `Discover
+devices`
+
+## Handlers
+
 Fauxmo has an example REST handler class that reacts to on
 and off commands using the
 [python-requests](http://docs.python-requests.org/en/latest/) library as well

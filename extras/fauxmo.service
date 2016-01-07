@@ -1,0 +1,15 @@
+[Unit]
+Description=Fauxmo
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fauxmo
+# Fix the paths below:
+ExecStart=/abs/path/to/venv/bin/fauxmo -c /abs/path/to/fauxmo/config.json -v
+Restart=on-failure
+User=fauxmo
+
+[Install]
+WantedBy=multi-user.target
