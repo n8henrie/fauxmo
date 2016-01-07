@@ -76,16 +76,43 @@ multitude of ways that you could have the Echo trigger an action. In
 API](https://home-assistant.io/developers/rest_api/)
 - Requests to Home Asssistant's Python API
 
-**Note:** unless you specify port numbers in the creation of your fauxmo
+## Configuration
+
+I recommend that you copy and modify `config-sample.json`.
+
+- `FAUXMO`: General Fauxmo settings
+    - `DEBUG`: Currently not functional, will be removed soon. Use the `-v`
+      command line flag.
+- `DEVICES`: List of devices that will employ `RestApiHandler`
+    - `port`: Port that Echo will use connect to device, should be different for
+      each device
+    - `handler`: Dictionary for `RestApiHandler` configuration
+        - `on_cmd`: URL that should be requested to turn device on
+        - `on_cmd`: URL that should be requested to turn device off
+        - `method`: GET or POST
+        - `headers`: Optional dict for extra headers
+        - `json`: Optional dict for JSON data to POST
+    - `description`: What you want to call the device (how to activate by Echo)
+- `HOMEASSISTANT`: Section for [Home Assistant Python
+  API](https://home-assistant.io/developers/python_api)
+    - `enable`: Disable this section by omitting or setting to `false`
+    - `host`: IP of host running Hass
+    - `port`: Port for Hass access (default: 8123)
+    - `password`: Hass API password
+    - `DEVICES`: List of devices that will employ `HassApiHandler`
+        - `description`: What you want to call the device (how to activate by
+          Echo)
+        - `port`: Port that Echo will use connect to device, should be
+          different for each device
+        - `entity_id`: Hass identifier used in API, one easy way to find is to
+          curl and grep the REST API, eg `curl http://IP_ADDRESS/api/bootstrap
+          | grep entity_id`
+
+**NB:** unless you specify port numbers in the creation of your fauxmo
 objetcs, your virtual switch devices will use a different port every time you
 run fauxmo.py, which will make it hard for the Echo to find them. So you should
 plan to either leave the script running for long periods or choose fixed port
 numbers.
-
-Once fauxmo.py is running, simply tell your Echo to "find connected devices" or
-open a browser to or your mobile device to the [connected home
-settings](http://alexa.amazon.com/#settings/connected-home) page and `Discover
-devices`
 
 ## Reading list:
 
