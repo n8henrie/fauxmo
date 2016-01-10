@@ -1,5 +1,6 @@
 """cli.py
-Argparse based CLI for fauxmo. Helps provide console_script. Also initializes
+Argparse based CLI for fauxmo. Helps provide console_script via argparse. Also
+initializes logging.
 """
 
 import argparse
