@@ -3,7 +3,14 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
-## 0.1.4 :: 20151231
+## 0.1.6 :: 20160105
+
+- Fix for Linux not returning local IP
+    - restored method I had removed from Maker Musings original / pre-fork
+      version not knowing it would introduce a bug where Linux returned
+      127.0.1.1 as local IP address
+
+## 0.1.4 :: 20150104
 
 - Fix default verbosity bug introduced in 1.1.3
 
