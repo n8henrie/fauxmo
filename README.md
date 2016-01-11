@@ -1,6 +1,8 @@
-# fauxmo
+# Fauxmo README
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
+
+- Documentation: [fauxmo.readthedocs.org](https://fauxmo.readthedocs.org)
 
 ## Updates 20151231 by @n8henrie:
 
