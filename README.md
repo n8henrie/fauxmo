@@ -56,6 +56,15 @@ to link their on and off actions to any code you want.
 1. `sudo systemctl enable fauxmo.service`
 1. `sudo systemctl start fauxmo.service`
 
+#### launchd (OS X)
+
+1. `cp extras/com.n8henrie.fauxmo.plist ~/Library/LaunchAgents/com.n8henrie.fauxmo.plist`
+1. Edit the paths in `~/Library/LaunchAgents/com.n8henrie.fauxmo.plist`
+    - You can remove the `StandardOutPath` and `StandardErrorPath` sections if
+      desired
+1. `launchctl load ~/Library/LaunchAgents/com.n8henrie.fauxmo.plist`
+1. `launchctl start com.n8henrie.fauxmo`
+
 Once fauxmo.py is running, simply tell your Echo to "find connected devices" or
 open a browser to or your mobile device to the [connected home
 settings](http://alexa.amazon.com/#settings/connected-home) page and `Discover
