@@ -1,1 +1,0 @@
-/Users/n8henrie/Dropbox/Launch/HomeMade/git/fauxmo/AUTHORS.md

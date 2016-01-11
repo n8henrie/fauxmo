@@ -53,11 +53,8 @@ coverage:
 clean-docs:
 	rm -f docs/fauxmo*.rst
 	rm -f docs/modules.rst
-	rm -rf docs/mdlinks
 
 docs: clean-docs
-	mkdir -p docs/mdlinks
-	ln -s $(PWD)/*.md docs/mdlinks/
 	sphinx-apidoc -o docs/ fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html

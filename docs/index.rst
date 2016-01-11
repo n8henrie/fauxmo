@@ -13,7 +13,7 @@ Contents:
     :maxdepth: 1
 
     fauxmo
-    mdlinks/* 
+    md/* 
 
 Indices and tables
 ==================

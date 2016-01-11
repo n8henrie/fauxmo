@@ -1,4 +1,3 @@
-#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # complexity documentation build configuration file, created by
@@ -15,6 +14,9 @@
 
 import sys
 import os
+import os.path
+import glob
+import shutil
 from recommonmark.parser import CommonMarkParser
 
 # If extensions (or modules to document with autodoc) are in another
@@ -280,3 +282,12 @@ texinfo_documents = [
 
 source_parsers = {'.md': CommonMarkParser}
 source_suffix = ['.rst', '.md']
+
+def setup(app):
+    curdir = os.path.dirname(os.path.abspath(__file__))
+    if not os.path.isdir(os.path.join(curdir, 'md')):
+        os.mkdir(os.path.join(curdir, 'md'))
+    for old_mdfile in glob.glob(os.path.join(curdir, 'md/*.md')):
+        os.remove(old_mdfile)
+    for new_mdfile in glob.glob(os.path.join(curdir, '../*.md')):
+        shutil.copy(new_mdfile, 'md/')
