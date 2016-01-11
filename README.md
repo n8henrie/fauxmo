@@ -51,8 +51,8 @@ to link their on and off actions to any code you want.
 1. Recommended: add an unprivileged user to run Fauxmo: `sudo useradd -r
    -s /bin/false fauxmo`
     - NB: Fauxmo may require root privileges if you're using ports below 1024
-1. Edit the paths in `extras/fauxmo.service`
-1. Copy the service file to `/etc/systemd/system/fauxmo.service`
+1. `sudo cp extras/fauxmo.service /etc/systemd/system/fauxmo.service`
+1. Edit the paths in `/etc/systemd/system/fauxmo.service`
 1. `sudo systemctl enable fauxmo.service`
 1. `sudo systemctl start fauxmo.service`
 
