@@ -1,0 +1,45 @@
+fauxmo package
+==============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    fauxmo.handlers
+
+Submodules
+----------
+
+fauxmo.cli module
+-----------------
+
+.. automodule:: fauxmo.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+fauxmo.fauxmo module
+--------------------
+
+.. automodule:: fauxmo.fauxmo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+fauxmo.upnp module
+------------------
+
+.. automodule:: fauxmo.upnp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: fauxmo
+    :members:
+    :undoc-members:
+    :show-inheritance:

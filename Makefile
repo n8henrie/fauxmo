@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 PYTHON = /usr/bin/env python3
 
-.PHONY: clean-pyc clean-build docs clean register release
+.PHONY: clean-pyc clean-build docs clean register release clean-docs
 
 
 help:
@@ -50,9 +50,14 @@ coverage:
 	coverage html
 	open htmlcov/index.html
 
-docs:
-	rm -f docs/fauxmo.md
-	rm -f docs/modules.md
+clean-docs:
+	rm -f docs/fauxmo*.rst
+	rm -f docs/modules.rst
+	rm -rf docs/md
+
+docs: clean-docs
+	mkdir -p docs/md
+	for mdfile in *.md; do cp {,docs/md/}$$mdfile; done
 	sphinx-apidoc -o docs/ fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
@@ -64,7 +69,7 @@ register: dist
 release: dist
 	twine upload dist/*
 
-dist: clean
+dist: clean docs
 	$(PYTHON) setup.py --long-description | rst2html.py
 	$(PYTHON) setup.py sdist
 	$(PYTHON) setup.py bdist_wheel
