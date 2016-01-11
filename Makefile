@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 PYTHON = /usr/bin/env python3
+PWD = $(shell pwd)
 
 .PHONY: clean-pyc clean-build docs clean register release clean-docs
-
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
@@ -53,11 +53,11 @@ coverage:
 clean-docs:
 	rm -f docs/fauxmo*.rst
 	rm -f docs/modules.rst
-	rm -rf docs/md
+	rm -rf docs/mdlinks
 
 docs: clean-docs
-	mkdir -p docs/md
-	for mdfile in *.md; do cp {,docs/md/}$$mdfile; done
+	mkdir -p docs/mdlinks
+	ln -s $(PWD)/*.md docs/mdlinks/
 	sphinx-apidoc -o docs/ fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html

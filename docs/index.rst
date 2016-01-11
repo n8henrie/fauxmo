@@ -10,10 +10,10 @@ Contents:
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
 
-    fauxmo*
-    md/*
+    fauxmo
+    mdlinks/* 
 
 Indices and tables
 ==================
