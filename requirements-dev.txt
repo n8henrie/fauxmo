@@ -1,4 +1,5 @@
-recommonmark==0.2.0
-wheel==0.26.0
+recommonmark==0.4.0
+Sphinx==1.3.3
+sphinx-rtd-theme==0.1.9
 twine==1.6.5
-docutils==0.12
+wheel==0.26.0
