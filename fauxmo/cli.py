@@ -35,3 +35,6 @@ def cli():
     logger.setLevel(verbosity)
 
     main(config_path=args.config, verbosity=verbosity)
+
+if __name__ == "__main__":
+    cli()
