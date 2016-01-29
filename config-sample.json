@@ -1,6 +1,6 @@
 {
     "FAUXMO": {
-        "DEBUG": false
+        "ip_address": "auto"
     },
     "DEVICES": [
         {

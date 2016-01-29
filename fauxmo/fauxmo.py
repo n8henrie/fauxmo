@@ -156,13 +156,17 @@ def main(config_path=None, verbosity=20):
                      "Try specifying your file with `-c` flag.\n")
         raise
 
+    # Every config should include a FAUXMO section
+    fauxmo_config = config.get("FAUXMO")
+    ip_address = fauxmo_config.get("ip_address")
+
     # Initialize Fauxmo devices
     for device in config.get('DEVICES'):
         name = device.get('description')
         port = int(device.get("port", 0))
         action_handler = RestApiHandler(**device.get("handler"))
         fauxmo = Fauxmo(name=name, listener=listener, poller=poller,
-                        ip_address=None, port=port,
+                        ip_address=ip_address, port=port,
                         action_handler=action_handler)
         logger.debug(vars(fauxmo))
 

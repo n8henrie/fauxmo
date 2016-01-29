@@ -72,7 +72,15 @@ class UpnpDevice:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         logger.debug("Attempting to bind: {}:{}".format(self.ip_address,
                                                         self.port))
-        self.socket.bind((self.ip_address, self.port))
+
+        try:
+            self.socket.bind((self.ip_address, self.port))
+        except socket.gaierror:
+            errmsg = ("Couldn't bind {}:{}. Please review your config "
+                     "settings".format(self.ip_address, self.port))
+            logger.error(errmsg)
+            raise
+
         self.socket.listen(5)
         if self.port == 0:
             self.port = self.socket.getsockname()[1]
@@ -82,7 +90,9 @@ class UpnpDevice:
 
     @staticmethod
     def get_local_ip(ip_address=None):
-        if not ip_address:
+        if ip_address is None or str(ip_address).lower() == "auto":
+            logger.debug("Attempting to get IP address automatically")
+
             hostname = socket.gethostname()
             ip_address = socket.gethostbyname(hostname)
 
@@ -93,6 +103,8 @@ class UpnpDevice:
                 tempsock.connect(('8.8.8.8', 0))
                 ip_address = tempsock.getsockname()[0]
                 tempsock.close()
+
+        logger.debug("Using IP address: {}".format(ip_address))
         return ip_address
 
     def fileno(self):
