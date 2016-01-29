@@ -92,8 +92,8 @@ API](https://home-assistant.io/developers/rest_api/)
 I recommend that you copy and modify `config-sample.json`.
 
 - `FAUXMO`: General Fauxmo settings
-    - `DEBUG`: Currently not functional, will be removed soon. Use the `-v`
-      command line flag.
+    - `ip_address`: Manually set the server's IP address. Optional. Recommended
+      value: `auto`
 - `DEVICES`: List of devices that will employ `RestApiHandler`
     - `port`: Port that Echo will use connect to device, should be different for
       each device
@@ -124,6 +124,10 @@ objetcs, your virtual switch devices will use a different port every time you
 run fauxmo.py, which will make it hard for the Echo to find them. So you should
 plan to either leave the script running for long periods or choose fixed port
 numbers.
+
+## Troubleshooting / FAQ
+
+- Increase logging verbosity with `-v[vv]`
 
 ## Reading list:
 
