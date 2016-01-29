@@ -186,7 +186,7 @@ def main(config_path=None, verbosity=20):
                                             password=hass_password,
                                             entity=entity, port=hass_port)
             fauxmo = Fauxmo(name=name, listener=listener, poller=poller,
-                            ip_address=None, port=device_port,
+                            ip_address=ip_address, port=device_port,
                             action_handler=action_handler)
             logger.debug(vars(fauxmo))
 
