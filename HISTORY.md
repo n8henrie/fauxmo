@@ -3,6 +3,12 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.1.8 :: 20160129
+
+- Add the ability to manually specify the host IP address for cases when the
+  auto detection isn't working (https://github.com/n8henrie/fauxmo/issues/1)
+- Deprecated the `DEBUG` setting in `config.json`. Just use `-vvv` from now on.
+
 ## 0.1.6 :: 20160105
 
 - Fix for Linux not returning local IP
