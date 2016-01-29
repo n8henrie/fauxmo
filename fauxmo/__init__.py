@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
+import logging.handlers
 
 __author__ = 'Nathan Henrie'
 __email__ = 'nate@n8henrie.com'
-__version__ = '0.1.10'
+__version__ = '0.1.11'
 
 logging.basicConfig(
         level=logging.WARNING,
@@ -12,3 +13,5 @@ logging.basicConfig(
         )
 logger = logging.getLogger("fauxmo")
 logger.addHandler(logging.NullHandler())
+syslog_handler = logging.handlers.SysLogHandler()
+logger.addHandler(syslog_handler)

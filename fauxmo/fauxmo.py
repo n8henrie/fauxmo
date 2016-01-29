@@ -5,24 +5,19 @@ Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 """
 
 from email.utils import formatdate
-import logging
 import os.path
 import time
 import uuid
 import json
 from .upnp import Poller, UpnpDevice, UpnpBroadcastResponder
 from .handlers.rest import RestApiHandler
+from . import logger
 try:
     from .handlers.hass import HassApiHandler
 except ImportError:
     # Hass not installed -- will still run fine as long as the hass portion of
     # config is disabled (or removed entirely)
     pass
-
-
-logger = logging.getLogger("fauxmo")
-
-# Minimum xml needed to define a virtual switches for the Amazon Echo
 
 
 class Fauxmo(UpnpDevice):

@@ -6,8 +6,7 @@ initializes logging.
 import argparse
 import sys
 from .fauxmo import main
-import logging
-import logging.handlers
+from . import logger
 
 
 def cli():
@@ -20,15 +19,6 @@ def cli():
                         "repeat up to -vv)", action="count", default=1)
     parser.add_argument("-c", "--config", help="specify alternate config file")
     args = parser.parse_args(arguments)
-
-    logging.basicConfig(
-            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
-            )
-
-    logger = logging.getLogger("fauxmo")
-    handler = logging.handlers.SysLogHandler()
-    logger.addHandler(handler)
 
     # args.verbose defaults to 1 -> 30 == logging.WARNING
     verbosity = max(40 - 10 * args.verbose, 10)

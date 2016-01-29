@@ -2,15 +2,13 @@
 Holds required classes for UPnP for fauxmo.
 """
 
-import logging
 import select
 import socket
 import uuid
 from email.utils import formatdate
 import struct
 import time
-
-logger = logging.getLogger("fauxmo")
+from . import logger
 
 
 class Poller:

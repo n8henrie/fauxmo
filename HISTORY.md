@@ -3,6 +3,10 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.1.11 :: 20160129
+
+- Consolidate logger to `__init__.py` and import from there in other modules
+
 ## 0.1.8 :: 20160129
 
 - Add the ability to manually specify the host IP address for cases when the
