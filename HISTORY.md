@@ -3,6 +3,15 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.2.0 :: 20160324
+
+- Add additional HTTP verbs and options to `RestApiHandler` and Indigo sample
+  to config
+    - **NB:** Breaking change: `json` config variable now needs to be either
+      `on_json` or `off_json`
+- Make `RestApiHandler` DRYer with `functools.partialmethod`
+- Add `SO_REUSEPORT` to `upnp.py` to make life easier on OS X
+
 ## 0.1.11 :: 20160129
 
 - Consolidate logger to `__init__.py` and import from there in other modules
