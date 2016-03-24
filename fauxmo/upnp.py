@@ -184,6 +184,7 @@ class UpnpBroadcastResponder:
             self.ssock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
                                        socket.IPPROTO_UDP)
             self.ssock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.ssock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
             try:
                 self.ssock.bind(('', self.port))
