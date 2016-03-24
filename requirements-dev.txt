@@ -4,3 +4,4 @@ sphinx-rtd-theme==0.1.9
 twine==1.6.5
 wheel==0.26.0
 pypandoc==1.1.2
+pytest==2.9.0
