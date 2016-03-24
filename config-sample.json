@@ -13,6 +13,20 @@
             "description": "fake switch one"
         },
         {
+            "port": 12347,
+            "handler": {
+                "on_cmd": "http://localhost:54321/devices/garage%20light",
+                "off_cmd": "http://localhost:54321/devices/garage%20light",
+                "on_data": {"isOn": 1},
+                "off_data": {"isOn": 0},
+                "user": "this",
+                "password": "that",
+                "auth_type": "digest",
+                "method": "PUT"
+            },
+            "description": "fake Indigo switch"
+        },
+        {
             "port": 12346,
             "handler": {
                 "on_cmd": "http://192.168.1.104:8123/api/services/switch/turn_on",
