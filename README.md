@@ -30,7 +30,11 @@ to link their on and off actions to any code you want.
    [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
 1. `fauxmo -c config.json [-v]`
 
-### Install for development: From GitHub
+### Simple install of dev branch (from GitHub)
+
+1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git@dev`
+
+### Install for development: from GitHub
 
 1. `git clone https://github.com/n8henrie/fauxmo.git`
 1. `cd fauxmo`
