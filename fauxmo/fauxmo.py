@@ -1,139 +1,148 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 """fauxmo.py
 Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 <https://github.com/n8henrie/fauxmo>.
 """
 
+import asyncio
 from email.utils import formatdate
-import os.path
-import time
-import uuid
+from functools import partial
 import json
-from .upnp import Poller, UpnpDevice, UpnpBroadcastResponder
-from .handlers.rest import RestApiHandler
-from . import logger
+import os.path
+import signal
+
+from fauxmo import logger
+from fauxmo.handlers.rest import RestApiHandler
+from fauxmo.upnp import SSDPServer
+from fauxmo.utils import make_udp_sock, get_local_ip, make_serial
 try:
-    from .handlers.hass import HassApiHandler
+    from fauxmo.handlers.hass import HassApiHandler
 except ImportError:
     # Hass not installed -- will still run fine as long as the hass portion of
     # config is disabled (or removed entirely)
     pass
 
 
-class Fauxmo(UpnpDevice):
-    """Does the bulk of the work to mimic a WeMo switch on the network"""
+class Fauxmo(asyncio.Protocol):
+    """Mimics a WeMo switch on the network
 
-    @staticmethod
-    def make_uuid(name):
-        """Create a persistent UUID from the device description"""
-        return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
+    Aysncio protocol intended for use with BaseEventLoop.create_server.
+    """
 
-    def __init__(self, name, listener, poller, ip_address, port,
-                 action_handler=None):
+    def __init__(self, name, action_handler):
+        """Initialize a Fauxmo device.
+
+        Args:
+            name (str): How you want to call the device, e.g. "bedroom light"
+            action_handler (fauxmo.handler): Fauxmo action handler object
+        """
+
         self.name = name
-        self.serial = self.make_uuid(name)
-        self.listener = listener
-        self.poller = poller
-        self.ip_address = ip_address
-        self.port = port
+        self.serial = make_serial(name)
         self.action_handler = action_handler
 
-        self.root_url = "http://{}:{}/setup.xml"
-        other_headers = ['X-User-Agent: Fauxmo']
+    def connection_made(self, transport):
+        peername = transport.get_extra_info('peername')
+        logger.debug("Connection made with: {}".format(peername))
+        self.transport = transport
 
-        super().__init__(listener=self.listener, poller=self.poller,
-                         port=self.port, root_url=self.root_url,
-                         server_version="Unspecified, UPnP/1.0, Unspecified",
-                         serial=self.serial, other_headers=other_headers,
-                         ip_address=self.ip_address)
-        logger.debug("Device {} ready on "
-                     "{}:{}".format(self.name, self.ip_address, self.port))
+    def data_received(self, data):
+        """Decode data and determine if it is a setup or action request"""
 
-    def handle_request(self, data, sender, socket):
-        setup_xml = (
-               '<?xml version="1.0"?>\n'
-               '<root>\n'
-               '<device>\n'
-               '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>\n'
-               '<friendlyName>{}</friendlyName>\n'
-               '<manufacturer>Belkin International Inc.</manufacturer>\n'
-               '<modelName>Emulated Socket</modelName>\n'
-               '<modelNumber>3.1415</modelNumber>\n'
-               '<UDN>uuid:Socket-1_0-{}</UDN>\n'
-               '</device>\n'
-               '</root>'.format(self.name, self.serial)
-               )
-        if data.find('GET /setup.xml HTTP/1.1') == 0:
+        msg = data.decode()
+        logger.debug("Received message:\n{}".format(msg))
+        if msg.startswith('GET /setup.xml HTTP/1.1'):
             logger.debug("setup.xml requested by Echo")
+            self.handle_setup()
 
-            date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-            msg = (
-               "HTTP/1.1 200 OK\r\n"
-               "CONTENT-LENGTH: {}\r\n"
-               "CONTENT-TYPE: text/xml\r\n"
-               "DATE: {}\r\n"
-               "LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT\r\n"
-               "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-               "X-User-Agent: Fauxmo\r\n"
-               "CONNECTION: close\r\n"
-               "\r\n"
-               "{}".format(len(setup_xml), date_str, setup_xml)
-               )
-            logger.debug("Responding to setup request with:\n{}".format(msg))
-            socket.send(msg.encode('utf8'))
-        elif data.find('SOAPACTION: "urn:Belkin:service:basicevent:1#'
-                       'SetBinaryState"') != -1:
-            success = False
+        elif msg.startswith('POST /upnp/control/basicevent1 HTTP/1.1'):
+            self.handle_action(msg)
 
-            # Turn device ON
-            if data.find('<BinaryState>1</BinaryState>') != -1:
-                logger.debug("Responding to ON for {}".format(self.name))
-                success = self.action_handler.on()
+    def handle_setup(self):
+        """Create a response to the Echo's setup request"""
 
-            # Turn device OFF
-            elif data.find('<BinaryState>0</BinaryState>') != -1:
-                logger.debug("Responding to OFF for {}".format(self.name))
-                success = self.action_handler.off()
+        date_str = formatdate(timeval=None, localtime=False, usegmt=True)
 
-            else:
-                logger.debug("Unknown Binary State request:")
-                logger.debug(data)
+        setup_xml = '\r\n'.join([
+               '<?xml version="1.0"?>',
+               '<root>',
+               '<device>',
+               '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>',
+               '<friendlyName>{}</friendlyName>'.format(self.name),
+               '<manufacturer>Belkin International Inc.</manufacturer>',
+               '<modelName>Emulated Socket</modelName>',
+               '<modelNumber>3.1415</modelNumber>',
+               '<UDN>uuid:Socket-1_0-{}</UDN>'.format(self.serial),
+               '</device>',
+               '</root>']) + 2 * '\r\n'
 
-            if success:
-                # The echo is happy with the 200 status code and doesn't
-                # appear to care about the SOAP response body
-                soap = ""
-                date_str = formatdate(timeval=None, localtime=False,
-                                      usegmt=True)
-                msg = ("HTTP/1.1 200 OK\r\n"
-                       "CONTENT-LENGTH: {}\r\n"
-                       "CONTENT-TYPE: text/xml charset=\"utf-8\"\r\n"
-                       "DATE: {}\r\n"
-                       "EXT:\r\n"
-                       "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
-                       "X-User-Agent: Fauxmo\r\n"
-                       "CONNECTION: close\r\n"
-                       "\r\n"
-                       "{}".format(len(soap), date_str, soap))
-                logger.debug(msg)
-                socket.send(msg.encode('utf8'))
+        # Made as a separate string because it requires `len(setup_xml)`
+        setup_response = '\r\n'.join([
+               'HTTP/1.1 200 OK',
+               'CONTENT-LENGTH: {}'.format(len(setup_xml)),
+               'CONTENT-TYPE: text/xml',
+               'DATE: {}'.format(date_str),
+               'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
+               'SERVER: Unspecified, UPnP/1.0, Unspecified',
+               'X-User-Agent: Fauxmo',
+               'CONNECTION: close']) + 2 * '\r\n' + setup_xml
+
+        logger.debug("Fauxmo response to setup request:\n{}"
+                     .format(setup_response))
+        self.transport.write(setup_response.encode())
+        self.transport.close()
+
+    def handle_action(self, msg):
+        """Execute `on` or `off` method of `action_handler`
+
+        Args:
+            msg (str): Body of the Echo's HTTP request to trigger an action
+
+        """
+
+        success = False
+        if '<BinaryState>0</BinaryState>' in msg:
+            # `off()` method called
+            success = self.action_handler.off()
+
+        elif '<BinaryState>1</BinaryState>' in msg:
+            # `on()` method called
+            success = self.action_handler.on()
+
         else:
-            logger.debug(data)
+            logger.debug("Unrecognized request:\n{}".format(msg))
+
+        if success:
+            date_str = formatdate(timeval=None, localtime=False, usegmt=True)
+            response = '\r\n'.join([
+                    'HTTP/1.1 200 OK',
+                    'CONTENT-LENGTH: 0',
+                    'CONTENT-TYPE: text/xml charset="utf-8"',
+                    'DATE: {}'.format(date_str),
+                    'EXT:',
+                    'SERVER: Unspecified, UPnP/1.0, Unspecified',
+                    'X-User-Agent: Fauxmo',
+                    'CONNECTION: close']) + 2 * '\r\n'
+            logger.debug(response)
+            self.transport.write(response.encode())
+            self.transport.close()
 
 
 def main(config_path=None, verbosity=20):
+    """Runs the main fauxmo process
+
+    Spawns a UDP server to handle the Echo's UPnP / SSDP device discovery
+    process as well as multiple TCP servers to respond to the Echo's device
+    setup requests and handle its process for turning devices on and off.
+
+    Kwargs:
+        config_path (str): Path to config file. If not given will search for
+                           `config.json` in cwd, `~/.fauxmo/`, and
+                           `/etc/fauxmo/`.
+        verbosity (int): Logging verbosity, defaults to 20
+    """
+
     logger.setLevel(verbosity)
-
-    # Set up our singleton for polling the sockets for data ready
-    poller = Poller()
-
-    # Set up our singleton listener for UPnP broadcasts
-    listener = UpnpBroadcastResponder()
-    listener.init_socket()
-
-    # Add the UPnP broadcast listener to the poller so we can respond
-    # when a broadcast is received.
-    poller.add(listener)
 
     if not config_path:
         config_dirs = ['.', os.path.expanduser("~/.fauxmo"), "/etc/fauxmo"]
@@ -153,17 +162,28 @@ def main(config_path=None, verbosity=20):
 
     # Every config should include a FAUXMO section
     fauxmo_config = config.get("FAUXMO")
-    ip_address = fauxmo_config.get("ip_address")
+    fauxmo_ip = get_local_ip(fauxmo_config.get("ip_address"))
+
+    ssdp_server = SSDPServer()
+    servers = []
+
+    loop = asyncio.get_event_loop()
+    loop.set_debug(True)
 
     # Initialize Fauxmo devices
     for device in config.get('DEVICES'):
         name = device.get('description')
-        port = int(device.get("port", 0))
+        port = int(device.get("port"))
         action_handler = RestApiHandler(**device.get("handler"))
-        fauxmo = Fauxmo(name=name, listener=listener, poller=poller,
-                        ip_address=ip_address, port=port,
-                        action_handler=action_handler)
-        logger.debug(vars(fauxmo))
+
+        fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)
+        coro = loop.create_server(fauxmo, host=fauxmo_ip, port=port)
+        server = loop.run_until_complete(coro)
+        servers.append(server)
+
+        ssdp_server.add_device(name, fauxmo_ip, port)
+
+        logger.debug(fauxmo.keywords)
 
     # Initialize Home Assistant devices if config exists and enable is True
     if config.get("HOMEASSISTANT", {}).get("enable") is True:
@@ -180,17 +200,31 @@ def main(config_path=None, verbosity=20):
             action_handler = HassApiHandler(host=hass_host,
                                             password=hass_password,
                                             entity=entity, port=hass_port)
-            fauxmo = Fauxmo(name=name, listener=listener, poller=poller,
-                            ip_address=ip_address, port=device_port,
-                            action_handler=action_handler)
-            logger.debug(vars(fauxmo))
+            fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)
+            coro = loop.create_server(fauxmo, host=fauxmo_ip, port=device_port)
+            server = loop.run_until_complete(coro)
+            servers.append(server)
 
-    logger.debug("Entering main loop (polling)")
-    while True:
-        try:
-            # Allow time for a ctrl-c to stop the process
-            poller.poll(100)
-            time.sleep(0.1)
-        except Exception:
-            logger.error("Exception during polling")
-            raise
+            ssdp_server.add_device(name, fauxmo_ip, device_port)
+
+            logger.debug(fauxmo.keywords)
+
+    logger.info("Starting UDP server")
+
+    listen = loop.create_datagram_endpoint(lambda: ssdp_server,
+                                           sock=make_udp_sock())
+    transport, protocol = loop.run_until_complete(listen)
+
+    for signame in ('SIGINT', 'SIGTERM'):
+        loop.add_signal_handler(getattr(signal, signame), loop.stop)
+
+    loop.run_forever()
+
+    # Will not reach this part unless SIGINT or SIGTERM triggers `loop.stop()`
+    logger.debug("Shutdown starting...")
+    transport.close()
+    for idx, server in enumerate(servers):
+        logger.debug("Shutting down server {}...".format(idx))
+        server.close()
+        loop.run_until_complete(server.wait_closed())
+    loop.close()
