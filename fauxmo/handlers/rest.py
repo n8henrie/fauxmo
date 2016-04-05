@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
+from functools import partialmethod
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
-from functools import partialmethod
 
 
 class RestApiHandler:
