@@ -73,7 +73,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                     .format(serial)]) + 2 * '\r\n'
 
             logger.debug("Sending response to {}:\n{}".format(addr, response))
-            self.transport.sendto(response.encode('utf8'), addr)
+            self.transport.sendto(response.encode(), addr)
 
     def connection_lost(self, exc):
         if exc:
