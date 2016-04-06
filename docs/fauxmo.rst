@@ -35,6 +35,14 @@ fauxmo.upnp module
     :undoc-members:
     :show-inheritance:
 
+fauxmo.utils module
+-------------------
+
+.. automodule:: fauxmo.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
