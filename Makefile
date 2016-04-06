@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-PYTHON = /usr/bin/env python3
+PYTHON = venv/bin/python3
 PWD = $(shell pwd)
 
 .PHONY: clean-pyc clean-build docs clean register release clean-docs
@@ -22,7 +22,7 @@ clean: clean-build clean-pyc clean-test
 clean-build:
 	rm -fr build/
 	rm -fr dist/
-	rm -fr *.egg-info
+	rm -fr src/*.egg-info
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -55,7 +55,7 @@ clean-docs:
 	rm -f docs/modules.rst
 
 docs: clean-docs
-	sphinx-apidoc -o docs/ fauxmo
+	source venv/bin/activate && sphinx-apidoc -o docs/ src/fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html

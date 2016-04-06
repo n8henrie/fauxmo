@@ -29,7 +29,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # Get the project root dir, which is the parent dir of this
 cwd = os.getcwd()
-project_root = os.path.dirname(cwd)
+project_root = os.path.join(os.path.dirname(cwd), 'src')
 
 # Insert the project root dir as the first element in the PYTHONPATH.
 # This lets us ensure that the source package is imported, and that its
@@ -288,6 +288,7 @@ texinfo_documents = [
 
 source_parsers = {'.md': CommonMarkParser}
 source_suffix = ['.rst', '.md']
+
 
 def setup(app):
     curdir = os.path.dirname(os.path.abspath(__file__))

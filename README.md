@@ -6,11 +6,11 @@ Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
 ## Updates 20151231 by @n8henrie:
 
-- see
-[HISTORY.md](https://github.com/n8henrie/fauxmo/blob/master/HISTORY.md)
+- See [HISTORY.md](https://github.com/n8henrie/fauxmo/blob/master/HISTORY.md)
 - All credit goes to @makermusings for [the original version
   of Fauxmo](https://github.com/makermusings/fauxmo)!
-    - Also thanks to @DoWhileGeek for commits towards python 3 compatibility
+
+    - Also thanks to @DoWhileGeek for commits towards Python 3 compatibility
 
 ## Summary
 
@@ -104,7 +104,7 @@ I recommend that you copy and modify `config-sample.json`.
     - `handler`: Dictionary for `RestApiHandler` configuration
         - `on_cmd`: URL that should be requested to turn device on
         - `on_cmd`: URL that should be requested to turn device off
-        - `method`: GET or POST
+        - `method`: GET, POST, PUT, etc.
         - `headers`: Optional dict for extra headers
         - `json`: Optional dict for JSON data to POST
     - `description`: What you want to call the device (how to activate by Echo)

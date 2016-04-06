@@ -8,8 +8,11 @@ include requirements-dev.txt
 include config-sample.json
 exclude config.json
 
-recursive-include tests *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+graft src
+recursive-include docs *.md *.rst conf.py Makefile
 
-recursive-include docs *.md conf.py Makefile
+prune docs/md
+
+global-exclude *.py[co]
+global-exclude *.swp
+global-exclude __pycache__/*
