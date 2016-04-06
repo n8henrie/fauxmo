@@ -12,11 +12,11 @@ import os.path
 import signal
 
 from fauxmo import logger
-from fauxmo.handlers.rest import RestApiHandler
+from fauxmo.handlers.rest import RESTAPIHandler
 from fauxmo.upnp import SSDPServer
 from fauxmo.utils import make_udp_sock, get_local_ip, make_serial
 try:
-    from fauxmo.handlers.hass import HassApiHandler
+    from fauxmo.handlers.hass import HassAPIHandler
 except ImportError:
     # Hass not installed -- will still run fine as long as the hass portion of
     # config is disabled (or removed entirely)
@@ -174,7 +174,7 @@ def main(config_path=None, verbosity=20):
     for device in config.get('DEVICES'):
         name = device.get('description')
         port = int(device.get("port"))
-        action_handler = RestApiHandler(**device.get("handler"))
+        action_handler = RESTAPIHandler(**device.get("handler"))
 
         fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)
         coro = loop.create_server(fauxmo, host=fauxmo_ip, port=port)
@@ -197,7 +197,7 @@ def main(config_path=None, verbosity=20):
             name = device.get('description')
             device_port = device.get("port")
             entity = device.get("entity_id")
-            action_handler = HassApiHandler(host=hass_host,
+            action_handler = HassAPIHandler(host=hass_host,
                                             password=hass_password,
                                             entity=entity, port=hass_port)
             fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)

@@ -3,26 +3,29 @@ import homeassistant.remote
 from homeassistant.const import SERVICE_TURN_ON, SERVICE_TURN_OFF
 
 
-class HassApiHandler:
+class HassAPIHandler:
     """Handler for Home Assistant (hass) Python API.
 
     Allows users to specify Home Assistant services in their config.json and
     toggle these with the Echo. While this can be done with Home Assistant's
     REST API as well (example included), I find it easier to use the Python
     API.
-
-    Args:
-        host (str): IP address of device running Home Assistant
-        password (str): Home Assistant password
-        entity (str): `entity_id` used by hass, one easy way to find is to curl
-        and grep the REST API, eg:
-        `curl http://IP/api/bootstrap | grep entity_id`
-
-    Kwargs:
-        port (int): Port running hass on the host computer (default 8123)
     """
 
     def __init__(self, host, password, entity, port=8123):
+        """Initialize a HassAPIHandler instance
+
+        Args:
+            host (str): IP address of device running Home Assistant
+            password (str): Home Assistant password
+            entity (str): `entity_id` used by hass, one easy way to find is to
+                          curl and grep the REST API, eg:
+                          `curl http://IP/api/bootstrap | grep entity_id`
+
+        Kwargs:
+            port (int): Port running hass on the host computer (default 8123)
+        """
+
         self.host = host
         self.password = password
         self.entity = entity

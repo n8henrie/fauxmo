@@ -4,7 +4,7 @@ import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 
-class RestApiHandler:
+class RESTAPIHandler:
     """Rest API handler class.
 
     The Fauxmo class expects handlers to be instances of objects that have on()
@@ -16,7 +16,7 @@ class RestApiHandler:
     def __init__(self, on_cmd, off_cmd, method="GET", on_data=None,
                  off_data=None, on_json=None, off_json=None, headers=None,
                  auth_type=None, user=None, password=None):
-        """Initialize a RestApiHandler.
+        """Initialize a RESTAPIHandler instance
 
         Args:
             on_cmd (str): URL to be called when turning device on
