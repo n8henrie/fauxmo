@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """fauxmo.py
+
 Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 <https://github.com/n8henrie/fauxmo>.
 """
@@ -24,7 +25,7 @@ except ImportError:
 
 
 class Fauxmo(asyncio.Protocol):
-    """Mimics a WeMo switch on the network
+    """Mimics a WeMo switch on the network.
 
     Aysncio protocol intended for use with BaseEventLoop.create_server.
     """
@@ -167,7 +168,8 @@ def main(config_path=None, verbosity=20):
     ssdp_server = SSDPServer()
     servers = []
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     loop.set_debug(True)
 
     # Initialize Fauxmo devices

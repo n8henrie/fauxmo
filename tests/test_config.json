@@ -1,0 +1,40 @@
+{
+    "FAUXMO": {
+        "ip_address": "localhost"
+    },
+    "DEVICES": [
+        {
+            "port": 12345,
+            "handler": {
+                "on_cmd": "http://localhost:2345/myserver/fakeswitches/01/on",
+                "off_cmd": "http://localhost:2345/myserver/fakeswitches/01/off",
+                "method": "GET"
+            },
+            "description": "fake switch one"
+        },
+        {
+            "port": 12346,
+            "handler": {
+                "on_cmd": "http://localhost:8123/api/services/switch/turn_on",
+                "off_cmd": "http://localhost:8123/api/services/switch/turn_off",
+                "method": "POST",
+                "headers": {"x-ha-access": "your_hass_password"},
+                "json": {"entity_id": "switch.fake_hass_switch"}
+            },
+            "description": "fake hass switch by REST API"
+        }
+    ],
+    "HOMEASSISTANT": {
+        "enable": true,
+        "host": "localhost",
+        "port": 8123,
+        "password": "your_hass_password",
+        "DEVICES": [
+            {
+                "description": "hass switch by python API",
+                "port": 12347,
+                "entity_id": "switch.fake_hass_switch"
+            }
+        ]
+    }
+}
