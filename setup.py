@@ -25,7 +25,7 @@ version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
 with open('src/fauxmo/__init__.py') as f:
     vlines = f.readlines()
 __version__ = next(re.match(version_regex, line).group(1) for line in vlines
-               if re.match(version_regex, line))
+                   if re.match(version_regex, line))
 
 setup(
     name="fauxmo",
