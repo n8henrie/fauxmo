@@ -132,6 +132,18 @@ numbers.
 ## Troubleshooting / FAQ
 
 - Increase logging verbosity with `-v[vv]`
+- But I don't *wanna* upgrade to 3.4.4... how can I install an older version of
+  Fauxmo that worked with Python 3.4.2?
+
+  - Install from a tag:
+
+    - `pip install git+git://github.com/n8henrie/fauxmo.git@v0.1.11`
+
+  - Install from a specific commit:
+
+    - `pip install
+      git+git://github.com/n8henrie/fauxmo.git@d877c513ad45cbbbd77b1b83e7a2f03bf0004856`
+
 
 ## Reading list:
 
