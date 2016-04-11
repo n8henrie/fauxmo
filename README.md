@@ -4,22 +4,21 @@ Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
 - Documentation: [fauxmo.readthedocs.org](https://fauxmo.readthedocs.org)
 
-## Updates 20151231 by @n8henrie:
-
-- See [HISTORY.md](https://github.com/n8henrie/fauxmo/blob/master/HISTORY.md)
-- All credit goes to @makermusings for [the original version
-  of Fauxmo](https://github.com/makermusings/fauxmo)!
-
-    - Also thanks to @DoWhileGeek for commits towards Python 3 compatibility
-
 ## Summary
 
-The Amazon Echo will allow you to control a limited number of home automation
-devices by voice. If you want to control device types that it doesn't know
-about, or perform more sophisticated actions, the Echo doesn't provide any
-native options. This code emulates the Belkin WeMo devices in software,
-allowing you to have it appear that any number of them are on your network and
-to link their on and off actions to any code you want.
+The Amazon Echo is able to control certain types of home automation devices by
+voice. Fauxmo provides emulated Belkin Wemo devices that the Echo can turn on
+and off by voice, locally, and with minimal lag time. Currently these Fauxmo
+devices can be configured to make requests to an HTTP server or to a [Home
+Assistant](https://home-assistant.io) instance via [its Python
+API](https://home-assistant.io/developers/python_api/) and only require a JSON
+config file for setup.
+
+As of version 0.3.0, Fauxmo uses the new [asyncio
+module](https://docs.python.org/3/library/asyncio.html#module-asyncio) and
+requires Python >= 3.4.4 due to
+[#6](https://github.com/n8henrie/fauxmo/issues/6). Python >= 3.5 is encouraged,
+in case I decide to use the new `async` and `await` keywords in the future.
 
 ## Usage
 
@@ -34,7 +33,7 @@ to link their on and off actions to any code you want.
 
 1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git@dev`
 
-### Install for development: from GitHub
+### Install for development (from GitHub)
 
 1. `git clone https://github.com/n8henrie/fauxmo.git`
 1. `cd fauxmo`
@@ -47,8 +46,13 @@ to link their on and off actions to any code you want.
 
 ### Set up the Echo
 
-1. Have the Echo "find connected devices"
-1. Test: "Alexa turn on [the kitchen light]"
+1. Open the Amazon Alexa webapp to the [Smart
+   Home](http://alexa.amazon.com/#smart-home) page
+1. **With Fauxmo running**, click "Discover devices" (or tell Alexa to "find
+   connected devices")
+1. Ensure that your Fauxmo devices were discovered and appear with their
+   names in the web interface
+1. Test: "Alexa, turn on [the kitchen light]"
 
 ### Set fauxmo to run automatically in the background
 
@@ -71,17 +75,11 @@ to link their on and off actions to any code you want.
 1. `launchctl load ~/Library/LaunchAgents/com.n8henrie.fauxmo.plist`
 1. `launchctl start com.n8henrie.fauxmo`
 
-Once fauxmo.py is running, simply tell your Echo to "find connected devices" or
-open a browser to or your mobile device to the [connected home
-settings](http://alexa.amazon.com/#settings/connected-home) page and `Discover
-devices`
-
 ## Handlers
 
-Fauxmo has an example REST handler class that reacts to on
-and off commands using the
-[python-requests](http://docs.python-requests.org/en/latest/) library as well
-as a handler for the [Home Assistant Python
+Fauxmo has an example REST handler class that reacts to on and off commands
+using the [python-requests](http://docs.python-requests.org/en/latest/) library
+as well as a handler for the [Home Assistant Python
 API](https://home-assistant.io/developers/python_api); these are examples of a
 multitude of ways that you could have the Echo trigger an action. In
 `config-sample.json`, you'll see examples of:
@@ -89,7 +87,9 @@ multitude of ways that you could have the Echo trigger an action. In
 - A `GET` request to a local server
 - A `POST` request to the [Home Assistant REST
 API](https://home-assistant.io/developers/rest_api/)
-- Requests to Home Asssistant's Python API
+- A `PUT` request to an [Indigo](https://www.indigodomo.com/) server
+- Requests to [Home Asssistant's Python
+  API](https://home-assistant.io/developers/python_api/)
 
 ## Configuration
 
@@ -98,15 +98,18 @@ I recommend that you copy and modify `config-sample.json`.
 - `FAUXMO`: General Fauxmo settings
     - `ip_address`: Manually set the server's IP address. Optional. Recommended
       value: `auto`
-- `DEVICES`: List of devices that will employ `RestApiHandler`
+- `DEVICES`: List of devices that will employ `RESTAPIHandler`
     - `port`: Port that Echo will use connect to device, should be different for
       each device
-    - `handler`: Dictionary for `RestApiHandler` configuration
+    - `handler`: Dictionary for `RESTAPIHandler` configuration
         - `on_cmd`: URL that should be requested to turn device on
         - `on_cmd`: URL that should be requested to turn device off
         - `method`: GET, POST, PUT, etc.
         - `headers`: Optional dict for extra headers
-        - `json`: Optional dict for JSON data to POST
+        - `on_json` / `off_json`: Optional dict of JSON data
+        - `on_data` / `off_data`: Optional POST data
+        - `auth_type`: `basic` or `digest` authentication, optional
+        - `user` / `password`: for use with `auth_type`, also optional
     - `description`: What you want to call the device (how to activate by Echo)
 - `HOMEASSISTANT`: Section for [Home Assistant Python
   API](https://home-assistant.io/developers/python_api)
@@ -123,15 +126,12 @@ I recommend that you copy and modify `config-sample.json`.
           curl and grep the REST API, eg `curl http://IP_ADDRESS/api/bootstrap
           | grep entity_id`
 
-**NB:** unless you specify port numbers in the creation of your fauxmo
-objetcs, your virtual switch devices will use a different port every time you
-run fauxmo.py, which will make it hard for the Echo to find them. So you should
-plan to either leave the script running for long periods or choose fixed port
-numbers.
-
 ## Troubleshooting / FAQ
 
 - Increase logging verbosity with `-v[vv]`
+- Ways to ensure your config is valid JSON:
+    - `python -m json.tool < config.json`
+    - Use `jsonlint` or one of numerous online tools
 - But I don't *wanna* upgrade to 3.4.4... how can I install an older version of
   Fauxmo that worked with Python 3.4.2?
 
@@ -144,8 +144,43 @@ numbers.
     - `pip install
       git+git://github.com/n8henrie/fauxmo.git@d877c513ad45cbbbd77b1b83e7a2f03bf0004856`
 
+### Installing Python 3.5 with pyenv
 
-## Reading list:
+```bash
+sudo install -o $(whoami) -g $(whoami) -d /opt/pyenv
+git clone https://github.com/yyuu/pyenv /opt/pyenv
+echo 'export PYENV_ROOT="/opt/pyenv"' >> ~/.bashrc
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+source ~/.bashrc
+pyenv install 3.5.1
+```
+
+You can then install Fauxmo into Python 3.5 in a few ways, including:
+
+```bash
+# Install with pip
+"$(pyenv root)"/versions/3.5.1/bin/python3.5 -m pip install fauxmo
+
+# Run with included console script
+fauxmo -c /path/to/config.json -vvv
+
+# Show full path to fauxmo console script
+pyenv which fauxmo
+
+# I recommend using the full path for use in start scripts (e.g. systemd, cron)
+"$(pyenv root)"/versions/3.5.1/bin/fauxmo -c /path/to/config.json -vvv
+
+# Alternatively, this also works (after `pip install`)
+"$(pyenv root)"/versions/3.5.1/bin/python3.5 -m fauxmo.cli -c config.json -vvv
+```
+
+## Acknowledgements / Reading List
+
+- Tremendous thanks to @makermusings for [the original version of
+  Fauxmo](https://github.com/makermusings/fauxmo)!
+
+    - Also thanks to @DoWhileGeek for commits towards Python 3 compatibility
 
 - <http://www.makermusings.com/2015/07/13/amazon-echo-and-home-automation>
 - <http://www.makermusings.com/2015/07/18/virtual-wemo-code-for-amazon-echo>

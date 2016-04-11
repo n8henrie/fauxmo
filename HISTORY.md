@@ -3,6 +3,16 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.3.0 :: 20160409
+
+- Fauxmo now uses asyncio and requires Python >= 3.4.4
+- *Extensive* changes to codebase
+- Handler classes renamed for PEP8 (capitalization)
+- Moved some general purpose functions to `fauxmo.utils` module
+- Both the UDP and TCP servers are now in `fauxmo.protocols`
+- Added some rudimentary [pytest](http://pytest.org/latest) tests including [tox](http://tox.readthedocs.org/en/latest) and [Travis](https://travis-ci.org/) support
+- Updated documentation on several classes
+
 ## 0.2.0 :: 20160324
 
 - Add additional HTTP verbs and options to `RestApiHandler` and Indigo sample
