@@ -134,15 +134,11 @@ I recommend that you copy and modify `config-sample.json`.
     - Use `jsonlint` or one of numerous online tools
 - But I don't *wanna* upgrade to 3.4.4... how can I install an older version of
   Fauxmo that worked with Python 3.4.2?
-
-  - Install from a tag:
-
-    - `pip install git+git://github.com/n8henrie/fauxmo.git@v0.1.11`
-
-  - Install from a specific commit:
-
-    - `pip install
-      git+git://github.com/n8henrie/fauxmo.git@d877c513ad45cbbbd77b1b83e7a2f03bf0004856`
+    - Install from a tag:
+        - `pip install git+git://github.com/n8henrie/fauxmo.git@v0.1.11`
+    - Install from a specific commit:
+        - `pip install
+          git+git://github.com/n8henrie/fauxmo.git@d877c513ad45cbbbd77b1b83e7a2f03bf0004856`
 
 ### Installing Python 3.5 with pyenv
 
@@ -179,9 +175,7 @@ pyenv which fauxmo
 
 - Tremendous thanks to @makermusings for [the original version of
   Fauxmo](https://github.com/makermusings/fauxmo)!
-
     - Also thanks to @DoWhileGeek for commits towards Python 3 compatibility
-
 - <http://www.makermusings.com/2015/07/13/amazon-echo-and-home-automation>
 - <http://www.makermusings.com/2015/07/18/virtual-wemo-code-for-amazon-echo>
 - <http://hackaday.com/2015/07/16/how-to-make-amazon-echo-control-fake-wemo-devices>
