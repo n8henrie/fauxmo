@@ -10,6 +10,7 @@ from functools import partial
 import json
 import os.path
 import signal
+import sys
 
 from fauxmo import logger
 from fauxmo.handlers.hass import HassAPIHandler
@@ -33,6 +34,8 @@ def main(config_path=None, verbosity=20):
     """
 
     logger.setLevel(verbosity)
+
+    logger.debug(sys.version)
 
     if not config_path:
         config_dirs = ['.', os.path.expanduser("~/.fauxmo"), "/etc/fauxmo"]
