@@ -1,10 +1,13 @@
 # Fauxmo README
 
+[![Build
+Status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=master)](https://travis-ci.org/n8henrie/fauxmo)
+
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
 - Documentation: [fauxmo.readthedocs.org](https://fauxmo.readthedocs.org)
 
-## Summary
+## Introduction
 
 The Amazon Echo is able to control certain types of home automation devices by
 voice. Fauxmo provides emulated Belkin Wemo devices that the Echo can turn on
