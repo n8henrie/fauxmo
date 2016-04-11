@@ -27,10 +27,10 @@ fauxmo.fauxmo module
     :undoc-members:
     :show-inheritance:
 
-fauxmo.upnp module
-------------------
+fauxmo.protocols module
+-----------------------
 
-.. automodule:: fauxmo.upnp
+.. automodule:: fauxmo.protocols
     :members:
     :undoc-members:
     :show-inheritance:
