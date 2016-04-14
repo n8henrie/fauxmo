@@ -1,10 +1,16 @@
-- Operating system and version:
-- Python version:
-- Fauxmo version:
+- **Operating system and version**:
+- **Python version**:
+- **Fauxmo version**:
 
 ## My Issue
 
+
+
 ## [WHYT](http://mattgemmell.com/what-have-you-tried)
+
+
+
+---
 
 Please make sure you've taken these steps before submitting a new issue:
 
