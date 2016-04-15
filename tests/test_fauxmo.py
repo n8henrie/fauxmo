@@ -12,7 +12,7 @@ import socket
 def test_udp_search(fauxmo_server):
     """Test device search request to UPnP / SSDP server"""
 
-    msg = b'urn:Belkin:device:**'
+    msg = b'"ssdp:discover"' + b'urn:Belkin:device:**'
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(1)
     sock.sendto(msg, ('localhost', 1900))
