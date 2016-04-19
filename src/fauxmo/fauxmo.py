@@ -10,13 +10,14 @@ from functools import partial
 import json
 import os.path
 import signal
+import socket
 import sys
 
 from fauxmo import logger
 from fauxmo.handlers.hass import HassAPIHandler
 from fauxmo.handlers.rest import RESTAPIHandler
 from fauxmo.protocols import SSDPServer, Fauxmo
-from fauxmo.utils import make_udp_sock, get_local_ip
+from fauxmo.utils import get_local_ip
 
 
 def main(config_path=None, verbosity=20):
@@ -106,7 +107,8 @@ def main(config_path=None, verbosity=20):
     logger.info("Starting UDP server")
 
     listen = loop.create_datagram_endpoint(lambda: ssdp_server,
-                                           sock=make_udp_sock())
+                                           local_addr=('0.0.0.0', 1900),
+                                           family=socket.AF_INET)
     transport, protocol = loop.run_until_complete(listen)
 
     for signame in ('SIGINT', 'SIGTERM'):

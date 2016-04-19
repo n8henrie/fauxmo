@@ -4,27 +4,9 @@
 Utility functions for Fauxmo.
 """
 
-import struct
 import socket
 from fauxmo import logger
 import uuid
-
-
-def make_udp_sock():
-    """Make a suitable udp socket to listen for device discovery requests"""
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(('', 1900))
-    group = socket.inet_aton('239.255.255.250')
-    mreq = struct.pack('4sL', group, socket.INADDR_ANY)
-    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    # Raises AttributeError on some Unixes
-    if hasattr(socket, 'SO_REUSEPORT'):
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-
-    return sock
 
 
 def get_local_ip(ip_address):

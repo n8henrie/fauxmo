@@ -3,6 +3,22 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.3.2 :: 20160419
+
+- Update SSDPServer to `setsockopt` to permit receiving multicast broadcasts
+- `sock` kwarg to `create_datagram_endpoint` no longer necessary, restoring
+  functionality to Python 3.4.0 - 3.4.3 (closes #6)
+- `make_udp_sock()` no longer necessary, removed from `fauxmo.utils`
+- Tox and Travis configs switched to use Python 3.4.2 instead of 3.4.4 (since
+  3.4.2 is the latest available in the default Raspbian Jessie repos)
+
+## 0.3.1 :: 20160415
+
+- Don't decode the UDP multicast broadcasts (hopefully fixes #7)
+    - They might not be from the Echo and might cause a `UnicodeDecodeError`
+    - Just search the bytes instead
+- Tests updated for this minor change
+
 ## 0.3.0 :: 20160409
 
 - Fauxmo now uses asyncio and requires Python >= 3.4.4
