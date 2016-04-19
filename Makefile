@@ -63,7 +63,7 @@ docs: clean-docs
 register: dist
 	twine register dist/*.whl
 
-release: dist
+release: test-all dist
 	twine upload dist/*
 
 dist: clean docs

@@ -4,7 +4,7 @@ import logging.handlers
 
 __author__ = 'Nathan Henrie'
 __email__ = 'nate@n8henrie.com'
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 logging.basicConfig(
         level="INFO",

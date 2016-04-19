@@ -40,6 +40,7 @@ class Fauxmo(asyncio.Protocol):
         """Decode data and determine if it is a setup or action request"""
 
         msg = data.decode()
+
         logger.debug("Received message:\n{}".format(msg))
         if msg.startswith('GET /setup.xml HTTP/1.1'):
             logger.debug("setup.xml requested by Echo")
@@ -147,10 +148,11 @@ class SSDPServer(asyncio.DatagramProtocol):
     def datagram_received(self, data, addr):
         """Check incoming UDP data for requests for Wemo devices"""
 
-        msg = data.decode()
-        logger.debug("Received from {}:\n{}".format(addr, msg))
+        logger.debug("Received data below from {}:".format(addr))
+        logger.debug(data)
 
-        if 'urn:Belkin:device:**' in msg:
+        if all(b in data for b in [b'"ssdp:discover"',
+                                   b'urn:Belkin:device:**']):
             self.respond_to_search(addr)
 
     def respond_to_search(self, addr):
