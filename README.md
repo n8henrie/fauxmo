@@ -19,9 +19,11 @@ config file for setup.
 
 As of version 0.3.0, Fauxmo uses the new [asyncio
 module](https://docs.python.org/3/library/asyncio.html#module-asyncio) and
-requires Python >= 3.4.4 due to
-[#6](https://github.com/n8henrie/fauxmo/issues/6). Python >= 3.5 is encouraged,
-in case I decide to use the new `async` and `await` keywords in the future.
+therefore requires Python >= 3.4*. Python >= 3.5 is encouraged, in case I
+decide to use the new `async` and `await` keywords in the future.
+
+\* Fauxmo 0.3.0 required Python >= 3.4.4, but Fauxmo 0.3.2 has restored
+compatibility with Python >= 3.4.0.
 
 ## Usage
 
@@ -135,8 +137,7 @@ I recommend that you copy and modify `config-sample.json`.
 - Ways to ensure your config is valid JSON:
     - `python -m json.tool < config.json`
     - Use `jsonlint` or one of numerous online tools
-- But I don't *wanna* upgrade to 3.4.4... how can I install an older version of
-  Fauxmo that worked with Python 3.4.2?
+- How can I install an older / specific version of Fauxmo?
     - Install from a tag:
         - `pip install git+git://github.com/n8henrie/fauxmo.git@v0.1.11`
     - Install from a specific commit:
