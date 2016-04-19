@@ -7,6 +7,8 @@ discovery.
 
 import asyncio
 from email.utils import formatdate
+import socket
+import struct
 import uuid
 
 from fauxmo import logger
@@ -143,6 +145,12 @@ class SSDPServer(asyncio.DatagramProtocol):
 
     def connection_made(self, transport):
         self.transport = transport
+
+        # Allow receiving multicast broadcasts
+        sock = self.transport.get_extra_info('socket')
+        group = socket.inet_aton('239.255.255.250')
+        mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
     def datagram_received(self, data, addr):
         """Check incoming UDP data for requests for Wemo devices"""
