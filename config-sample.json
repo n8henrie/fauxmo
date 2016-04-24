@@ -4,7 +4,7 @@
     },
     "DEVICES": [
         {
-            "port": 12345,
+            "port": 12340,
             "handler": {
                 "on_cmd": "http://192.168.1.104/myserver/fakeswitches/01/on",
                 "off_cmd": "http://192.168.1.104/myserver/fakeswitches/01/off",
@@ -13,7 +13,7 @@
             "description": "fake switch one"
         },
         {
-            "port": 12347,
+            "port": 12341,
             "handler": {
                 "on_cmd": "http://localhost:54321/devices/garage%20light",
                 "off_cmd": "http://localhost:54321/devices/garage%20light",
@@ -27,13 +27,14 @@
             "description": "fake Indigo switch"
         },
         {
-            "port": 12346,
+            "port": 12342,
             "handler": {
                 "on_cmd": "http://192.168.1.104:8123/api/services/switch/turn_on",
                 "off_cmd": "http://192.168.1.104:8123/api/services/switch/turn_off",
                 "method": "POST",
                 "headers": {"x-ha-access": "your_hass_password"},
-                "json": {"entity_id": "switch.fake_hass_switch"}
+                "on_json": {"entity_id": "switch.fake_hass_switch"},
+                "off_json": {"entity_id": "switch.fake_hass_switch"}
             },
             "description": "fake hass switch by REST API"
         }
@@ -46,7 +47,7 @@
         "DEVICES": [
             {
                 "description": "hass switch by python API",
-                "port": 12347,
+                "port": 12350,
                 "entity_id": "switch.fake_hass_switch"
             }
         ]
