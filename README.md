@@ -98,7 +98,11 @@ API](https://home-assistant.io/developers/rest_api/)
 
 ## Configuration
 
-I recommend that you copy and modify `config-sample.json`.
+I recommend that you copy and modify
+[`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json).
+Fauxmo will use whatever config file you specify with `-c` or will search for
+`config.json` in the current directory, `~/.fauxmo/`, and `/etc/fauxmo/` (in
+that order).
 
 - `FAUXMO`: General Fauxmo settings
     - `ip_address`: Manually set the server's IP address. Optional. Recommended
@@ -133,8 +137,9 @@ I recommend that you copy and modify `config-sample.json`.
 
 ## Troubleshooting / FAQ
 
-- Increase logging verbosity with `-v[vv]`
-- Ways to ensure your config is valid JSON:
+- How can I increase my logging verbosity?
+    - `-v[vv]`
+- How can I ensure my config is valid JSON?
     - `python -m json.tool < config.json`
     - Use `jsonlint` or one of numerous online tools
 - How can I install an older / specific version of Fauxmo?
