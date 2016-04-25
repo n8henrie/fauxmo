@@ -148,6 +148,10 @@ that order).
     - Install from a specific commit:
         - `pip install
           git+git://github.com/n8henrie/fauxmo.git@d877c513ad45cbbbd77b1b83e7a2f03bf0004856`
+- Where can I get more information on how the Echo interacts with devices like
+  Fauxmo?
+    - Check out
+      [`protocol_notes.md`](https://github.com/n8henrie/fauxmo/blob/master/protocol_notes.md)
 
 ### Installing Python 3.5 with pyenv
 
