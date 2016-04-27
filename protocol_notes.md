@@ -207,3 +207,63 @@ To verify that Fauxmo is working properly, check for a few things:
 If you can confirm that things seem to be working through number 4, then it
 would seem that Fauxmo is working properly, and the issue would seem to be
 elsewhere.
+
+## On and Off Commands
+
+One way to examine exactly what the Echo sends to one of your connected Fauxmo
+devices (i.e. one that *already* works as expected) is to first **stop** Fauxmo
+(to free up the port), then use netcat to listen to that port while you trigger
+the command. E.g. for a Fauxmo device configured to use port `12345`, run
+`nc.traditional -l 12345` and then tell the Echo to "turn on [device name]".
+The Echo will notify you that the command failed, obviously, because Fauxmo
+isn't running, but you should be able to see exactly what the Echo sent.
+
+These are the requests that the Echo sends to Fauxmo when you ask it to turn a
+device...
+
+### On
+
+```
+POST /upnp/control/basicevent1 HTTP/1.1
+Host: 192.168.27.31:12345
+Accept: */*
+Content-type: text/xml; charset="utf-8"
+SOAPACTION: "urn:Belkin:service:basicevent:1#SetBinaryState"
+Content-Length: 299
+
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body>
+<u:SetBinaryState xmlns:u="urn:Belkin:service:basicevent:1">
+<BinaryState>1</BinaryState>
+</u:SetBinaryState>
+</s:Body>
+</s:Envelope>
+```
+
+### Off
+
+```
+POST /upnp/control/basicevent1 HTTP/1.1
+Host: 192.168.27.31:12345
+Accept: */*
+Content-type: text/xml; charset="utf-8"
+SOAPACTION: "urn:Belkin:service:basicevent:1#SetBinaryState"
+Content-Length: 299
+
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body>
+<u:SetBinaryState xmlns:u="urn:Belkin:service:basicevent:1">
+<BinaryState>0</BinaryState>
+</u:SetBinaryState>
+</s:Body>
+</s:Envelope>
+```
+
+Several similar terms can be used instead of `On` and `Off`, e.g. `Open` and
+`Close`; the response looks identical. [This Reddit
+post](https://www.reddit.com/r/amazonecho/comments/4gaf05/discovery_a_lot_more_smart_home_action_phrases/)
+has a good number more that work. NB: the `Dim` commands in the post don't seem
+to work (likely incompatible with Wemo devices, so the Echo doesn't even try to
+send them).
