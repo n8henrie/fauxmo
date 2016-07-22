@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import homeassistant.remote
-from homeassistant.const import SERVICE_TURN_ON, SERVICE_TURN_OFF
+from homeassistant.const import (SERVICE_TURN_ON, SERVICE_TURN_OFF,
+                                 SERVICE_MOVE_UP, SERVICE_MOVE_DOWN)
 
 
 class HassAPIHandler:
@@ -35,6 +36,17 @@ class HassAPIHandler:
         self.api = homeassistant.remote.API(self.host, self.password,
                                             port=self.port)
 
+        self.service_map = {
+                'switch': {
+                    'on': SERVICE_TURN_ON,
+                    'off': SERVICE_TURN_OFF
+                    },
+                'rollershutter': {
+                    'on': SERVICE_MOVE_UP,
+                    'off': SERVICE_MOVE_DOWN
+                    }
+                }
+
     def send(self, signal):
         """Send a signal to the hass `call_service` function, returns True.
 
@@ -54,7 +66,9 @@ class HassAPIHandler:
         return True
 
     def on(self):
-        return self.send(SERVICE_TURN_ON)
+        on_cmd = self.service_map[self.domain.lower()]['on']
+        return self.send(on_cmd)
 
     def off(self):
-        return self.send(SERVICE_TURN_OFF)
+        off_cmd = self.service_map[self.domain.lower()]['off']
+        return self.send(off_cmd)
