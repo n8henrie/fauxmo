@@ -3,6 +3,12 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## 0.3.3 :: 20160722
+
+- Added compatibility for `rollershutter` to `handlers.hass`
+- Changed `handlers.hass` to send values from a dict to make addition of new
+  services easier in the future
+
 ## 0.3.2 :: 20160419
 
 - Update SSDPServer to `setsockopt` to permit receiving multicast broadcasts
