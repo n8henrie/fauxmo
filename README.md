@@ -44,7 +44,7 @@ compatibility with Python >= 3.4.0.
 1. `cd fauxmo`
 1. `python3 -m venv venv`
 1. `source venv/bin/activate`
-1. `pip install -e .`
+1. `pip install -e .` NOTE this pulls down Home Assistant and its dependencies
 1. `cp config-sample.json config.json`
 1. Edit `config.json`
 1. `fauxmo [-v]`
