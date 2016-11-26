@@ -27,5 +27,6 @@ def cli():
 
     main(config_path=args.config, verbosity=verbosity)
 
+
 if __name__ == "__main__":
     cli()
