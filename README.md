@@ -112,7 +112,7 @@ that order).
       each device
     - `handler`: Dictionary for `RESTAPIHandler` configuration
         - `on_cmd`: URL that should be requested to turn device on
-        - `on_cmd`: URL that should be requested to turn device off
+        - `off_cmd`: URL that should be requested to turn device off
         - `method`: GET, POST, PUT, etc.
         - `headers`: Optional dict for extra headers
         - `on_json` / `off_json`: Optional dict of JSON data
