@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import homeassistant.remote
 from homeassistant.const import (SERVICE_TURN_ON, SERVICE_TURN_OFF,
-                                 SERVICE_MOVE_UP, SERVICE_MOVE_DOWN)
+                                 SERVICE_OPEN_COVER, SERVICE_CLOSE_COVER)
 
 
 class HassAPIHandler:
@@ -47,9 +47,9 @@ class HassAPIHandler:
                     'on': SERVICE_TURN_ON,
                     'off': SERVICE_TURN_OFF
                     },
-                'rollershutter': {
-                    'on': SERVICE_MOVE_UP,
-                    'off': SERVICE_MOVE_DOWN
+                'cover': {
+                    'on': SERVICE_OPEN_COVER,
+                    'off': SERVICE_CLOSE_COVER
                     }
                 }
 
