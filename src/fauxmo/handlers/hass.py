@@ -33,11 +33,17 @@ class HassAPIHandler:
         self.port = port
 
         self.domain = self.entity.split(".")[0]
+        if self.domain == 'group':
+            self.domain = 'homeassistant'
         self.api = homeassistant.remote.API(self.host, self.password,
                                             port=self.port)
 
         self.service_map = {
                 'switch': {
+                    'on': SERVICE_TURN_ON,
+                    'off': SERVICE_TURN_OFF
+                    },
+                'homeassistant': {
                     'on': SERVICE_TURN_ON,
                     'off': SERVICE_TURN_OFF
                     },
