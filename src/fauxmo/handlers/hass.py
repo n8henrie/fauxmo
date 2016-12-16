@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import homeassistant.remote
 from homeassistant.const import (SERVICE_TURN_ON, SERVICE_TURN_OFF,
-                                 SERVICE_MOVE_UP, SERVICE_MOVE_DOWN)
+                                 SERVICE_OPEN_COVER, SERVICE_CLOSE_COVER)
 
 
 class HassAPIHandler:
@@ -33,6 +33,8 @@ class HassAPIHandler:
         self.port = port
 
         self.domain = self.entity.split(".")[0]
+        if self.domain == 'group':
+            self.domain = 'homeassistant'
         self.api = homeassistant.remote.API(self.host, self.password,
                                             port=self.port)
 
@@ -41,9 +43,13 @@ class HassAPIHandler:
                     'on': SERVICE_TURN_ON,
                     'off': SERVICE_TURN_OFF
                     },
-                'rollershutter': {
-                    'on': SERVICE_MOVE_UP,
-                    'off': SERVICE_MOVE_DOWN
+                'homeassistant': {
+                    'on': SERVICE_TURN_ON,
+                    'off': SERVICE_TURN_OFF
+                    },
+                'cover': {
+                    'on': SERVICE_OPEN_COVER,
+                    'off': SERVICE_CLOSE_COVER
                     }
                 }
 
