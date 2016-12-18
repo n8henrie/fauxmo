@@ -66,7 +66,7 @@ def main(config_path=None, verbosity=20):
     loop.set_debug(True)
 
     # Initialize Fauxmo devices
-    for device in config.get('DEVICES'):
+    for device in config.get('DEVICES', {}):
         name = device.get('description')
         port = int(device.get("port"))
         action_handler = RESTAPIHandler(**device.get("handler"))
