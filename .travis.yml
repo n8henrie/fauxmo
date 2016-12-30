@@ -4,8 +4,10 @@ matrix:
     include:
         - python: 3.4.2
           env: TOXENV=py34
-        - python: 3.5.1
+        - python: 3.5.2
           env: TOXENV=py35
+        - python: 3.6.0
+          env: TOXENV=py36
 
 install: pip install tox
 
