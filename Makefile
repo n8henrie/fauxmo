@@ -58,7 +58,7 @@ docs: clean-docs
 	source venv/bin/activate && sphinx-apidoc -o docs/ src/fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	open docs/_build/html/index.html
+	-open docs/_build/html/index.html
 
 register: dist
 	twine register dist/*.whl
