@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """protocols.py
 
 Holds asyncio protocols required classes for the Echo's UPnP / SSDP device

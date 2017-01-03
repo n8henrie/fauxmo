@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """fauxmo.py
 
 Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at

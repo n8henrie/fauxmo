@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import homeassistant.remote
 from homeassistant.const import (SERVICE_TURN_ON, SERVICE_TURN_OFF,
                                  SERVICE_OPEN_COVER, SERVICE_CLOSE_COVER)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """cli.py
 Argparse based CLI for fauxmo. Helps provide console_script via argparse. Also
 initializes logging.
