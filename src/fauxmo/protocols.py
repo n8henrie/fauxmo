@@ -153,6 +153,9 @@ class SSDPServer(asyncio.DatagramProtocol):
         mreq = struct.pack('4sL', group, socket.INADDR_ANY)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
+        if hasattr(socket, 'SO_REUSEPORT'):
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+
     def datagram_received(self, data, addr):
         """Check incoming UDP data for requests for Wemo devices"""
 
