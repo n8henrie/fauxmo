@@ -61,6 +61,13 @@ compatibility with Python >= 3.4.0.
 
 ### Set fauxmo to run automatically in the background
 
+NB: As discussed in [#20](https://github.com/n8henrie/fauxmo/issues/20), the
+example files in `extras/` are *not* included when you install from PyPI (using
+`pip`). If you want to use them, you either need to clone the repo or you can
+download them individually using tools like `wget` or `curl` by navigating to
+the file in your web browser, clicking the `Raw` button, and using the
+resulting URL in your address bar.
+
 #### systemd (e.g. Raspbian Jessie)
 
 1. Recommended: add an unprivileged user to run Fauxmo: `sudo useradd -r
