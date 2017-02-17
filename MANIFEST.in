@@ -8,7 +8,7 @@ include requirements-dev.txt
 include config-sample.json
 exclude config.json
 
-graft src
+graft fauxmo
 recursive-include docs *.md *.rst conf.py Makefile
 
 prune docs/md
