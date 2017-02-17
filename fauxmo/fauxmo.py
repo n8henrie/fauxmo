@@ -111,7 +111,12 @@ def main(config_path=None, verbosity=20):
     transport, protocol = loop.run_until_complete(listen)
 
     for signame in ('SIGINT', 'SIGTERM'):
-        loop.add_signal_handler(getattr(signal, signame), loop.stop)
+        try:
+            loop.add_signal_handler(getattr(signal, signame), loop.stop)
+
+        # Workaround for Windows (https://github.com/n8henrie/fauxmo/issues/21)
+        except NotImplementedError:
+            pass
 
     loop.run_forever()
 
