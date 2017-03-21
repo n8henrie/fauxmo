@@ -10,9 +10,6 @@ except ImportError:
         readme = readme_file.read()
         history = history_file.read()
 
-with open('requirements.txt') as requirements_file:
-    requirements = requirements_file.read().splitlines()
-
 with open('requirements-dev.txt') as dev_requirements_file:
     dev_requirements = dev_requirements_file.read().splitlines()
 
@@ -32,7 +29,6 @@ setup(
     url="https://github.com/n8henrie/fauxmo",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=requirements,
     license="MIT",
     zip_safe=False,
     keywords=["fauxmo", "alexa", "amazon echo"],

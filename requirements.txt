@@ -1,2 +1,0 @@
-homeassistant==0.31.1
-requests==2.12.4
