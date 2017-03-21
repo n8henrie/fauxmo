@@ -11,8 +11,7 @@ logging.basicConfig(
         datefmt='%Y-%m-%d %H:%M:%S'
         )
 logger = logging.getLogger("fauxmo")
-# logging.getLogger("asyncio").setLevel("WARNING")
 syslog_handler = logging.handlers.SysLogHandler()
 logger.addHandler(syslog_handler)
 
-logger.info("Fauxmo version {}".format(__version__))
+logger.info(f"Fauxmo version {__version__}")
