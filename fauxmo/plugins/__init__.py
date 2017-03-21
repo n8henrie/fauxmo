@@ -1,0 +1,53 @@
+"""fauxmo.plugins
+
+Provide ABC for Fauxmo plugins
+"""
+
+import abc
+
+
+class FauxmoPlugin(abc.ABC):
+    """ABC for Fauxmo plugins
+
+    This will become the `action_handler` attribute of a `Fauxmo` instance. Its
+    `on` and `off` methods will be called when Alexa turns something `on` or
+    `off`.
+
+    Args:
+        name: Required, device name
+        port: Required, port that the Fauxmo associated with this plugin should
+              run on
+
+    Note about `port`: if not given in config, it will be set to an apparently
+    free port in `fauxmo.fauxmo` before FauxmoPlugin initialization. This
+    attribute serves no default purpose in the FauxmoPlugin but is passed in to
+    be accessible by user code (i.e. for logging / debugging). Alternatively,
+    one could accept and throw away the passed in `port` value and generate
+    their own port in a plugin, since the Fauxmo device determines its port
+    from the plugin's instance attribute.
+
+    All keys (other than the list of `DEVICES`) from the config will be passed
+    into FauxmoPlugin as kwargs at initialization, which should let users do
+    some interesting things. However, that means users employing custom config
+    keys will need to override `__init__` and either set the `name` and
+    "private" `_port` attributes manually or pass the appropriate args to
+    `super().__init__()`.
+    """
+
+    def __init__(self, name, port):
+        self.name = name
+        self._port = port
+
+    @property
+    def port(self):
+        return self._port
+
+    @abc.abstractmethod
+    def on(self):
+        """Called when Alexa turns this Fauxmo device on"""
+        pass
+
+    @abc.abstractmethod
+    def off(self):
+        """Called when Alexa turns this Fauxmo device off"""
+        pass
