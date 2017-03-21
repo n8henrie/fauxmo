@@ -3,12 +3,15 @@
 Utility functions for Fauxmo.
 """
 
+import importlib.util
+import pathlib
 import socket
-from fauxmo import logger
 import uuid
 
+from fauxmo import logger
 
-def get_local_ip(ip_address):
+
+def get_local_ip(ip_address=None):
     """Attempt to get the local network-connected IP address"""
 
     if ip_address is None or ip_address.lower() == "auto":
@@ -40,3 +43,18 @@ def make_serial(name):
     """
 
     return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
+
+
+def module_from_file(modname, path_str):
+    """Load a module into `modname` from a file path
+
+    Args:
+        modname: The desired module name
+        path_str: Path to the file
+    """
+
+    path = pathlib.Path(path_str).expanduser()
+    spec = importlib.util.spec_from_file_location(modname, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module

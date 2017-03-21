@@ -12,6 +12,7 @@ import uuid
 
 from fauxmo import logger
 from fauxmo.utils import make_serial
+from fauxmo.plugins import FauxmoPlugin
 
 
 class Fauxmo(asyncio.Protocol):
@@ -24,8 +25,8 @@ class Fauxmo(asyncio.Protocol):
         """Initialize a Fauxmo device.
 
         Args:
-            name (str): How you want to call the device, e.g. "bedroom light"
-            action_handler (fauxmo.handler): Fauxmo action handler object
+            name: How you want to call the device, e.g. "bedroom light"
+            action_handler: Fauxmo plugin
         """
 
         self.name = name
@@ -88,7 +89,7 @@ class Fauxmo(asyncio.Protocol):
         """Execute `on` or `off` method of `action_handler`
 
         Args:
-            msg (str): Body of the Echo's HTTP request to trigger an action
+            msg: Body of the Echo's HTTP request to trigger an action
 
         """
 
@@ -126,14 +127,12 @@ class SSDPServer(asyncio.DatagramProtocol):
     def __init__(self, devices=None):
         """Initialize an SSDPServer instance.
 
-        Kwargs:
-            devices (list(dict)): List of devices to advertise when the Echo's
-                                  SSDP search request is received.
+        Args:
+            devices: Iterable of devices to advertise when the Echo's SSDP
+                     search request is received.
         """
 
-        if devices is None:
-            devices = []
-        self.devices = devices
+        self.devices = list(devices or ())
 
     def add_device(self, name, ip_address, port):
         device_dict = {

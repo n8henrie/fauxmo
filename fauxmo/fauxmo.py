@@ -5,18 +5,19 @@ Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 """
 
 import asyncio
-from functools import partial
+import importlib
 import json
-import os.path
+import pathlib
 import signal
 import socket
 import sys
+from functools import partial
+from test.support import find_unused_port
 
+import fauxmo.plugins
 from fauxmo import logger
-from fauxmo.handlers.hass import HassAPIHandler
-from fauxmo.handlers.rest import RESTAPIHandler
 from fauxmo.protocols import SSDPServer, Fauxmo
-from fauxmo.utils import get_local_ip
+from fauxmo.utils import get_local_ip, module_from_file
 
 
 def main(config_path=None, verbosity=20):
@@ -62,52 +63,56 @@ def main(config_path=None, verbosity=20):
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.set_debug(True)
 
-    # Initialize Fauxmo devices
-    for device in config.get('DEVICES', {}):
-        name = device.get('description')
-        port = int(device.get("port"))
-        action_handler = RESTAPIHandler(**device.get("handler"))
+    if verbosity < 20:
+        loop.set_debug(True)
 
-        fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)
-        coro = loop.create_server(fauxmo, host=fauxmo_ip, port=port)
-        server = loop.run_until_complete(coro)
-        servers.append(server)
+    for plugin in config['PLUGINS']:
 
-        ssdp_server.add_device(name, fauxmo_ip, port)
+        modname = f"{__package__}.plugins.{plugin.lower()}"
+        try:
+            module = importlib.import_module(modname)
+        except ModuleNotFoundError:
+            path_str = config['PLUGINS'][plugin]['path']
+            module = module_from_file(modname, path_str)
 
-        logger.debug(fauxmo.keywords)
+        Plugin = getattr(module, plugin)
 
-    # Initialize Home Assistant devices if config exists and enable is True
-    if config.get("HOMEASSISTANT", {}).get("enable") is True:
-        hass_config = config.get("HOMEASSISTANT")
+        # Pass along variables defined at the plugin level that don't change
+        # per device
+        plugin_vars = {k: v for k, v in config['PLUGINS'][plugin].items()
+                       if k not in {"DEVICES", "path"}}
+        logger.debug(f"plugin_vars: {repr(plugin_vars)}")
 
-        hass_host = hass_config.get("host")
-        hass_password = hass_config.get("password")
-        hass_port = hass_config.get("port")
+        for device in config['PLUGINS'][plugin]['DEVICES']:
+            logger.debug(f"device: {repr(device)}")
+            name = device['name']
 
-        for device in hass_config.get('DEVICES'):
-            name = device.get('description')
-            device_port = device.get("port")
-            entity = device.get("entity_id")
-            action_handler = HassAPIHandler(host=hass_host,
-                                            password=hass_password,
-                                            entity=entity, port=hass_port)
-            fauxmo = partial(Fauxmo, name=name, action_handler=action_handler)
-            coro = loop.create_server(fauxmo, host=fauxmo_ip, port=device_port)
+            # Ensure port is `int`, set it if not given (`None`) or 0
+            device["port"] = int(device.get('port', 0)) or find_unused_port()
+
+            try:
+                plugin = Plugin(**plugin_vars, **device)
+            except TypeError:
+                logger.error(f"Error in plugin {repr(Plugin)}")
+                raise
+
+            fauxmo = partial(Fauxmo, name=name, action_handler=plugin)
+            coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
             servers.append(server)
 
-            ssdp_server.add_device(name, fauxmo_ip, device_port)
+            ssdp_server.add_device(name, fauxmo_ip, plugin.port)
 
-            logger.debug(fauxmo.keywords)
+            logger.debug(f"fauxmo keywords: {repr(fauxmo.keywords)}")
 
     logger.info("Starting UDP server")
 
-    listen = loop.create_datagram_endpoint(lambda: ssdp_server,
-                                           local_addr=('0.0.0.0', 1900),
-                                           family=socket.AF_INET)
+    listen = loop.create_datagram_endpoint(
+            lambda: ssdp_server,
+            local_addr=('0.0.0.0', 1900),
+            family=socket.AF_INET
+            )
     transport, protocol = loop.run_until_complete(listen)
 
     for signame in ('SIGINT', 'SIGTERM'):
