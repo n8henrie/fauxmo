@@ -35,23 +35,22 @@ def main(config_path=None, verbosity=20):
     """
 
     logger.setLevel(verbosity)
-
     logger.debug(sys.version)
 
-    if not config_path:
-        config_dirs = ['.', os.path.expanduser("~/.fauxmo"), "/etc/fauxmo"]
-        for config_dir in config_dirs:
-            config_path = os.path.join(config_dir, 'config.json')
-            if os.path.isfile(config_path):
-                logger.info("Using config: {}".format(config_path))
+    if config_path:
+        config_path = pathlib.Path(config_path)
+    else:
+        for config_dir in ('.', "~/.fauxmo", "/etc/fauxmo"):
+            config_path = pathlib.Path(config_dir) / 'config.json'
+            if config_path.is_file():
+                logger.info(f"Using config: {config_path}")
                 break
 
     try:
-        with open(config_path) as config_file:
-            config = json.load(config_file)
+        config = json.loads(config_path.read_text())
     except FileNotFoundError:
-        logger.error("Could not find config file in default search path. "
-                     "Try specifying your file with `-c` flag.\n")
+        logger.error("Could not find config file in default search path. Try "
+                     "specifying your file with `-c`.\n")
         raise
 
     # Every config should include a FAUXMO section
