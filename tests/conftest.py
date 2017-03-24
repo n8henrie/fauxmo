@@ -2,6 +2,7 @@
 
 from multiprocessing import Process
 from time import sleep
+from typing import Generator
 
 import httpbin
 import pytest
@@ -9,10 +10,10 @@ from fauxmo import fauxmo
 
 
 @pytest.fixture(scope="session")
-def fauxmo_server():
-    config_path = "tests/test_config.json"
+def fauxmo_server() -> Generator:
+    config_path_str = "tests/test_config.json"
     server = Process(target=fauxmo.main,
-                     kwargs={'config_path': config_path},
+                     kwargs={'config_path_str': config_path_str},
                      daemon=True)
 
     fauxmo_device = Process(target=httpbin.core.app.run,

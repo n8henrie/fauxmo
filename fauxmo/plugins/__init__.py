@@ -34,20 +34,20 @@ class FauxmoPlugin(abc.ABC):
     `super().__init__()`.
     """
 
-    def __init__(self, name, port):
+    def __init__(self, name: str, port: int) -> None:
         self.name = name
         self._port = port
 
     @property
-    def port(self):
+    def port(self) -> int:
         return self._port
 
     @abc.abstractmethod
-    def on(self):
+    def on(self) -> bool:
         """Called when Alexa turns this Fauxmo device on"""
         pass
 
     @abc.abstractmethod
-    def off(self):
+    def off(self) -> bool:
         """Called when Alexa turns this Fauxmo device off"""
         pass

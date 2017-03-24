@@ -6,10 +6,11 @@ import xml.etree.ElementTree as etree
 
 from fauxmo.plugins.simplehttphandler import SimpleHTTPHandler
 
+import pytest
 import requests
 
 
-def test_udp_search(fauxmo_server):
+def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     """Test device search request to UPnP / SSDP server"""
 
     msg = b'"ssdp:discover"' + b'urn:Belkin:device:**'
@@ -22,7 +23,7 @@ def test_udp_search(fauxmo_server):
     assert b'/setup.xml' in data
 
 
-def test_setup(fauxmo_server):
+def test_setup(fauxmo_server: pytest.fixture) -> None:
     """Test TCP server's `/setup.xml` endpoint"""
 
     r = requests.get('http://127.0.0.1:12345/setup.xml')
@@ -32,7 +33,7 @@ def test_setup(fauxmo_server):
     assert root.find(".//friendlyName").text == 'fake switch one'
 
 
-def test_turnon(fauxmo_server):
+def test_turnon(fauxmo_server: pytest.fixture) -> None:
     """Test TCP server's "on" action for SimpleHTTPHandler"""
 
     data = '<BinaryState>1</BinaryState>'
@@ -45,7 +46,7 @@ def test_turnon(fauxmo_server):
     assert resp.status_code == 200
 
 
-def test_simplehttphandler(fauxmo_server):
+def test_simplehttphandler(fauxmo_server: pytest.fixture) -> None:
     with open("tests/test_config.json") as f:
         config = json.load(f)
 

@@ -9,18 +9,16 @@ import importlib
 import json
 import pathlib
 import signal
-import socket
 import sys
 from functools import partial
 from test.support import find_unused_port
 
-import fauxmo.plugins
 from fauxmo import logger
 from fauxmo.protocols import SSDPServer, Fauxmo
-from fauxmo.utils import get_local_ip, module_from_file
+from fauxmo.utils import get_local_ip, module_from_file, make_udp_sock
 
 
-def main(config_path=None, verbosity=20):
+def main(config_path_str: str=None, verbosity: int=20) -> None:
     """Runs the main fauxmo process
 
     Spawns a UDP server to handle the Echo's UPnP / SSDP device discovery
@@ -28,17 +26,17 @@ def main(config_path=None, verbosity=20):
     setup requests and handle its process for turning devices on and off.
 
     Kwargs:
-        config_path (str): Path to config file. If not given will search for
-                           `config.json` in cwd, `~/.fauxmo/`, and
-                           `/etc/fauxmo/`.
-        verbosity (int): Logging verbosity, defaults to 20
+        config_path_str: Path to config file. If not given will search for
+                         `config.json` in cwd, `~/.fauxmo/`, and
+                         `/etc/fauxmo/`.
+        verbosity: Logging verbosity, defaults to 20
     """
 
     logger.setLevel(verbosity)
     logger.debug(sys.version)
 
-    if config_path:
-        config_path = pathlib.Path(config_path)
+    if config_path_str:
+        config_path = pathlib.Path(config_path_str)
     else:
         for config_dir in ('.', "~/.fauxmo", "/etc/fauxmo"):
             config_path = pathlib.Path(config_dir) / 'config.json'
@@ -71,6 +69,9 @@ def main(config_path=None, verbosity=20):
         modname = f"{__package__}.plugins.{plugin.lower()}"
         try:
             module = importlib.import_module(modname)
+
+        # Will fail until https://github.com/python/typeshed/pull/1083 merged
+        # and included in the next mypy release
         except ModuleNotFoundError:
             path_str = config['PLUGINS'][plugin]['path']
             module = module_from_file(modname, path_str)
@@ -107,11 +108,10 @@ def main(config_path=None, verbosity=20):
 
     logger.info("Starting UDP server")
 
-    listen = loop.create_datagram_endpoint(
-            lambda: ssdp_server,
-            local_addr=('0.0.0.0', 1900),
-            family=socket.AF_INET
-            )
+    # mypy will fail until https://github.com/python/typeshed/pull/1084 merged,
+    # pulled into mypy, and new mypy released
+    listen = loop.create_datagram_endpoint(lambda: ssdp_server,
+                                           sock=make_udp_sock())
     transport, protocol = loop.run_until_complete(listen)
 
     for signame in ('SIGINT', 'SIGTERM'):

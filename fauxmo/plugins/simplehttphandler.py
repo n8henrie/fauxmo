@@ -8,9 +8,10 @@ RESTAPIHandler in `https://github.com/n8henrie/fauxmo-plugins/`, which takes
 advantage of Requests' rich API.
 """
 
+import http
 import urllib.parse
 import urllib.request
-from functools import partialmethod
+from functools import partialmethod  # type: ignore # not yet in typeshed
 from http.cookiejar import CookieJar
 
 from fauxmo.plugins import FauxmoPlugin
@@ -26,8 +27,8 @@ class SimpleHTTPHandler(FauxmoPlugin):
     """
 
     def __init__(self, name: str, port: int, on_cmd: str, off_cmd: str, method:
-            str="GET", on_data: dict=None, off_data: dict=None, headers:
-            dict=None, user: str=None, password: str=None) -> None:
+                 str="GET", on_data: dict=None, off_data: dict=None, headers:
+                 dict=None, user: str=None, password: str=None) -> None:
 
         """Initialize a SimpleHTTPHandler instance
 
@@ -58,6 +59,9 @@ class SimpleHTTPHandler(FauxmoPlugin):
             cj = CookieJar()
             cookie_handler = urllib.request.HTTPCookieProcessor(cj)
 
+            # Will get a mypy error here until
+            # https://github.com/python/typeshed/pull/1082 gets synced into
+            # mypy and a new mypy release comes out
             basic_handler = urllib.request.HTTPBasicAuthHandler(manager)
             digest_handler = urllib.request.HTTPDigestAuthHandler(manager)
 
@@ -69,7 +73,7 @@ class SimpleHTTPHandler(FauxmoPlugin):
 
         super().__init__(name, port)
 
-    def set_state(self, cmd: str, data: str):
+    def set_state(self, cmd: str, data: str) -> bool:
         """Call HTTP method, for use by `functools.partialmethod`."""
 
         # `data` is passed in as either `"on_data"` or `"off_data"` as string,
@@ -85,8 +89,12 @@ class SimpleHTTPHandler(FauxmoPlugin):
                 headers=self.headers,
                 method=self.method
                 )
+
         with self.urlopen(req) as resp:
-            return resp.getcode() in (200, 201)
+            if isinstance(resp, http.client.HTTPResponse):
+                return resp.status in (200, 201)
+            else:
+                return False
 
     on = partialmethod(set_state, 'on_cmd', 'on_data')
     off = partialmethod(set_state, 'off_cmd', 'off_data')

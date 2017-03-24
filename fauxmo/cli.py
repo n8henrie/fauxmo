@@ -9,7 +9,7 @@ from .fauxmo import main
 from . import logger
 
 
-def cli():
+def cli() -> None:
     """Parse command line options, provide entry point for console scripts"""
 
     arguments = sys.argv[1:]
@@ -25,7 +25,7 @@ def cli():
     verbosity = max(40 - 10 * args.verbose, 10)
     logger.setLevel(verbosity)
 
-    main(config_path=args.config, verbosity=verbosity)
+    main(config_path_str=args.config, verbosity=verbosity)
 
 
 if __name__ == "__main__":

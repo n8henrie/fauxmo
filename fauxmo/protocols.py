@@ -6,8 +6,7 @@ discovery.
 
 import asyncio
 from email.utils import formatdate
-import socket
-import struct
+from typing import Iterable, AnyStr
 import uuid
 
 from fauxmo import logger
@@ -21,7 +20,7 @@ class Fauxmo(asyncio.Protocol):
     Aysncio protocol intended for use with BaseEventLoop.create_server.
     """
 
-    def __init__(self, name, action_handler):
+    def __init__(self, name: str, action_handler: FauxmoPlugin) -> None:
         """Initialize a Fauxmo device.
 
         Args:
@@ -33,12 +32,17 @@ class Fauxmo(asyncio.Protocol):
         self.serial = make_serial(name)
         self.action_handler = action_handler
 
-    def connection_made(self, transport):
+    def connection_made(self, transport: asyncio.BaseTransport) -> None:
         peername = transport.get_extra_info('peername')
         logger.debug("Connection made with: {}".format(peername))
-        self.transport = transport
 
-    def data_received(self, data):
+        if isinstance(transport, asyncio.Transport):
+            self.transport = transport
+        else:
+            raise TypeError("transport should be type asyncio.Transport, got "
+                            f"type {str(type(transport))}")
+
+    def data_received(self, data: bytes) -> None:
         """Decode data and determine if it is a setup or action request"""
 
         msg = data.decode()
@@ -51,7 +55,7 @@ class Fauxmo(asyncio.Protocol):
         elif msg.startswith('POST /upnp/control/basicevent1 HTTP/1.1'):
             self.handle_action(msg)
 
-    def handle_setup(self):
+    def handle_setup(self) -> None:
         """Create a response to the Echo's setup request"""
 
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -85,7 +89,7 @@ class Fauxmo(asyncio.Protocol):
         self.transport.write(setup_response.encode())
         self.transport.close()
 
-    def handle_action(self, msg):
+    def handle_action(self, msg: str) -> None:
         """Execute `on` or `off` method of `action_handler`
 
         Args:
@@ -121,10 +125,24 @@ class Fauxmo(asyncio.Protocol):
             self.transport.close()
 
 
-class SSDPServer(asyncio.DatagramProtocol):
+# For some reason inheriting from asyncio.DatagramProtocol ends up giving all
+# kinds of problematic typing issues:
+# - supertype problems if `connection_made` takes `asyncio.DatagramTransport`
+# - no attribute `sendto` if it takes `asyncio.BaseTransport`
+# - apparently `transport` ends up being
+#   `asyncio.selector_events._SelectorDatagramTransport`, which *doesn't*
+#   inherit from `asyncio.DatagramTransport`, so `isinstance` not working like
+#   above in Fauxmo...
+# Easiest just to not have `SSDPServer` inherit from `asyncio.DatagramProtocol`
+# for now, which curiously is how they examples are in the docs -- the
+# asyncio.Transport example inherits:
+# https://docs.python.org/3/library/asyncio-protocol.html#tcp-echo-server-protocol
+# while the Datagram example doesn't:
+# https://docs.python.org/3/library/asyncio-protocol.html#udp-echo-server-protocol
+class SSDPServer:
     """Responds to the Echo's SSDP / UPnP requests"""
 
-    def __init__(self, devices=None):
+    def __init__(self, devices: Iterable[dict]=None) -> None:
         """Initialize an SSDPServer instance.
 
         Args:
@@ -134,7 +152,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         self.devices = list(devices or ())
 
-    def add_device(self, name, ip_address, port):
+    def add_device(self, name: str, ip_address: str, port: int) -> None:
         device_dict = {
                 'name': name,
                 'ip_address': ip_address,
@@ -142,29 +160,20 @@ class SSDPServer(asyncio.DatagramProtocol):
                 }
         self.devices.append(device_dict)
 
-    def connection_made(self, transport):
+    def connection_made(self, transport: asyncio.DatagramTransport) -> None:
         self.transport = transport
 
-        # Allow receiving multicast broadcasts
-        sock = self.transport.get_extra_info('socket')
-        group = socket.inet_aton('239.255.255.250')
-        mreq = struct.pack('4sL', group, socket.INADDR_ANY)
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
-        if hasattr(socket, 'SO_REUSEPORT'):
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-
-    def datagram_received(self, data, addr):
+    def datagram_received(self, data: AnyStr, addr: str) -> None:
         """Check incoming UDP data for requests for Wemo devices"""
 
         logger.debug("Received data below from {}:".format(addr))
-        logger.debug(data)
+        logger.debug(str(data))
 
         if all(b in data for b in [b'"ssdp:discover"',
                                    b'urn:Belkin:device:**']):
             self.respond_to_search(addr)
 
-    def respond_to_search(self, addr):
+    def respond_to_search(self, addr: str) -> None:
         """Build and send an appropriate response to an SSDP search request."""
 
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -192,6 +201,6 @@ class SSDPServer(asyncio.DatagramProtocol):
             logger.debug("Sending response to {}:\n{}".format(addr, response))
             self.transport.sendto(response.encode(), addr)
 
-    def connection_lost(self, exc):
+    def connection_lost(self, exc: Exception) -> None:
         if exc:
             logger.warning("SSDPServer closed with exception: {}".format(exc))
