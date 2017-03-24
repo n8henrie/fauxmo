@@ -120,7 +120,10 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
         # Workaround for Windows (https://github.com/n8henrie/fauxmo/issues/21)
         except NotImplementedError:
-            pass
+            if sys.platform == 'win32':
+                pass
+            else:
+                raise
 
     loop.run_forever()
 
