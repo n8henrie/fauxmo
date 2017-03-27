@@ -1,5 +1,5 @@
 language: python
-python: 
+python:
   - 3.6
 
 addons:
@@ -10,6 +10,8 @@ addons:
 install: pip install tox
 
 # http://stackoverflow.com/a/42309035
-script: tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/') 
+script:
+  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/')
+  - tox -e docs
 
 after_failure: cat .tox/log/tox-*.log
