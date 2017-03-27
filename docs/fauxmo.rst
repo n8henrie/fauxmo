@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    fauxmo.handlers
+    fauxmo.plugins
 
 Submodules
 ----------
