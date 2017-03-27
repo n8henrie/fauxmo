@@ -9,9 +9,9 @@ from email.utils import formatdate
 from typing import Iterable, AnyStr
 import uuid
 
-from fauxmo import logger
-from fauxmo.utils import make_serial
-from fauxmo.plugins import FauxmoPlugin
+from . import logger
+from .utils import make_serial
+from .plugins import FauxmoPlugin
 
 
 class Fauxmo(asyncio.Protocol):

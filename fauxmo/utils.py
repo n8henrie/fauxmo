@@ -10,7 +10,7 @@ import struct
 import uuid
 from types import ModuleType
 
-from fauxmo import logger
+from . import logger
 
 
 def get_local_ip(ip_address: str=None) -> str:

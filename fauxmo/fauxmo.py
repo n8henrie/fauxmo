@@ -13,9 +13,9 @@ import sys
 from functools import partial
 from test.support import find_unused_port
 
-from fauxmo import logger
-from fauxmo.protocols import SSDPServer, Fauxmo
-from fauxmo.utils import get_local_ip, module_from_file, make_udp_sock
+from . import logger
+from .protocols import SSDPServer, Fauxmo
+from .utils import get_local_ip, module_from_file, make_udp_sock
 
 
 def main(config_path_str: str=None, verbosity: int=20) -> None:

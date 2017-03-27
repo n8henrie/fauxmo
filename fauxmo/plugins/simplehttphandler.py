@@ -14,7 +14,7 @@ import urllib.request
 from functools import partialmethod  # type: ignore # not yet in typeshed
 from http.cookiejar import CookieJar
 
-from fauxmo.plugins import FauxmoPlugin
+from . import FauxmoPlugin
 
 
 class SimpleHTTPHandler(FauxmoPlugin):
