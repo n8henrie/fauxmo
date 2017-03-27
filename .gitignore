@@ -31,3 +31,4 @@ htmlcov
 docs/_build
 docs/md/
 .cache/
+.eggs/
