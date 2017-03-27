@@ -1,0 +1,6 @@
+flake8==3.3.0
+httpbin==0.5.0
+mypy==0.501
+pytest==3.0.7
+requests==2.13.0
+tox==2.6.0
