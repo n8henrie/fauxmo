@@ -72,7 +72,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
         # Will fail until https://github.com/python/typeshed/pull/1083 merged
         # and included in the next mypy release
-        except ModuleNotFoundError:
+        except ModuleNotFoundError:  # type: ignore
             path_str = config['PLUGINS'][plugin]['path']
             module = module_from_file(modname, path_str)
 
@@ -110,9 +110,9 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
     # mypy will fail until https://github.com/python/typeshed/pull/1084 merged,
     # pulled into mypy, and new mypy released
-    listen = loop.create_datagram_endpoint(lambda: ssdp_server,
+    listen = loop.create_datagram_endpoint(lambda: ssdp_server,  # type: ignore
                                            sock=make_udp_sock())
-    transport, protocol = loop.run_until_complete(listen)
+    transport, protocol = loop.run_until_complete(listen)  # type: ignore
 
     for signame in ('SIGINT', 'SIGTERM'):
         try:
