@@ -34,7 +34,7 @@ class Fauxmo(asyncio.Protocol):
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         peername = transport.get_extra_info('peername')
-        logger.debug("Connection made with: {}".format(peername))
+        logger.debug(f"Connection made with: {peername}")
 
         if isinstance(transport, asyncio.Transport):
             self.transport = transport
@@ -47,7 +47,7 @@ class Fauxmo(asyncio.Protocol):
 
         msg = data.decode()
 
-        logger.debug("Received message:\n{}".format(msg))
+        logger.debug(f"Received message:\n{msg}")
         if msg.startswith('GET /setup.xml HTTP/1.1'):
             logger.debug("setup.xml requested by Echo")
             self.handle_setup()
@@ -65,20 +65,20 @@ class Fauxmo(asyncio.Protocol):
                '<root>',
                '<device>',
                '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>',
-               '<friendlyName>{}</friendlyName>'.format(self.name),
+               f'<friendlyName>{self.name}</friendlyName>',
                '<manufacturer>Belkin International Inc.</manufacturer>',
                '<modelName>Emulated Socket</modelName>',
                '<modelNumber>3.1415</modelNumber>',
-               '<UDN>uuid:Socket-1_0-{}</UDN>'.format(self.serial),
+               f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>',
                '</device>',
                '</root>']) + 2 * '\r\n'
 
         # Made as a separate string because it requires `len(setup_xml)`
         setup_response = '\r\n'.join([
                'HTTP/1.1 200 OK',
-               'CONTENT-LENGTH: {}'.format(len(setup_xml)),
+               f'CONTENT-LENGTH: {len(setup_xml)}',
                'CONTENT-TYPE: text/xml',
-               'DATE: {}'.format(date_str),
+               f'DATE: {date_str}',
                'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
                'SERVER: Unspecified, UPnP/1.0, Unspecified',
                'X-User-Agent: Fauxmo',
@@ -107,7 +107,7 @@ class Fauxmo(asyncio.Protocol):
             success = self.action_handler.on()
 
         else:
-            logger.debug("Unrecognized request:\n{}".format(msg))
+            logger.debug(f"Unrecognized request:\n{msg}")
 
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -115,7 +115,7 @@ class Fauxmo(asyncio.Protocol):
                     'HTTP/1.1 200 OK',
                     'CONTENT-LENGTH: 0',
                     'CONTENT-TYPE: text/xml charset="utf-8"',
-                    'DATE: {}'.format(date_str),
+                    f'DATE: {date_str}',
                     'EXT:',
                     'SERVER: Unspecified, UPnP/1.0, Unspecified',
                     'X-User-Agent: Fauxmo',
@@ -166,7 +166,7 @@ class SSDPServer:
     def datagram_received(self, data: AnyStr, addr: str) -> None:
         """Check incoming UDP data for requests for Wemo devices"""
 
-        logger.debug("Received data below from {}:".format(addr))
+        logger.debug(f"Received data below from {addr}:")
         logger.debug(str(data))
 
         if all(b in data for b in [b'"ssdp:discover"',
@@ -183,24 +183,24 @@ class SSDPServer:
             ip_address = device.get('ip_address')
             port = device.get('port')
 
-            location = 'http://{}:{}/setup.xml'.format(ip_address, port)
+            location = f'http://{ip_address}:{port}/setup.xml'
             serial = make_serial(name)
             response = '\r\n'.join([
                     'HTTP/1.1 200 OK',
                     'CACHE-CONTROL: max-age=86400',
-                    'DATE: {}'.format(date_str),
+                    f'DATE: {date_str}',
                     'EXT:',
-                    'LOCATION: {}'.format(location),
+                    f'LOCATION: {location}',
                     'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
-                    '01-NLS: {}'.format(uuid.uuid4()),
+                    f'01-NLS: {uuid.uuid4()}',
                     'SERVER: Unspecified, UPnP/1.0, Unspecified',
                     'ST: urn:Belkin:device:**',
-                    'USN: uuid:Socket-1_0-{}::urn:Belkin:device:**'
-                    .format(serial)]) + 2 * '\r\n'
+                    f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**'
+                    ]) + 2 * '\r\n'
 
-            logger.debug("Sending response to {}:\n{}".format(addr, response))
+            logger.debug(f"Sending response to {addr}:\n{response}")
             self.transport.sendto(response.encode(), addr)
 
     def connection_lost(self, exc: Exception) -> None:
         if exc:
-            logger.warning("SSDPServer closed with exception: {}".format(exc))
+            logger.warning(f"SSDPServer closed with exception: {exc}")

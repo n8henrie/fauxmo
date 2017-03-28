@@ -131,7 +131,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
     logger.debug("Shutdown starting...")
     transport.close()
     for idx, server in enumerate(servers):
-        logger.debug("Shutting down server {}...".format(idx))
+        logger.debug(f"Shutting down server {idx}...")
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()

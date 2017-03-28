@@ -30,7 +30,7 @@ def get_local_ip(ip_address: str=None) -> str:
             ip_address = tempsock.getsockname()[0]
             tempsock.close()
 
-    logger.debug("Using IP address: {}".format(ip_address))
+    logger.debug(f"Using IP address: {ip_address}")
     return ip_address
 
 
