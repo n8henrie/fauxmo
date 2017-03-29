@@ -3,7 +3,7 @@
         "ip_address": "127.0.0.1"
     },
     "PLUGINS": {
-        "SimpleHTTPHandler": {
+        "SimpleHTTPPlugin": {
             "DEVICES": [
                 {
                     "port": 12345,

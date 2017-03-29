@@ -1,10 +1,10 @@
-"""simplehttphandler.py
+"""simplehttpplugin.py
 
 Fauxmo plugin that makes simple HTTP requests in its `on` and `off` methods.
 Comes pre-installed in Fauxmo as an example for user plugins.
 
 For more complicated requests (e.g. authentication, sending JSON), check out
-RESTAPIHandler in `https://github.com/n8henrie/fauxmo-plugins/`, which takes
+RESTAPIPlugin in `https://github.com/n8henrie/fauxmo-plugins/`, which takes
 advantage of Requests' rich API.
 """
 
@@ -17,20 +17,20 @@ from http.cookiejar import CookieJar
 from . import FauxmoPlugin
 
 
-class SimpleHTTPHandler(FauxmoPlugin):
-    """Rest API handler class.
+class SimpleHTTPPlugin(FauxmoPlugin):
+    """Plugin for interacting with HTTP devices.
 
-    The Fauxmo class expects handlers to be instances of objects that have on()
-    and off() methods that return True on success and False otherwise. This
-    class takes a mix of url, method, header, body, and auth data and makes
-    REST calls to a device.
+    The Fauxmo class expects plguins to be instances of objects that inherit
+    from FauxmoPlugin and have on() and off() methods that return True on
+    success and False otherwise. This class takes a mix of url, method, header,
+    body, and auth data and makes REST calls to a device.
     """
 
     def __init__(self, name: str, port: int, on_cmd: str, off_cmd: str, method:
                  str="GET", on_data: dict=None, off_data: dict=None, headers:
                  dict=None, user: str=None, password: str=None) -> None:
 
-        """Initialize a SimpleHTTPHandler instance
+        """Initialize a SimpleHTTPPlugin instance
 
         Args:
             on_cmd: URL to be called when turning device on

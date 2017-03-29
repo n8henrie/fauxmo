@@ -20,17 +20,17 @@ class Fauxmo(asyncio.Protocol):
     Aysncio protocol intended for use with BaseEventLoop.create_server.
     """
 
-    def __init__(self, name: str, action_handler: FauxmoPlugin) -> None:
+    def __init__(self, name: str, plugin: FauxmoPlugin) -> None:
         """Initialize a Fauxmo device.
 
         Args:
             name: How you want to call the device, e.g. "bedroom light"
-            action_handler: Fauxmo plugin
+            plugin: Fauxmo plugin
         """
 
         self.name = name
         self.serial = make_serial(name)
-        self.action_handler = action_handler
+        self.plugin = plugin
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         peername = transport.get_extra_info('peername')
@@ -90,7 +90,7 @@ class Fauxmo(asyncio.Protocol):
         self.transport.close()
 
     def handle_action(self, msg: str) -> None:
-        """Execute `on` or `off` method of `action_handler`
+        """Execute `on` or `off` method of `plugin`
 
         Args:
             msg: Body of the Echo's HTTP request to trigger an action
@@ -100,11 +100,11 @@ class Fauxmo(asyncio.Protocol):
         success = False
         if '<BinaryState>0</BinaryState>' in msg:
             # `off()` method called
-            success = self.action_handler.off()
+            success = self.plugin.off()
 
         elif '<BinaryState>1</BinaryState>' in msg:
             # `on()` method called
-            success = self.action_handler.on()
+            success = self.plugin.on()
 
         else:
             logger.debug(f"Unrecognized request:\n{msg}")

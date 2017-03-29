@@ -3,7 +3,7 @@
         "ip_address": "auto"
     },
     "PLUGINS": {
-        "SimpleHTTPHandler": {
+        "SimpleHTTPPlugin": {
             "DEVICES": [
                 {
                     "port": 12340,

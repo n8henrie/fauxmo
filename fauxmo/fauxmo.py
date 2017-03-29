@@ -97,7 +97,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
                 logger.error(f"Error in plugin {repr(Plugin)}")
                 raise
 
-            fauxmo = partial(Fauxmo, name=name, action_handler=plugin)
+            fauxmo = partial(Fauxmo, name=name, plugin=plugin)
             coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
             servers.append(server)

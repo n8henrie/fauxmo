@@ -9,9 +9,8 @@ import abc
 class FauxmoPlugin(abc.ABC):
     """ABC for Fauxmo plugins
 
-    This will become the `action_handler` attribute of a `Fauxmo` instance. Its
-    `on` and `off` methods will be called when Alexa turns something `on` or
-    `off`.
+    This will become the `plugin` attribute of a `Fauxmo` instance. Its `on`
+    and `off` methods will be called when Alexa turns something `on` or `off`.
 
     Args:
         name: Required, device name
