@@ -14,6 +14,7 @@ from functools import partial
 from test.support import find_unused_port
 
 from . import logger
+from .plugins import FauxmoPlugin
 from .protocols import SSDPServer, Fauxmo
 from .utils import get_local_ip, module_from_file, make_udp_sock
 
@@ -77,6 +78,8 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
             module = module_from_file(modname, path_str)
 
         Plugin = getattr(module, plugin)
+        if not issubclass(Plugin, FauxmoPlugin):
+            raise TypeError(f"Plugins must inherit from {repr(FauxmoPlugin)}")
 
         # Pass along variables defined at the plugin level that don't change
         # per device
