@@ -5,6 +5,10 @@ Status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=master)](https://travis
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
+Originally forked from <https://github.com/makermusings/fauxmo>, unforked to
+enable GitHub code search (which currently doesn't work in a fork), and because
+the libraries have diverged substantially.
+
 - Documentation: [fauxmo.readthedocs.org](https://fauxmo.readthedocs.org)
 
 ## Introduction
@@ -17,34 +21,42 @@ Assistant](https://home-assistant.io) instance via [its Python
 API](https://home-assistant.io/developers/python_api/) and only require a JSON
 config file for setup.
 
-As of version 0.3.0, Fauxmo uses the new [asyncio
-module](https://docs.python.org/3/library/asyncio.html#module-asyncio) and
-therefore requires Python >= 3.4*. Python >= 3.5 is encouraged, in case I
-decide to use the new `async` and `await` keywords in the future.
-
-\* Fauxmo 0.3.0 required Python >= 3.4.4, but Fauxmo 0.3.2 has restored
-compatibility with Python >= 3.4.0.
+As of version v0.4.0, Fauxmo uses several API features and f-strings that
+require Python 3.6+. I highly recommend looking into
+[pyenv](https://github.com/pyenv/pyenv) if you're currently on an older Python
+version and willing to upgrade. Otherwise, check out the FAQ section at the
+bottom for tips on installing an older Fauxmo version (though note that I will
+not be continuing development or support for older versions).
 
 ## Usage
 
+Installation into a venv is *highly recommended*, especially since it's baked
+into the recent Python versions that Fauxmo requires.
+
 ### Simple install: From PyPI
 
+1. `python3 -m venv venv`
+1. `source venv/bin/activate`
 1. `python3 -m pip install fauxmo`
 1. Make a `config.json` based on
    [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
 1. `fauxmo -c config.json [-v]`
 
-### Simple install of dev branch (from GitHub)
+### Simple install of dev branch from GitHub (for testing features in
+development -- for actually contributing to development clone the repo as per
+below)
 
+1. `python3 -m venv venv`
+1. `source venv/bin/activate`
 1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git@dev`
 
-### Install for development (from GitHub)
+### Install for development from GitHub
 
 1. `git clone https://github.com/n8henrie/fauxmo.git`
 1. `cd fauxmo`
 1. `python3 -m venv venv`
 1. `source venv/bin/activate`
-1. `pip install -e .`
+1. `pip install -e .[dev]`
 1. `cp config-sample.json config.json`
 1. Edit `config.json`
 1. `fauxmo [-v]`
@@ -62,11 +74,16 @@ compatibility with Python >= 3.4.0.
 ### Set fauxmo to run automatically in the background
 
 NB: As discussed in [#20](https://github.com/n8henrie/fauxmo/issues/20), the
-example files in `extras/` are *not* included when you install from PyPI (using
-`pip`). If you want to use them, you either need to clone the repo or you can
-download them individually using tools like `wget` or `curl` by navigating to
-the file in your web browser, clicking the `Raw` button, and using the
-resulting URL in your address bar.
+example files in `extras/` are *not* included when you install from PyPI\*
+(using `pip`). If you want to use them, you either need to clone the repo or
+you can download them individually using tools like `wget` or `curl` by
+navigating to the file in your web browser, clicking the `Raw` button, and
+using the resulting URL in your address bar.
+
+\* As of Fauxmo v0.4.0 `extras/` has been added to `MANIFEST.in` and may be
+included somewhere depending on installation from the `.tar.gz` vs `whl`
+format -- if you can't find them, you should probably just get the files
+manually as described above.
 
 #### systemd (e.g. Raspbian Jessie)
 
@@ -87,21 +104,72 @@ resulting URL in your address bar.
 1. `launchctl load ~/Library/LaunchAgents/com.n8henrie.fauxmo.plist`
 1. `launchctl start com.n8henrie.fauxmo`
 
-## Handlers
+## Plugins
 
-Fauxmo has an example REST handler class that reacts to on and off commands
-using the [python-requests](http://docs.python-requests.org/en/latest/) library
-as well as a handler for the [Home Assistant Python
-API](https://home-assistant.io/developers/python_api); these are examples of a
-multitude of ways that you could have the Echo trigger an action. In
-`config-sample.json`, you'll see examples of:
+Plugins are small user-extendible classes that allow users to easily make their
+own actions for Fauxmo to run by way of Alexa commands. They were previously
+called Handlers and may be referred to as such in places in the code and
+documentation.
 
-- A `GET` request to a local server
-- A `POST` request to the [Home Assistant REST
-API](https://home-assistant.io/developers/rest_api/)
-- A `PUT` request to an [Indigo](https://www.indigodomo.com/) server
-- Requests to [Home Asssistant's Python
-  API](https://home-assistant.io/developers/python_api/)
+Fauxmo v0.4.0 implements a new and breaking change in the way Handlers were
+implemented in previous versions, which requires modification of the
+`config.json` file (as described below).
+
+A few plugins and the ABC from which the plugins are required to inherit are
+included and installed by default in the `fauxmo.plugins` package. The
+pre-installed plugins, like the rest of the core Fauxmo code, have no third
+party dependencies.
+
+The pre-installed plugins include
+
+- `fauxmo.plugins.simplehttpplugin.SimpleHTTPPlugin`
+- `fauxmo.plugins.command_line.CommandLinePlugin`
+
+`SimpleHTTPPlugin` responds to Alexa's `on` and `off` commands by making
+requests to URL endpoints by way of
+[`urllib`](https://docs.python.org/3/library/urllib.html). Example uses cases
+relevant to the IOT community might be a Flask server served from localhost
+that provides a nice web interface for toggling switches, whose endpoints could
+be added as the `on_cmd` and `off_cmd` args to a `SimpleHTTPPlugin` instance
+to allow activation by way of Alexa -> Fauxmo.
+
+Please see details regarding `SimpleHTTPPlugin` configuration in the class's
+docstring, which I intend to continue as a convention for Fauxmo plugins.
+Users hoping to make more complicated requests may be interested in looking at
+`RESTAPIPlugin` in the
+[`fauxmo-plugins repository`](https://github.com/n8henrie/fauxmo-plugins),
+which uses Requests for a much friendlier API.
+
+Users can easily create their own plugins, which is the motivation behind most
+of the changes in Fauxmo v0.4.0.
+
+To get started:
+
+1. Decide on a name for your plugin class. I highly recommend something
+   descriptive, CamelCase and a `Plugin` suffix, e.g. `FooSwitcherPlugin`.
+1. I strongly recommend naming your module the same as the plugin, but in all
+   lower case, e.g. `fooswitcherplugin.py`.
+1. Note the path to your plugin, which will need to be included in your
+   `config.json` as `path` (absolute path recommended, `~` for homedir is okay)
+1. Write your class, which should at minimum:
+    - inherit from `fauxmo.plugins.FauxmoPlugin`
+    - provide the methods `on()` and `off()`
+1. Any required settings will be read from your `config.json` and passed into
+   your plugin as kwargs at initialization, see below.
+
+In addition to the above, if you intend to share your plugin with others, I
+strongly recommend that you:
+
+- include generous documentation as a module level docstring
+- note specific versions of any dependencies in that docstring
+  - Because these user plugins are kind of "side-loaded," you will need to
+    install their dependencies into the appropriate environment manually, so
+    it's important to let other users know exactly what versions you use.
+
+### Notable Fauxmo plugins
+
+Please see <https://github.com/n8henrie/fauxmo-plugins>, where user
+contributions of interesting plugins are more than welcome!
 
 ## Configuration
 
@@ -117,7 +185,7 @@ that order).
 - `DEVICES`: List of devices that will employ `RESTAPIHandler`
     - `port`: Port that Echo will use connect to device, should be different for
       each device
-    - `handler`: Dictionary for `RESTAPIHandler` configuration
+    - `plugin`: Dictionary for `RESTAPIHandler` configuration
         - `on_cmd`: URL that should be requested to turn device on
         - `off_cmd`: URL that should be requested to turn device off
         - `method`: GET, POST, PUT, etc.
@@ -141,6 +209,16 @@ that order).
         - `entity_id`: Hass identifier used in API, one easy way to find is to
           curl and grep the REST API, eg `curl http://IP_ADDRESS/api/bootstrap
           | grep entity_id`
+
+## Security considerations
+
+Because Fauxmo v0.4.0+ loads any user plugin specified in their config, it will
+run untested and potentially unsafe code. If an intruder were to have write
+access to your `config.json`, they could cause you all kinds of trouble. Then
+again, if they already have write access to your computer, you probably have
+bigger problems. Consider making your config.json `0600` for your user, or
+perhaps `0644 root:YourFauxmoUser`. Use Fauxmo at your own risk, with or
+without user plugins.
 
 ## Troubleshooting / FAQ
 
