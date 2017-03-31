@@ -34,12 +34,16 @@ class FauxmoPlugin(abc.ABC):
     """
 
     def __init__(self, name: str, port: int) -> None:
-        self.name = name
+        self._name = name
         self._port = port
 
     @property
     def port(self) -> int:
         return self._port
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @abc.abstractmethod
     def on(self) -> bool:

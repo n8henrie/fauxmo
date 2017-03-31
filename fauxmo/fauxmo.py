@@ -89,7 +89,6 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
         for device in config['PLUGINS'][plugin]['DEVICES']:
             logger.debug(f"device: {repr(device)}")
-            name = device['name']
 
             # Ensure port is `int`, set it if not given (`None`) or 0
             device["port"] = int(device.get('port', 0)) or find_unused_port()
@@ -100,12 +99,12 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
                 logger.error(f"Error in plugin {repr(Plugin)}")
                 raise
 
-            fauxmo = partial(Fauxmo, name=name, plugin=plugin)
+            fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
             coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
             servers.append(server)
 
-            ssdp_server.add_device(name, fauxmo_ip, plugin.port)
+            ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
 
             logger.debug(f"fauxmo keywords: {repr(fauxmo.keywords)}")
 
