@@ -6,7 +6,7 @@ discovery.
 
 import asyncio
 from email.utils import formatdate
-from typing import Iterable, AnyStr
+from typing import AnyStr, cast, Iterable
 import uuid
 
 from . import logger
@@ -35,12 +35,7 @@ class Fauxmo(asyncio.Protocol):
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         peername = transport.get_extra_info('peername')
         logger.debug(f"Connection made with: {peername}")
-
-        if isinstance(transport, asyncio.Transport):
-            self.transport = transport
-        else:
-            raise TypeError("transport should be type asyncio.Transport, got "
-                            f"type {str(type(transport))}")
+        self.transport = cast(asyncio.Transport, transport)
 
     def data_received(self, data: bytes) -> None:
         """Decode data and determine if it is a setup or action request"""
@@ -125,21 +120,7 @@ class Fauxmo(asyncio.Protocol):
             self.transport.close()
 
 
-# For some reason inheriting from asyncio.DatagramProtocol ends up giving all
-# kinds of problematic typing issues:
-# - supertype problems if `connection_made` takes `asyncio.DatagramTransport`
-# - no attribute `sendto` if it takes `asyncio.BaseTransport`
-# - apparently `transport` ends up being
-#   `asyncio.selector_events._SelectorDatagramTransport`, which *doesn't*
-#   inherit from `asyncio.DatagramTransport`, so `isinstance` not working like
-#   above in Fauxmo...
-# Easiest just to not have `SSDPServer` inherit from `asyncio.DatagramProtocol`
-# for now, which curiously is how they examples are in the docs -- the
-# asyncio.Transport example inherits:
-# https://docs.python.org/3/library/asyncio-protocol.html#tcp-echo-server-protocol
-# while the Datagram example doesn't:
-# https://docs.python.org/3/library/asyncio-protocol.html#udp-echo-server-protocol
-class SSDPServer:
+class SSDPServer(asyncio.DatagramProtocol):
     """Responds to the Echo's SSDP / UPnP requests"""
 
     def __init__(self, devices: Iterable[dict]=None) -> None:
@@ -160,8 +141,8 @@ class SSDPServer:
                 }
         self.devices.append(device_dict)
 
-    def connection_made(self, transport: asyncio.DatagramTransport) -> None:
-        self.transport = transport
+    def connection_made(self, transport: asyncio.BaseTransport) -> None:
+        self.transport = cast(asyncio.DatagramTransport, transport)
 
     def datagram_received(self, data: AnyStr, addr: str) -> None:
         """Check incoming UDP data for requests for Wemo devices"""
