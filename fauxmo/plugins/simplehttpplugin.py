@@ -71,7 +71,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         else:
             self.urlopen = urllib.request.urlopen
 
-        super().__init__(name, port)
+        super().__init__(name=name, port=port)
 
     def set_state(self, cmd: str, data: str) -> bool:
         """Call HTTP method, for use by `functools.partialmethod`."""

@@ -33,7 +33,7 @@ class FauxmoPlugin(abc.ABC):
     `super().__init__()`.
     """
 
-    def __init__(self, name: str, port: int) -> None:
+    def __init__(self, *, name: str, port: int) -> None:
         self._name = name
         self._port = port
 
