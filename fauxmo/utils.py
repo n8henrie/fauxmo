@@ -63,7 +63,14 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
 
 
 def make_udp_sock() -> socket.socket:
-    """Make a suitable udp socket to listen for device discovery requests."""
+    """Make a suitable udp socket to listen for device discovery requests.
+
+    I would *love* to get rid of this function and just use the built-in
+    options to `create_datagram_endpoint` (e.g. `allow_broadcast` with
+    appropriate local and remote addresses), but having no luck. Would be
+    thrilled if someone can figure this out in a better way than this or
+    <https://github.com/n8henrie/fauxmo/blob/c5419b3f61311e5386387e136d26dd8d4a55518c/src/fauxmo/protocols.py#L149>.
+    """
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('', 1900))
