@@ -238,7 +238,7 @@ without user plugins.
     - Check out
       [`protocol_notes.md`](https://github.com/n8henrie/fauxmo/blob/master/protocol_notes.md)
 
-### Installing Python 3.5 with pyenv
+### Installing Python 3.6 with [pyenv](https://github.com/pyenv/pyenv)
 
 ```bash
 sudo install -o $(whoami) -g $(whoami) -d /opt/pyenv
@@ -247,26 +247,26 @@ echo 'export PYENV_ROOT="/opt/pyenv"' >> ~/.bashrc
 echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 source ~/.bashrc
-pyenv install 3.5.1
+pyenv install 3.6.1
 ```
 
-You can then install Fauxmo into Python 3.5 in a few ways, including:
+You can then install Fauxmo into Python 3.6 in a few ways, including:
 
 ```bash
 # Install with pip
-"$(pyenv root)"/versions/3.5.1/bin/python3.5 -m pip install fauxmo
-
-# Run with included console script
-fauxmo -c /path/to/config.json -vvv
+"$(pyenv root)"/versions/3.6.1/bin/python3.6 -m pip install fauxmo
 
 # Show full path to fauxmo console script
 pyenv which fauxmo
 
+# Run with included console script
+fauxmo -c /path/to/config.json -vvv
+
 # I recommend using the full path for use in start scripts (e.g. systemd, cron)
-"$(pyenv root)"/versions/3.5.1/bin/fauxmo -c /path/to/config.json -vvv
+"$(pyenv root)"/versions/3.6.1/bin/fauxmo -c /path/to/config.json -vvv
 
 # Alternatively, this also works (after `pip install`)
-"$(pyenv root)"/versions/3.5.1/bin/python3.5 -m fauxmo.cli -c config.json -vvv
+"$(pyenv root)"/versions/3.6.1/bin/python3.6 -m fauxmo.cli -c config.json -vvv
 ```
 
 ## Acknowledgements / Reading List
