@@ -28,6 +28,20 @@ version and willing to upgrade. Otherwise, check out the FAQ section at the
 bottom for tips on installing an older Fauxmo version (though note that I will
 not be continuing development or support for older versions).
 
+## Terminology
+
+faux (`\ˈfō\`): imitation
+WeMo: Belkin home automation product with which the Amazon Echo can interface
+
+Fauxmo (`\ˈfō-mō\`): Python 3 module that emulates Belkin WeMo devices for use
+with the Amazon Echo.
+
+Fauxmo has a server component that helps register "devices" with the Echo (which
+may be referred to as the Fauxmo server or Fauxmo core). These devices are then
+exposed individually, each requiring its own port, and may be referred to as a
+Fauxmo device or a Fauxmo instance. The Echo interacts with each Fauxmo device
+as if it were a separate WeMo device.
+
 ## Usage
 
 Installation into a venv is *highly recommended*, especially since it's baked
@@ -140,6 +154,8 @@ Users hoping to make more complicated requests may be interested in looking at
 [`fauxmo-plugins repository`](https://github.com/n8henrie/fauxmo-plugins),
 which uses Requests for a much friendlier API.
 
+### User plugins
+
 Users can easily create their own plugins, which is the motivation behind most
 of the changes in Fauxmo v0.4.0.
 
@@ -150,23 +166,24 @@ To get started:
 1. I strongly recommend naming your module the same as the plugin, but in all
    lower case, e.g. `fooswitcherplugin.py`.
 1. Note the path to your plugin, which will need to be included in your
-   `config.json` as `path` (absolute path recommended, `~` for homedir is okay)
+   `config.json` as `path` (absolute path recommended, `~` for homedir is
+   okay).
 1. Write your class, which should at minimum:
-    - inherit from `fauxmo.plugins.FauxmoPlugin`
-    - provide the methods `on()` and `off()`
+    - inherit from `fauxmo.plugins.FauxmoPlugin`.
+    - provide the methods `on()` and `off()`.
 1. Any required settings will be read from your `config.json` and passed into
    your plugin as kwargs at initialization, see below.
 
 In addition to the above, if you intend to share your plugin with others, I
 strongly recommend that you:
 
-- include generous documentation as a module level docstring
-- note specific versions of any dependencies in that docstring
+- Include generous documentation as a module level docstring.
+- Note specific versions of any dependencies in that docstring.
   - Because these user plugins are kind of "side-loaded," you will need to
-    install their dependencies into the appropriate environment manually, so
+    manually install their dependencies into the appropriate environment, so
     it's important to let other users know exactly what versions you use.
 
-### Notable Fauxmo plugins
+### Notable plugin examples
 
 Please see <https://github.com/n8henrie/fauxmo-plugins>, where user
 contributions of interesting plugins are more than welcome!
@@ -177,38 +194,67 @@ I recommend that you copy and modify
 [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json).
 Fauxmo will use whatever config file you specify with `-c` or will search for
 `config.json` in the current directory, `~/.fauxmo/`, and `/etc/fauxmo/` (in
-that order).
+that order). The minimal configuration settings are:
 
 - `FAUXMO`: General Fauxmo settings
-    - `ip_address`: Manually set the server's IP address. Optional. Recommended
-      value: `auto`
-- `DEVICES`: List of devices that will employ `RESTAPIHandler`
-    - `port`: Port that Echo will use connect to device, should be different for
-      each device
-    - `plugin`: Dictionary for `RESTAPIHandler` configuration
-        - `on_cmd`: URL that should be requested to turn device on
-        - `off_cmd`: URL that should be requested to turn device off
-        - `method`: GET, POST, PUT, etc.
-        - `headers`: Optional dict for extra headers
-        - `on_json` / `off_json`: Optional dict of JSON data
-        - `on_data` / `off_data`: Optional POST data
-        - `auth_type`: `basic` or `digest` authentication, optional
-        - `user` / `password`: for use with `auth_type`, also optional
-    - `description`: What you want to call the device (how to activate by Echo)
-- `HOMEASSISTANT`: Section for [Home Assistant Python
-  API](https://home-assistant.io/developers/python_api)
-    - `enable`: Disable this section by omitting or setting to `false`
-    - `host`: IP of host running Hass
-    - `port`: Port for Hass access (default: 8123)
-    - `password`: Hass API password
-    - `DEVICES`: List of devices that will employ `HassApiHandler`
-        - `description`: What you want to call the device (how to activate by
-          Echo)
-        - `port`: Port that Echo will use connect to device, should be
-          different for each device
-        - `entity_id`: Hass identifier used in API, one easy way to find is to
-          curl and grep the REST API, eg `curl http://IP_ADDRESS/api/bootstrap
-          | grep entity_id`
+    - `ip_address`: Optional[str] - Manually set the server's IP address.
+      Recommended value: `"auto"`.
+- `PLUGINS`: Top level key for your plugins, values should be a dictionary of
+  (likely CamelCase) class names, spelled identically to the plugin class, with
+  each plugin's settings as a subdictionary.
+    - `ExamplePlugin`: Your plugin class name here, case sensitive.
+        - `path`: The absolute path to the Python file in which the plugin
+          class is defined (please see the section on user plugins above).
+          Required for user plugins / plugins not pre-installed in the
+          `fauxmo.plugins` subpackage.
+        - `example_var1`: For convenience and to avoid redundancy, your plugin
+          class can *optionally* use config variables at this level that
+          will be shared for all `DEVICES` listed in the next section (e.g. an
+          api key that would be shared for all devices of this plugin type).
+          If provided, your plugin class must consume this variable in a custom
+          `__init__`.
+        - `DEVICES`: List of devices that will employ `ExamplePlugin`
+            - `name`: Optional[str] -- Name for this device. Optional in the
+              sense that you can leave it out of the config as long as you set
+              it in your plugin code as the `_name` attribute, but it does need
+              to be set somewhere. If you omit it from config you will also
+              need to override the `__init__` method, which expects a `name`
+              kwarg.
+            - `port`: Optional[int] -- Port that Echo will use connect to
+              device. Should be different for each device, Fauxmo will attempt
+              to set automatically if absent from config. NB: Like `name`, you
+              can choose to set manually in your plugin code by overriding the
+              `_port` attribute (and the `__init__` method, which expects a
+              `port` kwarg otherwise).
+            - `example_var2`: Config variables for individual Fauxmo devices
+              can go here if needed (e.g. the URL that should be triggered when
+              a device is activated). Again, your plugin class will need to
+              consume them in a custom `__init__`.
+
+
+Each user plugin should describe its required configuration in its module-level
+docstring. The only required config variables for all plugins is `DEVICES`,
+which is a `List[dict]` of configuration variables for each device of that
+plugin type. Under `DEVICES` it is a good idea to set a fixed, high, free
+`port` for each device, but if you don't set one, Fauxmo will try to pick a
+reasonable port automatically (though it will change for each run).
+
+Please see
+[`config-sample`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
+for a more concrete idea of the structure of the config file, using the
+built-in `SimpleHTTPPlugin` for demonstration purposes. Below is a description
+of the kwargs that `SimpleHTTPPlugin` accepts.
+
+- `name`: What you want to call the device (how to activate by
+  Echo)
+- `port`: Port the Fauxmo device will run on
+- `on_cmd`: str -- URL that should be requested to turn device on.
+- `off_cmd`: str -- URL that should be requested to turn device off.
+- `method`: Optional[str]  = GET -- GET, POST, PUT, etc.
+- `headers`: Optional[dict]  -- Extra headers
+- `on_data` / `off_data`: Optional[dict] -- POST data
+- `user` / `password`: Optional[str] -- Enables HTTP authentication (basic or
+  digest only)
 
 ## Security considerations
 
