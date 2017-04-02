@@ -4,9 +4,10 @@ from setuptools import setup, find_packages
 try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
-    history = pypandoc.convert('HISTORY.md', 'rst')
+    history = pypandoc.convert('CHANGELOG.md', 'rst')
 except ImportError:
-    with open('README.md') as readme_file, open('HISTORY.md') as history_file:
+    with open('README.md') as readme_file, \
+            open('CHANGELOG.md') as history_file:
         readme = readme_file.read()
         history = history_file.read()
 
