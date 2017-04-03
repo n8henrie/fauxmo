@@ -24,7 +24,7 @@
                     "name": "fake Indigo switch"
                 },
                 {
-                    "name": "fake hass switch by REST API",
+                    "name": "fake home assistant switch by REST API",
                     "port": 12342,
                     "on_cmd": "http://192.168.1.104:8123/api/services/switch/turn_on",
                     "off_cmd": "http://192.168.1.104:8123/api/services/switch/turn_off",
