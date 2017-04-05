@@ -10,7 +10,7 @@ import httpbin
 import pytest
 
 @pytest.fixture(scope="session")
-def fauxmo_server(fauxmo_server) -> Generator:
+def fauxmo_server() -> Generator:
     config_path_str = "tests/test_config.json"
     server = Process(target=fauxmo.main,
                      kwargs={'config_path_str': config_path_str},
