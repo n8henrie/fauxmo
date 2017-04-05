@@ -40,9 +40,6 @@ def test_turnon(fauxmo_server: pytest.fixture,
 
     data = '<BinaryState>1</BinaryState>'
 
-    # requests.exceptions.Timeout suggests it was able to issue the request to
-    # Fauxmo without exception, but there aren't any devices running at the
-    # configured `on_cmd` address (probably should be true)
     resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
                          data=data)
     assert resp.status_code == 200
