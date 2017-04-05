@@ -79,7 +79,6 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
         print(errmsg)
         sys.exit(1)
 
-
     for plugin in plugins:
 
         modname = f"{__package__}.plugins.{plugin.lower()}"

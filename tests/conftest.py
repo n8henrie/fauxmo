@@ -9,6 +9,7 @@ from fauxmo import fauxmo
 import httpbin
 import pytest
 
+
 @pytest.fixture(scope="session")
 def fauxmo_server() -> Generator:
     config_path_str = "tests/test_config.json"
@@ -38,4 +39,3 @@ def simplehttpplugin_server() -> Generator:
 
     fauxmo_device.terminate()
     fauxmo_device.join()
-
