@@ -67,7 +67,20 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
         loop.set_debug(True)
         logging.getLogger('asyncio').setLevel(logging.DEBUG)
 
-    for plugin in config['PLUGINS']:
+    try:
+        plugins = config['PLUGINS']
+    except KeyError:
+        # Give a meaningful message without a nasty traceback if it looks like
+        # user is running a pre-v0.4.0 config.
+        errmsg = ("`PLUGINS` key not found in your config.\n"
+                  "You may be trying to use an outdated config.\n"
+                  "If so, please review <https://github.com/n8henrie/fauxmo> "
+                  "and update your config for Fauxmo >= v0.4.0.")
+        print(errmsg)
+        sys.exit(1)
+
+
+    for plugin in plugins:
 
         modname = f"{__package__}.plugins.{plugin.lower()}"
         try:
