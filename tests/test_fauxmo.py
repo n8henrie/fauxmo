@@ -45,7 +45,22 @@ def test_turnon(fauxmo_server: pytest.fixture,
     assert resp.status_code == 200
 
 
-def test_simplehttpplugin(fauxmo_server: pytest.fixture) -> None:
+def test_old_config_fails() -> None:
+    """Ensure the config for fauxmo < v0.4.0 fails with SystemExit"""
+
+    with pytest.raises(SystemExit):
+        fauxmo.main(config_path_str="tests/old-config-sample.json")
+
+
+def test_simplehttpplugin(fauxmo_server: pytest.fixture,
+                          simplehttpplugin_server: pytest.fixture) -> None:
+    """Tests simplehttpplugin
+
+    Uses the fauxmo_device fixture (runs httpbin) to emulate the *target* of
+    SimpleHTTPPlugin's `on_cmd` and `off_cmd`, ensures these run and return
+    200, which should make the `.on()` and `.off()` methods return True.
+    """
+
     with open("tests/test_config.json") as f:
         config = json.load(f)
 
