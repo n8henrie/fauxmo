@@ -7,6 +7,7 @@ Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 import asyncio
 import importlib
 import json
+import logging
 import pathlib
 import signal
 import sys
@@ -64,6 +65,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
     if verbosity < 20:
         loop.set_debug(True)
+        logging.getLogger('asyncio').setLevel(logging.DEBUG)
 
     for plugin in config['PLUGINS']:
 
@@ -88,7 +90,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
         logger.debug(f"plugin_vars: {repr(plugin_vars)}")
 
         for device in config['PLUGINS'][plugin]['DEVICES']:
-            logger.debug(f"device: {repr(device)}")
+            logger.debug(f"device config: {repr(device)}")
 
             # Ensure port is `int`, set it if not given (`None`) or 0
             device["port"] = int(device.get('port', 0)) or find_unused_port()
@@ -106,7 +108,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
 
             ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
 
-            logger.debug(f"fauxmo keywords: {repr(fauxmo.keywords)}")
+            logger.debug(f"Started fauxmo device: {repr(fauxmo.keywords)}")
 
     logger.info("Starting UDP server")
 
