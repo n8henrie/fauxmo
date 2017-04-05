@@ -4,10 +4,10 @@ from multiprocessing import Process
 from time import sleep
 from typing import Generator
 
-import httpbin
-import pytest
 from fauxmo import fauxmo
 
+import httpbin
+import pytest
 
 @pytest.fixture(scope="session")
 def fauxmo_server() -> Generator:
