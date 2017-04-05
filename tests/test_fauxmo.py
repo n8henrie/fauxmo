@@ -4,6 +4,7 @@ import json
 import socket
 import xml.etree.ElementTree as etree
 
+from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 
 import pytest
@@ -33,7 +34,8 @@ def test_setup(fauxmo_server: pytest.fixture) -> None:
     assert root.find(".//friendlyName").text == 'fake switch one'
 
 
-def test_turnon(fauxmo_server: pytest.fixture) -> None:
+def test_turnon(fauxmo_server: pytest.fixture,
+                simplehttpplugin_server: pytest.fixture) -> None:
     """Test TCP server's "on" action for SimpleHTTPPlugin"""
 
     data = '<BinaryState>1</BinaryState>'
@@ -51,6 +53,5 @@ def test_simplehttpplugin(fauxmo_server: pytest.fixture) -> None:
         config = json.load(f)
 
     for device in config["PLUGINS"]["SimpleHTTPPlugin"]["DEVICES"]:
-        print(device)
         assert SimpleHTTPPlugin(**device).on() is True
         assert SimpleHTTPPlugin(**device).off() is True
