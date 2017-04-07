@@ -27,7 +27,8 @@ def fauxmo_server() -> Generator:
 
 
 @pytest.fixture(scope="function")
-def simplehttpplugin_server() -> Generator:
+def simplehttpplugin_target() -> Generator:
+    """Simulates the endpoints triggered by RESTAPIPlugin."""
     fauxmo_device = Process(target=httpbin.core.app.run,
                             kwargs={"host": "127.0.0.1", "port": 8000},
                             daemon=True)

@@ -35,7 +35,7 @@ def test_setup(fauxmo_server: pytest.fixture) -> None:
 
 
 def test_turnon(fauxmo_server: pytest.fixture,
-                simplehttpplugin_server: pytest.fixture) -> None:
+                simplehttpplugin_target: pytest.fixture) -> None:
     """Test TCP server's "on" action for SimpleHTTPPlugin"""
 
     data = '<BinaryState>1</BinaryState>'
@@ -52,8 +52,7 @@ def test_old_config_fails() -> None:
         fauxmo.main(config_path_str="tests/old-config-sample.json")
 
 
-def test_simplehttpplugin(fauxmo_server: pytest.fixture,
-                          simplehttpplugin_server: pytest.fixture) -> None:
+def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
     """Tests simplehttpplugin
 
     Uses the fauxmo_device fixture (runs httpbin) to emulate the *target* of
