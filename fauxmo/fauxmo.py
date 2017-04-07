@@ -14,7 +14,7 @@ import sys
 from functools import partial
 from test.support import find_unused_port
 
-from . import logger
+from . import logger, __version__
 from .plugins import FauxmoPlugin
 from .protocols import SSDPServer, Fauxmo
 from .utils import get_local_ip, module_from_file, make_udp_sock
@@ -35,6 +35,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
     """
 
     logger.setLevel(verbosity)
+    logger.info(f"Fauxmo version {__version__}")
     logger.debug(sys.version)
 
     if config_path_str:

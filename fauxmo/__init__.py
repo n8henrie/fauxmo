@@ -13,5 +13,3 @@ logging.basicConfig(
 logger = logging.getLogger("fauxmo")
 syslog_handler = logging.handlers.SysLogHandler()
 logger.addHandler(syslog_handler)
-
-logger.info(f"Fauxmo version {__version__}")
