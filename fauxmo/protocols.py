@@ -94,11 +94,11 @@ class Fauxmo(asyncio.Protocol):
 
         success = False
         if '<BinaryState>0</BinaryState>' in msg:
-            # `off()` method called
+            logger.debug(f"Attempting to turn off {self.plugin}")
             success = self.plugin.off()
 
         elif '<BinaryState>1</BinaryState>' in msg:
-            # `on()` method called
+            logger.debug(f"Attempting to turn on {self.plugin}")
             success = self.plugin.on()
 
         else:
@@ -117,7 +117,10 @@ class Fauxmo(asyncio.Protocol):
                     'CONNECTION: close']) + 2 * '\r\n'
             logger.debug(response)
             self.transport.write(response.encode())
-            self.transport.close()
+        else:
+            errmsg = f"Unable to complete command in {self.plugin}:\n{msg}"
+            logger.warning(errmsg)
+        self.transport.close()
 
 
 class SSDPServer(asyncio.DatagramProtocol):
