@@ -14,7 +14,14 @@ from . import logger
 
 
 def get_local_ip(ip_address: str=None) -> str:
-    """Attempt to get the local network-connected IP address."""
+    """Attempt to get the local network-connected IP address.
+
+    Args:
+        ip_address: Either desired ip address or string or "auto"
+
+    Returns:
+        Current IP address as string
+    """
 
     if ip_address is None or ip_address.lower() == "auto":
         logger.debug("Attempting to get IP address automatically")
@@ -41,7 +48,10 @@ def make_serial(name: str) -> str:
     given name.
 
     Args:
-        name (str): Friendly device name (e.g. "living room light")
+        name: Friendly device name (e.g. "living room light")
+
+    Returns:
+        Persistent UUID as string
     """
 
     return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
@@ -53,6 +63,9 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
     Args:
         modname: The desired module name
         path_str: Path to the file
+
+    Returns:
+        Module read in from path_str
     """
 
     path = pathlib.Path(path_str).expanduser()
@@ -70,6 +83,9 @@ def make_udp_sock() -> socket.socket:
     appropriate local and remote addresses), but having no luck. Would be
     thrilled if someone can figure this out in a better way than this or
     <https://github.com/n8henrie/fauxmo/blob/c5419b3f61311e5386387e136d26dd8d4a55518c/src/fauxmo/protocols.py#L149>.
+
+    Returns:
+        Socket suitable for responding to multicast requests
     """
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -1,7 +1,4 @@
-"""fauxmo.plugins
-
-Provide ABC for Fauxmo plugins
-"""
+"""fauxmo.plugins :: Provide ABC for Fauxmo plugins."""
 
 import abc
 
@@ -12,19 +9,6 @@ class FauxmoPlugin(abc.ABC):
     This will become the `plugin` attribute of a `Fauxmo` instance. Its `on`
     and `off` methods will be called when Alexa turns something `on` or `off`.
 
-    Args:
-        name: Required, device name
-        port: Required, port that the Fauxmo associated with this plugin should
-              run on
-
-    Note about `port`: if not given in config, it will be set to an apparently
-    free port in `fauxmo.fauxmo` before FauxmoPlugin initialization. This
-    attribute serves no default purpose in the FauxmoPlugin but is passed in to
-    be accessible by user code (i.e. for logging / debugging). Alternatively,
-    one could accept and throw away the passed in `port` value and generate
-    their own port in a plugin, since the Fauxmo device determines its port
-    from the plugin's instance attribute.
-
     All keys (other than the list of `DEVICES`) from the config will be passed
     into FauxmoPlugin as kwargs at initialization, which should let users do
     some interesting things. However, that means users employing custom config
@@ -34,6 +18,23 @@ class FauxmoPlugin(abc.ABC):
     """
 
     def __init__(self, *, name: str, port: int) -> None:
+        """Initialization for FauxmoPlugin
+
+        Keyword Args:
+            name: Required, device name
+            port: Required, port that the Fauxmo associated with this plugin
+                  should run on
+
+        Note about `port`: if not given in config, it will be set to an
+        apparently free port in `fauxmo.fauxmo` before FauxmoPlugin
+        initialization. This attribute serves no default purpose in the
+        FauxmoPlugin but is passed in to be accessible by user code (i.e. for
+        logging / debugging). Alternatively, one could accept and throw away
+        the passed in `port` value and generate their own port in a plugin,
+        since the Fauxmo device determines its port from the plugin's instance
+        attribute.
+        """
+
         self._name = name
         self._port = port
 

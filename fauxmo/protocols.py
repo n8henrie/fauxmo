@@ -33,12 +33,21 @@ class Fauxmo(asyncio.Protocol):
         self.plugin = plugin
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
+        """Accept an incoming TCP connection.
+
+        Args:
+            transport: Passed in asyncio.Transport
+        """
         peername = transport.get_extra_info('peername')
         logger.debug(f"Connection made with: {peername}")
         self.transport = cast(asyncio.Transport, transport)
 
     def data_received(self, data: bytes) -> None:
-        """Decode data and determine if it is a setup or action request"""
+        """Decode incoming data.
+
+        Args:
+            data: Incoming message, either setup request or action request
+        """
 
         msg = data.decode()
 
@@ -51,7 +60,7 @@ class Fauxmo(asyncio.Protocol):
             self.handle_action(msg)
 
     def handle_setup(self) -> None:
-        """Create a response to the Echo's setup request"""
+        """Create a response to the Echo's setup request."""
 
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
 
@@ -85,7 +94,7 @@ class Fauxmo(asyncio.Protocol):
         self.transport.close()
 
     def handle_action(self, msg: str) -> None:
-        """Execute `on` or `off` method of `plugin`
+        """Execute `on` or `off` method of `plugin`.
 
         Args:
             msg: Body of the Echo's HTTP request to trigger an action
@@ -137,6 +146,13 @@ class SSDPServer(asyncio.DatagramProtocol):
         self.devices = list(devices or ())
 
     def add_device(self, name: str, ip_address: str, port: int) -> None:
+        """Keep track of a list of devices for logging and shutdown.
+
+        Args:
+            name: Device name
+            ip_address: IP address of device
+            port: Port of device
+        """
         device_dict = {
                 'name': name,
                 'ip_address': ip_address,
@@ -145,10 +161,21 @@ class SSDPServer(asyncio.DatagramProtocol):
         self.devices.append(device_dict)
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
+        """Set transport attribute to incoming transport.
+
+        Args:
+            transport: Incoming asyncio.DatagramTransport
+        """
+
         self.transport = cast(asyncio.DatagramTransport, transport)
 
     def datagram_received(self, data: AnyStr, addr: str) -> None:
-        """Check incoming UDP data for requests for Wemo devices"""
+        """Check incoming UDP data for requests for Wemo devices.
+
+        Args:
+            data: Incoming data content
+            addr: Address sending data
+        """
 
         logger.debug(f"Received data below from {addr}:")
         logger.debug(str(data))
@@ -158,7 +185,11 @@ class SSDPServer(asyncio.DatagramProtocol):
             self.respond_to_search(addr)
 
     def respond_to_search(self, addr: str) -> None:
-        """Build and send an appropriate response to an SSDP search request."""
+        """Build and send an appropriate response to an SSDP search request.
+
+        Args:
+            addr: Address sending search request
+        """
 
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         for device in self.devices:
@@ -186,5 +217,11 @@ class SSDPServer(asyncio.DatagramProtocol):
             self.transport.sendto(response.encode(), addr)
 
     def connection_lost(self, exc: Exception) -> None:
+        """Handle lost connections.
+
+        Args:
+            exc: Exception type
+        """
+
         if exc:
             logger.warning(f"SSDPServer closed with exception: {exc}")

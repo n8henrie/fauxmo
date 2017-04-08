@@ -26,13 +26,14 @@ class SimpleHTTPPlugin(FauxmoPlugin):
     body, and auth data and makes REST calls to a device.
     """
 
-    def __init__(self, name: str, port: int, on_cmd: str, off_cmd: str, method:
-                 str="GET", on_data: dict=None, off_data: dict=None, headers:
-                 dict=None, user: str=None, password: str=None) -> None:
+    def __init__(self, *, name: str, port: int, on_cmd: str, off_cmd: str,
+                 method: str="GET", on_data: dict=None, off_data: dict=None,
+                 headers: dict=None, user: str=None, password: str=None) \
+            -> None:
 
         """Initialize a SimpleHTTPPlugin instance
 
-        Args:
+        Keyword Args:
             on_cmd: URL to be called when turning device on
             off_cmd: URL to be called when turning device off
             method: HTTP method to be used for both `on()` and `off()`
@@ -74,7 +75,15 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         super().__init__(name=name, port=port)
 
     def set_state(self, cmd: str, data: str) -> bool:
-        """Call HTTP method, for use by `functools.partialmethod`."""
+        """Call HTTP method, for use by `functools.partialmethod`.
+
+        Args:
+            cmd: Either `"on_cmd"` or `"off_cmd"`, for `getattr(self, cmd)`
+            data: Either `"on_data"` or `"off_data"`, for `getattr(self, data)`
+
+        Returns:
+            Boolean indicating whether it state was set successfully
+        """
 
         # `data` is passed in as either `"on_data"` or `"off_data"` as string,
         # so `getattr` to get the actual content as dict. Same for `cmd`.

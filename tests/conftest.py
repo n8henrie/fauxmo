@@ -12,6 +12,7 @@ import pytest
 
 @pytest.fixture(scope="session")
 def fauxmo_server() -> Generator:
+    """Create a Fauxmo server from test_config.json."""
     config_path_str = "tests/test_config.json"
     server = Process(target=fauxmo.main,
                      kwargs={'config_path_str': config_path_str},

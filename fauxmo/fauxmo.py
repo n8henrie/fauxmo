@@ -1,4 +1,4 @@
-"""fauxmo.py
+"""fauxmo.py :: Main server code for Fauxmo.
 
 Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 <https://github.com/n8henrie/fauxmo>.
@@ -21,13 +21,13 @@ from .utils import get_local_ip, module_from_file, make_udp_sock
 
 
 def main(config_path_str: str=None, verbosity: int=20) -> None:
-    """Runs the main fauxmo process
+    """Runs the main fauxmo process.
 
     Spawns a UDP server to handle the Echo's UPnP / SSDP device discovery
     process as well as multiple TCP servers to respond to the Echo's device
     setup requests and handle its process for turning devices on and off.
 
-    Kwargs:
+    Args:
         config_path_str: Path to config file. If not given will search for
                          `config.json` in cwd, `~/.fauxmo/`, and
                          `/etc/fauxmo/`.
