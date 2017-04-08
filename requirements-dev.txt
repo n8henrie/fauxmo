@@ -1,6 +1,6 @@
 pypandoc==1.3.3
 recommonmark==0.4.0
 sphinx-rtd-theme==0.2.4
-Sphinx==1.5.3
+Sphinx==1.5.5
 twine==1.8.1
 wheel==0.29.0
