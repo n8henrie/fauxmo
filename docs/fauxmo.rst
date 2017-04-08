@@ -11,32 +11,32 @@ Subpackages
 Submodules
 ----------
 
-fauxmo.cli module
------------------
+fauxmo\.cli module
+------------------
 
 .. automodule:: fauxmo.cli
     :members:
     :undoc-members:
     :show-inheritance:
 
-fauxmo.fauxmo module
---------------------
+fauxmo\.fauxmo module
+---------------------
 
 .. automodule:: fauxmo.fauxmo
     :members:
     :undoc-members:
     :show-inheritance:
 
-fauxmo.protocols module
------------------------
+fauxmo\.protocols module
+------------------------
 
 .. automodule:: fauxmo.protocols
     :members:
     :undoc-members:
     :show-inheritance:
 
-fauxmo.utils module
--------------------
+fauxmo\.utils module
+--------------------
 
 .. automodule:: fauxmo.utils
     :members:
