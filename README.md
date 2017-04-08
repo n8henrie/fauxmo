@@ -185,8 +185,22 @@ strongly recommend that you:
 
 ### Notable plugin examples
 
-Please see <https://github.com/n8henrie/fauxmo-plugins>, where user
-contributions of interesting plugins are more than welcome!
+NB: You may need to *manually* install additional dependencies for these to
+work -- look for the dependencies in the module level docstring.
+
+- <https://github.com/n8henrie/fauxmo-plugins>
+    - `RESTAPIPlugin`
+        - Trigger HTTP requests with your Echo.
+        - Similar to `SimpleHTTPPlugin`, but uses
+          [Requests](https://github.com/kennethreitz/requests) for a simpler
+          API and easier modification.
+    - `HassAPIPlugin`
+        - Uses the [Home Assistant Python
+          API](https://home-assistant.io/developers/python_api/) to run
+          commands through a local or remote Home Assistance instance.
+    - `CommandLinePlugin`
+        - Run a shell command on the local machine.
+    - User contributions of interesting plugins are more than welcome!
 
 ## Configuration
 
