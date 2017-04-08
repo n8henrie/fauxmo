@@ -4,10 +4,10 @@ fauxmo.plugins package
 Submodules
 ----------
 
-fauxmo.plugins.simplehttphandler module
----------------------------------------
+fauxmo.plugins.simplehttpplugin module
+--------------------------------------
 
-.. automodule:: fauxmo.plugins.simplehttphandler
+.. automodule:: fauxmo.plugins.simplehttpplugin
     :members:
     :undoc-members:
     :show-inheritance:
