@@ -89,14 +89,16 @@ def make_udp_sock() -> socket.socket:
     """
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(('', 1900))
-    group = socket.inet_aton('239.255.255.250')
-    mreq = struct.pack('4sL', group, socket.INADDR_ANY)
-    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     reuseport = getattr(socket, "SO_REUSEPORT", None)
     if reuseport:
         sock.setsockopt(socket.SOL_SOCKET, reuseport, 1)
+
+    sock.bind(('', 1900))
+
+    group = socket.inet_aton('239.255.255.250')
+    mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
     return sock
