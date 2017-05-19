@@ -23,6 +23,8 @@ def fauxmo_server() -> Generator:
 
     yield
 
+    # Time to finish a request in process
+    sleep(0.1)
     server.terminate()
     server.join()
 
@@ -39,5 +41,7 @@ def simplehttpplugin_target() -> Generator:
 
     yield
 
+    # Time to finish a request in process
+    sleep(0.1)
     fauxmo_device.terminate()
     fauxmo_device.join()
