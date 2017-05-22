@@ -1,7 +1,4 @@
-"""utils.py
-
-Utility functions for Fauxmo.
-"""
+"""utils.py :: Holds utility functions for Fauxmo."""
 
 import importlib.util
 import pathlib
@@ -10,10 +7,10 @@ import struct
 import uuid
 from types import ModuleType
 
-from . import logger
+from fauxmo import logger
 
 
-def get_local_ip(ip_address: str=None) -> str:
+def get_local_ip(ip_address: str = None) -> str:
     """Attempt to get the local network-connected IP address.
 
     Args:
@@ -21,8 +18,8 @@ def get_local_ip(ip_address: str=None) -> str:
 
     Returns:
         Current IP address as string
-    """
 
+    """
     if ip_address is None or ip_address.lower() == "auto":
         logger.debug("Attempting to get IP address automatically")
 
@@ -52,8 +49,8 @@ def make_serial(name: str) -> str:
 
     Returns:
         Persistent UUID as string
-    """
 
+    """
     return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
 
 
@@ -66,8 +63,8 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
 
     Returns:
         Module read in from path_str
-    """
 
+    """
     path = pathlib.Path(path_str).expanduser()
     spec = importlib.util.spec_from_file_location(modname, str(path))
     module = importlib.util.module_from_spec(spec)
@@ -86,8 +83,8 @@ def make_udp_sock() -> socket.socket:
 
     Returns:
         Socket suitable for responding to multicast requests
-    """
 
+    """
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 

@@ -14,14 +14,14 @@ import sys
 from functools import partial
 from test.support import find_unused_port
 
-from . import logger, __version__
-from .plugins import FauxmoPlugin
-from .protocols import SSDPServer, Fauxmo
-from .utils import get_local_ip, module_from_file, make_udp_sock
+from fauxmo import __version__, logger
+from fauxmo.plugins import FauxmoPlugin
+from fauxmo.protocols import Fauxmo, SSDPServer
+from fauxmo.utils import get_local_ip, make_udp_sock, module_from_file
 
 
-def main(config_path_str: str=None, verbosity: int=20) -> None:
-    """Runs the main fauxmo process.
+def main(config_path_str: str = None, verbosity: int = 20) -> None:
+    """Run the main fauxmo process.
 
     Spawns a UDP server to handle the Echo's UPnP / SSDP device discovery
     process as well as multiple TCP servers to respond to the Echo's device
@@ -33,7 +33,6 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
                          `/etc/fauxmo/`.
         verbosity: Logging verbosity, defaults to 20
     """
-
     logger.setLevel(verbosity)
     logger.info(f"Fauxmo version {__version__}")
     logger.debug(sys.version)
@@ -92,8 +91,8 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
             path_str = config['PLUGINS'][plugin]['path']
             module = module_from_file(modname, path_str)
 
-        Plugin = getattr(module, plugin)
-        if not issubclass(Plugin, FauxmoPlugin):
+        PluginClass = getattr(module, plugin)  # noqa
+        if not issubclass(PluginClass, FauxmoPlugin):
             raise TypeError(f"Plugins must inherit from {repr(FauxmoPlugin)}")
 
         # Pass along variables defined at the plugin level that don't change
@@ -109,9 +108,9 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
             device["port"] = int(device.get('port', 0)) or find_unused_port()
 
             try:
-                plugin = Plugin(**plugin_vars, **device)
+                plugin = PluginClass(**plugin_vars, **device)
             except TypeError:
-                logger.error(f"Error in plugin {repr(Plugin)}")
+                logger.error(f"Error in plugin {repr(PluginClass)}")
                 raise
 
             fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
@@ -129,7 +128,7 @@ def main(config_path_str: str=None, verbosity: int=20) -> None:
     # pulled into mypy, and new mypy released
     listen = loop.create_datagram_endpoint(lambda: ssdp_server,  # type: ignore
                                            sock=make_udp_sock())
-    transport, protocol = loop.run_until_complete(listen)  # type: ignore
+    transport, _ = loop.run_until_complete(listen)  # type: ignore
 
     for signame in ('SIGINT', 'SIGTERM'):
         try:

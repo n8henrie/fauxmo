@@ -1,17 +1,17 @@
-"""cli.py
+"""cli.py :: Argparse based CLI for fauxmo.
 
-Argparse based CLI for fauxmo. Helps provide console_script via argparse.
+Provides console_script via argparse.
 """
 
 import argparse
 import sys
-from .fauxmo import main
-from . import logger
+
+from fauxmo import logger
+from fauxmo.fauxmo import main
 
 
 def cli() -> None:
-    """Parse command line options, provide entry point for console scripts"""
-
+    """Parse command line options, provide entry point for console scripts."""
     arguments = sys.argv[1:]
     parser = argparse.ArgumentParser(description="Emulate Belkin Wemo devices "
                                      "for use with Amaazon Echo")

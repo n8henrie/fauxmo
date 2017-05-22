@@ -2,16 +2,16 @@
 
 from multiprocessing import Process
 from time import sleep
-from typing import Generator
-
-from fauxmo import fauxmo
+from typing import Iterator
 
 import httpbin
 import pytest
 
+from fauxmo import fauxmo
+
 
 @pytest.fixture(scope="session")
-def fauxmo_server() -> Generator:
+def fauxmo_server() -> Iterator:
     """Create a Fauxmo server from test_config.json."""
     config_path_str = "tests/test_config.json"
     server = Process(target=fauxmo.main,
@@ -30,8 +30,8 @@ def fauxmo_server() -> Generator:
 
 
 @pytest.fixture(scope="function")
-def simplehttpplugin_target() -> Generator:
-    """Simulates the endpoints triggered by RESTAPIPlugin."""
+def simplehttpplugin_target() -> Iterator:
+    """Simulate the endpoints triggered by RESTAPIPlugin."""
     fauxmo_device = Process(target=httpbin.core.app.run,
                             kwargs={"host": "127.0.0.1", "port": 8000},
                             daemon=True)

@@ -4,7 +4,7 @@ import abc
 
 
 class FauxmoPlugin(abc.ABC):
-    """ABC for Fauxmo plugins
+    """Provide ABC for Fauxmo plugins.
 
     This will become the `plugin` attribute of a `Fauxmo` instance. Its `on`
     and `off` methods will be called when Alexa turns something `on` or `off`.
@@ -18,7 +18,7 @@ class FauxmoPlugin(abc.ABC):
     """
 
     def __init__(self, *, name: str, port: int) -> None:
-        """Initialization for FauxmoPlugin
+        """Initialize FauxmoPlugin.
 
         Keyword Args:
             name: Required, device name
@@ -34,24 +34,25 @@ class FauxmoPlugin(abc.ABC):
         since the Fauxmo device determines its port from the plugin's instance
         attribute.
         """
-
         self._name = name
         self._port = port
 
     @property
     def port(self) -> int:
+        """Return port attribute in read-only manner."""
         return self._port
 
     @property
     def name(self) -> str:
+        """Return name attribute in read-only manner."""
         return self._name
 
     @abc.abstractmethod
     def on(self) -> bool:
-        """Called when Alexa turns this Fauxmo device on"""
+        """Run function when Alexa turns this Fauxmo device on."""
         pass
 
     @abc.abstractmethod
     def off(self) -> bool:
-        """Called when Alexa turns this Fauxmo device off"""
+        """Run function when Alexa turns this Fauxmo device off."""
         pass

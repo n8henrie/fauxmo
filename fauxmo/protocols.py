@@ -1,17 +1,13 @@
-"""protocols.py
-
-Holds asyncio protocols required classes for the Echo's UPnP / SSDP device
-discovery.
-"""
+"""protocols.py :: Provide asyncio protocols for UPnP and SSDP discovery."""
 
 import asyncio
+import uuid
 from email.utils import formatdate
 from typing import AnyStr, cast, Iterable
-import uuid
 
-from . import logger
-from .utils import make_serial
-from .plugins import FauxmoPlugin
+from fauxmo import logger
+from fauxmo.plugins import FauxmoPlugin
+from fauxmo.utils import make_serial
 
 
 class Fauxmo(asyncio.Protocol):
@@ -27,10 +23,10 @@ class Fauxmo(asyncio.Protocol):
             name: How you want to call the device, e.g. "bedroom light"
             plugin: Fauxmo plugin
         """
-
         self.name = name
         self.serial = make_serial(name)
         self.plugin = plugin
+        self.transport = None  # type: asyncio.Transport
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """Accept an incoming TCP connection.
@@ -48,7 +44,6 @@ class Fauxmo(asyncio.Protocol):
         Args:
             data: Incoming message, either setup request or action request
         """
-
         msg = data.decode()
 
         logger.debug(f"Received message:\n{msg}")
@@ -61,35 +56,33 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_setup(self) -> None:
         """Create a response to the Echo's setup request."""
-
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
 
         setup_xml = '\r\n'.join([
-               '<?xml version="1.0"?>',
-               '<root>',
-               '<device>',
-               '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>',
-               f'<friendlyName>{self.name}</friendlyName>',
-               '<manufacturer>Belkin International Inc.</manufacturer>',
-               '<modelName>Emulated Socket</modelName>',
-               '<modelNumber>3.1415</modelNumber>',
-               f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>',
-               '</device>',
-               '</root>']) + 2 * '\r\n'
+            '<?xml version="1.0"?>',
+            '<root>',
+            '<device>',
+            '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>',
+            f'<friendlyName>{self.name}</friendlyName>',
+            '<manufacturer>Belkin International Inc.</manufacturer>',
+            '<modelName>Emulated Socket</modelName>',
+            '<modelNumber>3.1415</modelNumber>',
+            f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>',
+            '</device>',
+            '</root>']) + 2 * '\r\n'
 
         # Made as a separate string because it requires `len(setup_xml)`
         setup_response = '\r\n'.join([
-               'HTTP/1.1 200 OK',
-               f'CONTENT-LENGTH: {len(setup_xml)}',
-               'CONTENT-TYPE: text/xml',
-               f'DATE: {date_str}',
-               'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
-               'SERVER: Unspecified, UPnP/1.0, Unspecified',
-               'X-User-Agent: Fauxmo',
-               'CONNECTION: close']) + 2 * '\r\n' + setup_xml
+            'HTTP/1.1 200 OK',
+            f'CONTENT-LENGTH: {len(setup_xml)}',
+            'CONTENT-TYPE: text/xml',
+            f'DATE: {date_str}',
+            'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
+            'SERVER: Unspecified, UPnP/1.0, Unspecified',
+            'X-User-Agent: Fauxmo',
+            'CONNECTION: close']) + 2 * '\r\n' + setup_xml
 
-        logger.debug("Fauxmo response to setup request:\n{}"
-                     .format(setup_response))
+        logger.debug(f"Fauxmo response to setup request:\n{setup_response}")
         self.transport.write(setup_response.encode())
         self.transport.close()
 
@@ -100,7 +93,6 @@ class Fauxmo(asyncio.Protocol):
             msg: Body of the Echo's HTTP request to trigger an action
 
         """
-
         success = False
         if '<BinaryState>0</BinaryState>' in msg:
             logger.debug(f"Attempting to turn off {self.plugin}")
@@ -116,14 +108,14 @@ class Fauxmo(asyncio.Protocol):
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
             response = '\r\n'.join([
-                    'HTTP/1.1 200 OK',
-                    'CONTENT-LENGTH: 0',
-                    'CONTENT-TYPE: text/xml charset="utf-8"',
-                    f'DATE: {date_str}',
-                    'EXT:',
-                    'SERVER: Unspecified, UPnP/1.0, Unspecified',
-                    'X-User-Agent: Fauxmo',
-                    'CONNECTION: close']) + 2 * '\r\n'
+                'HTTP/1.1 200 OK',
+                'CONTENT-LENGTH: 0',
+                'CONTENT-TYPE: text/xml charset="utf-8"',
+                f'DATE: {date_str}',
+                'EXT:',
+                'SERVER: Unspecified, UPnP/1.0, Unspecified',
+                'X-User-Agent: Fauxmo',
+                'CONNECTION: close']) + 2 * '\r\n'
             logger.debug(response)
             self.transport.write(response.encode())
         else:
@@ -133,17 +125,17 @@ class Fauxmo(asyncio.Protocol):
 
 
 class SSDPServer(asyncio.DatagramProtocol):
-    """Responds to the Echo's SSDP / UPnP requests"""
+    """UDP server that responds to the Echo's SSDP / UPnP requests."""
 
-    def __init__(self, devices: Iterable[dict]=None) -> None:
+    def __init__(self, devices: Iterable[dict] = None) -> None:
         """Initialize an SSDPServer instance.
 
         Args:
             devices: Iterable of devices to advertise when the Echo's SSDP
                      search request is received.
         """
-
         self.devices = list(devices or ())
+        self.transport = None  # type: asyncio.DatagramTransport
 
     def add_device(self, name: str, ip_address: str, port: int) -> None:
         """Keep track of a list of devices for logging and shutdown.
@@ -154,10 +146,10 @@ class SSDPServer(asyncio.DatagramProtocol):
             port: Port of device
         """
         device_dict = {
-                'name': name,
-                'ip_address': ip_address,
-                'port': port
-                }
+            'name': name,
+            'ip_address': ip_address,
+            'port': port
+        }
         self.devices.append(device_dict)
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
@@ -166,7 +158,6 @@ class SSDPServer(asyncio.DatagramProtocol):
         Args:
             transport: Incoming asyncio.DatagramTransport
         """
-
         self.transport = cast(asyncio.DatagramTransport, transport)
 
     def datagram_received(self, data: AnyStr, addr: str) -> None:
@@ -176,7 +167,6 @@ class SSDPServer(asyncio.DatagramProtocol):
             data: Incoming data content
             addr: Address sending data
         """
-
         logger.debug(f"Received data below from {addr}:")
         logger.debug(str(data))
 
@@ -190,7 +180,6 @@ class SSDPServer(asyncio.DatagramProtocol):
         Args:
             addr: Address sending search request
         """
-
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         for device in self.devices:
 
@@ -201,17 +190,17 @@ class SSDPServer(asyncio.DatagramProtocol):
             location = f'http://{ip_address}:{port}/setup.xml'
             serial = make_serial(name)
             response = '\r\n'.join([
-                    'HTTP/1.1 200 OK',
-                    'CACHE-CONTROL: max-age=86400',
-                    f'DATE: {date_str}',
-                    'EXT:',
-                    f'LOCATION: {location}',
-                    'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
-                    f'01-NLS: {uuid.uuid4()}',
-                    'SERVER: Unspecified, UPnP/1.0, Unspecified',
-                    'ST: urn:Belkin:device:**',
-                    f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**'
-                    ]) + 2 * '\r\n'
+                'HTTP/1.1 200 OK',
+                'CACHE-CONTROL: max-age=86400',
+                f'DATE: {date_str}',
+                'EXT:',
+                f'LOCATION: {location}',
+                'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
+                f'01-NLS: {uuid.uuid4()}',
+                'SERVER: Unspecified, UPnP/1.0, Unspecified',
+                'ST: urn:Belkin:device:**',
+                f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**'
+                ]) + 2 * '\r\n'
 
             logger.debug(f"Sending response to {addr}:\n{response}")
             self.transport.sendto(response.encode(), addr)
@@ -222,6 +211,5 @@ class SSDPServer(asyncio.DatagramProtocol):
         Args:
             exc: Exception type
         """
-
         if exc:
             logger.warning(f"SSDPServer closed with exception: {exc}")
