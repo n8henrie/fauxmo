@@ -24,7 +24,7 @@ def fauxmo_server() -> Iterator:
     yield
 
     # Time to finish a request in process
-    sleep(0.1)
+    sleep(1)
     server.terminate()
     server.join()
 
@@ -42,6 +42,6 @@ def simplehttpplugin_target() -> Iterator:
     yield
 
     # Time to finish a request in process
-    sleep(0.1)
+    sleep(1)
     fauxmo_device.terminate()
     fauxmo_device.join()
