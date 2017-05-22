@@ -31,6 +31,7 @@ not be continuing development or support for older versions).
 ## Terminology
 
 faux (`\ˈfō\`): imitation
+
 WeMo: Belkin home automation product with which the Amazon Echo can interface
 
 Fauxmo (`\ˈfō-mō\`): Python 3 module that emulates Belkin WeMo devices for use
@@ -56,9 +57,10 @@ into the recent Python versions that Fauxmo requires.
    [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
 1. `fauxmo -c config.json [-v]`
 
-### Simple install of dev branch from GitHub (for testing features in
-development -- for actually contributing to development clone the repo as per
-below)
+### Simple install of dev branch from GitHub
+
+This is a good strategy for testing features in development -- for actually
+contributing to development, clone the repo as per below)
 
 1. `python3 -m venv venv`
 1. `source venv/bin/activate`
