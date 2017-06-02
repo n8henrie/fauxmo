@@ -3,6 +3,11 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.2 :: 20170601
+
+- Add additional linters to tests
+- Set reuseaddr and reuseport before binding socket
+
 ## v0.4.0 :: 20170402
 
 - Rename handlers to plugins
