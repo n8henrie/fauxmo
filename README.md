@@ -299,6 +299,10 @@ without user plugins.
   Fauxmo?
     - Check out
       [`protocol_notes.md`](https://github.com/n8henrie/fauxmo/blob/master/protocol_notes.md)
+- What is the Fire TV Stick support status
+    - Fire TV and Fire TV Stick can not discover WeMo devices
+      but they can be used to control devices discovered by
+      Echo (and other compatible Alexa devices)
 
 ### Installing Python 3.6 with [pyenv](https://github.com/pyenv/pyenv)
 
