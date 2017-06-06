@@ -82,7 +82,7 @@ contributing to development, clone the repo as per below)
 1. Open the Amazon Alexa webapp to the [Smart
    Home](http://alexa.amazon.com/#smart-home) page
 1. **With Fauxmo running**, click "Discover devices" (or tell Alexa to "find
-   connected devices")
+   connected devices" or "discover devices")
 1. Ensure that your Fauxmo devices were discovered and appear with their
    names in the web interface
 1. Test: "Alexa, turn on [the kitchen light]"
