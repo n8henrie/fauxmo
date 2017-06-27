@@ -36,7 +36,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 fauxmo tests
+	flake8 src/fauxmo tests
 
 test:
 	py.test tests
@@ -55,7 +55,7 @@ clean-docs:
 	rm -f docs/modules.rst
 
 docs: clean-docs
-	source venv/bin/activate && sphinx-apidoc -o docs/ fauxmo
+	source venv/bin/activate && sphinx-apidoc -o docs/ src/fauxmo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	-open docs/_build/html/index.html

@@ -1,7 +1,7 @@
 include *.md LICENSE requirements*.txt config-sample.json
 exclude config.json TODO.md
 
-graft fauxmo
+graft src
 graft extras
 recursive-include docs *.md *.rst conf.py Makefile
 
