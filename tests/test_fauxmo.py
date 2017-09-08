@@ -25,7 +25,7 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     if reuseport:
         sock.setsockopt(socket.SOL_SOCKET, reuseport, 1)
 
-    sock.settimeout(1)
+    sock.settimeout(2)
 
     addr = (config['FAUXMO']['ip_address'], 1900)
     sock.sendto(msg, addr)

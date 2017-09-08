@@ -18,9 +18,11 @@ def fauxmo_server() -> Iterator:
                      kwargs={'config_path_str': config_path_str},
                      daemon=True)
 
+    sleep(2)
+
     server.start()
 
-    sleep(1)
+    sleep(2)
 
     yield
 
