@@ -19,12 +19,11 @@ def fauxmo_server() -> Iterator:
                      daemon=True)
 
     server.start()
+
     sleep(1)
 
     yield
 
-    # Time to finish a request in process
-    sleep(1)
     server.terminate()
     server.join()
 

@@ -72,7 +72,7 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
     return module
 
 
-def make_udp_sock() -> socket.socket:
+def make_udp_sock(fauxmo_ip: str) -> socket.socket:
     """Make a suitable udp socket to listen for device discovery requests.
 
     I would *love* to get rid of this function and just use the built-in
@@ -92,7 +92,7 @@ def make_udp_sock() -> socket.socket:
     if reuseport:
         sock.setsockopt(socket.SOL_SOCKET, reuseport, 1)
 
-    sock.bind(('', 1900))
+    sock.bind((fauxmo_ip, 1900))
 
     group = socket.inet_aton('239.255.255.250')
     mreq = struct.pack('4sL', group, socket.INADDR_ANY)

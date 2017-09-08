@@ -127,7 +127,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     # mypy will fail until https://github.com/python/typeshed/pull/1084 merged,
     # pulled into mypy, and new mypy released
     listen = loop.create_datagram_endpoint(lambda: ssdp_server,  # type: ignore
-                                           sock=make_udp_sock())
+                                           sock=make_udp_sock(fauxmo_ip))
     transport, _ = loop.run_until_complete(listen)  # type: ignore
 
     for signame in ('SIGINT', 'SIGTERM'):
