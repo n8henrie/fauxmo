@@ -1,6 +1,6 @@
 - **Operating system and version**:
 - **Python version**:
-- **Fauxmo version** (`fauxmo --help`):
+- **Fauxmo version** (`fauxmo --version`):
 
 ## My Issue
 

@@ -34,7 +34,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
         verbosity: Logging verbosity, defaults to 20
     """
     logger.setLevel(verbosity)
-    logger.info(f"Fauxmo version {__version__}")
+    logger.info(f"Fauxmo {__version__}")
     logger.debug(sys.version)
 
     if config_path_str:
