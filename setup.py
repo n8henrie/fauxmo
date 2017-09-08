@@ -46,5 +46,6 @@ setup(
     },
     test_suite="tests",
     tests_require=test_requirements,
-    entry_points={'console_scripts': ['fauxmo=fauxmo.cli:cli']}
+    entry_points={'console_scripts': ['fauxmo=fauxmo.cli:cli']},
+    python_requires=">=3.6",
 )
