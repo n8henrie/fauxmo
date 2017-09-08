@@ -48,6 +48,9 @@ as if it were a separate WeMo device.
 Installation into a venv is *highly recommended*, especially since it's baked
 into the recent Python versions that Fauxmo requires.
 
+Additionally, please ensure you're using a recent version of pip (>= 9.0.1)
+prior to installation: `pip install --upgrade pip`
+
 ### Simple install: From PyPI
 
 1. `python3 -m venv venv`
