@@ -3,6 +3,13 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.3 :: 20170914
+
+- Add `--version` to cli
+- Add `python_requires` specifier to `setup.py`
+- Bind to specific address in `make_udp_sock` (`fauxmo.utils`), seems to fix
+  some intermittent failing tests on MacOS.
+
 ## v0.4.2 :: 20170601
 
 - Add additional linters to tests
