@@ -13,9 +13,6 @@ from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     """Test device search request to UPnP / SSDP server."""
-    with open("tests/test_config.json") as conf_file:
-        config = json.load(conf_file)
-
     msg = b'"ssdp:discover"' + b'urn:Belkin:device:**'
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -27,7 +24,7 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
 
     sock.settimeout(2)
 
-    addr = (config['FAUXMO']['ip_address'], 1900)
+    addr = ("239.255.255.250", 1900)
     sock.sendto(msg, addr)
     data = sock.recv(4096)
 
