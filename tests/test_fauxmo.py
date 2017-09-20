@@ -68,5 +68,6 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
         config = json.load(conf_file)
 
     for device in config["PLUGINS"]["SimpleHTTPPlugin"]["DEVICES"]:
-        assert SimpleHTTPPlugin(**device).on() is True
-        assert SimpleHTTPPlugin(**device).off() is True
+        plugin = SimpleHTTPPlugin(**device)
+        assert plugin.on() is True
+        assert plugin.off() is True

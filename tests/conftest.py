@@ -34,7 +34,11 @@ def fauxmo_server() -> Iterator:
 def simplehttpplugin_target() -> Iterator:
     """Simulate the endpoints triggered by RESTAPIPlugin."""
     fauxmo_device = Process(target=httpbin.core.app.run,
-                            kwargs={"host": "127.0.0.1", "port": 8000},
+                            kwargs={
+                                "host": "127.0.0.1",
+                                "port": 8000,
+                                "threaded": True,
+                                },
                             daemon=True)
 
     fauxmo_device.start()
@@ -44,5 +48,6 @@ def simplehttpplugin_target() -> Iterator:
 
     # Time to finish a request in process
     sleep(1)
+
     fauxmo_device.terminate()
     fauxmo_device.join()
