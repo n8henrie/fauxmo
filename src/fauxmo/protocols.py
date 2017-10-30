@@ -94,16 +94,31 @@ class Fauxmo(asyncio.Protocol):
 
         """
         success = False
-        if '<BinaryState>0</BinaryState>' in msg:
-            logger.debug(f"Attempting to turn off {self.plugin}")
-            success = self.plugin.off()
 
-        elif '<BinaryState>1</BinaryState>' in msg:
-            logger.debug(f"Attempting to turn on {self.plugin}")
-            success = self.plugin.on()
+        command_format = ('SOAPACTION: '
+                          '"urn:Belkin:service:basicevent:1#{}BinaryState"'
+                          .format)
 
-        else:
-            logger.debug(f"Unrecognized request:\n{msg}")
+        if command_format("Get") in msg:
+            logger.debug(f"Attempting to get state for {self.plugin}")
+
+            try:
+                success = self.plugin.get_state()
+            except AttributeError:
+                logger.warning(f"Plugin {self.plugin.__module__} has not "
+                                "implemented a `get_state` method.")
+
+        elif command_format("Set") in msg:
+            if '<BinaryState>0</BinaryState>' in msg:
+                logger.debug(f"Attempting to turn off {self.plugin}")
+                success = self.plugin.off()
+
+            elif '<BinaryState>1</BinaryState>' in msg:
+                logger.debug(f"Attempting to turn on {self.plugin}")
+                success = self.plugin.on()
+
+            else:
+                logger.debug(f"Unrecognized request:\n{msg}")
 
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
