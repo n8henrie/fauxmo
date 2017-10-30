@@ -267,3 +267,26 @@ post](https://www.reddit.com/r/amazonecho/comments/4gaf05/discovery_a_lot_more_s
 has a good number more that work. NB: the `Dim` commands in the post don't seem
 to work (likely incompatible with Wemo devices, so the Echo doesn't even try to
 send them).
+
+As of sometime around 20171030, it will also now send a `GetBinaryState`
+action when viewing a device, which [can be
+problematic](https://github.com/n8henrie/fauxmo/issues/31) for earlier versions
+of Fauxmo (prior to v0.4.5).
+
+```
+POST /upnp/control/basicevent1 HTTP/1.1
+Host: 192.168.27.31:12345
+Accept: */*
+Content-type: text/xml; charset="utf-8"
+SOAPACTION: "urn:Belkin:service:basicevent:1#GetBinaryState"
+Content-Length: 299
+
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body>
+<u:GetBinaryState xmlns:u="urn:Belkin:service:basicevent:1">
+<BinaryState>1</BinaryState>
+</u:GetBinaryState>
+</s:Body>
+</s:Envelope>
+```
