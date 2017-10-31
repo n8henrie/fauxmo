@@ -44,7 +44,8 @@ def test_setup(fauxmo_server: pytest.fixture) -> None:
 def test_turnon(fauxmo_server: pytest.fixture,
                 simplehttpplugin_target: pytest.fixture) -> None:
     """Test TCP server's "on" action for SimpleHTTPPlugin."""
-    data = '<BinaryState>1</BinaryState>'
+    data = ('SOAPACTION: "urn:Belkin:service:basicevent:1#SetBinaryState"'
+            '<BinaryState>1</BinaryState>')
 
     resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
                          data=data)
