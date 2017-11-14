@@ -3,6 +3,10 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.5 :: 20171114
+
+- Support new GetBinaryState command (fixes n8henrie/fauxmo#31)
+
 ## v0.4.3 :: 20170914
 
 - Add `--version` to cli

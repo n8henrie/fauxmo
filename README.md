@@ -152,6 +152,11 @@ that provides a nice web interface for toggling switches, whose endpoints could
 be added as the `on_cmd` and `off_cmd` args to a `SimpleHTTPPlugin` instance
 to allow activation by way of Alexa -> Fauxmo.
 
+As of Fauxmo v0.4.5, `SimpleHTTPPlugin` also supports (and Fauxmo requires) a
+`get_state` method, which tells Alexa a device's state. If you don't have a way
+to determine devices state, just have your `get_state` method return
+`"unknown"`.
+
 Please see details regarding `SimpleHTTPPlugin` configuration in the class's
 docstring, which I intend to continue as a convention for Fauxmo plugins.
 Users hoping to make more complicated requests may be interested in looking at
@@ -269,9 +274,13 @@ of the kwargs that `SimpleHTTPPlugin` accepts.
 - `port`: Port the Fauxmo device will run on
 - `on_cmd`: str -- URL that should be requested to turn device on.
 - `off_cmd`: str -- URL that should be requested to turn device off.
-- `method`: Optional[str]  = GET -- GET, POST, PUT, etc.
+- `state_cmd`: str -- URL that should be requested to query device state
+- `method` / `state_method`: Optional[str] = GET -- GET, POST, PUT, etc.
 - `headers`: Optional[dict]  -- Extra headers
-- `on_data` / `off_data`: Optional[dict] -- POST data
+- `on_data` / `off_data` / `state_data`: Optional[dict] -- POST data
+- `state_response_on` / `state_response_off`: str -- If this string is in
+  contained in the response from `state_cmd`, then the devices is `on` or
+  `off`, respectively
 - `user` / `password`: Optional[str] -- Enables HTTP authentication (basic or
   digest only)
 
