@@ -58,11 +58,8 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             jar = CookieJar()
             cookie_handler = urllib.request.HTTPCookieProcessor(jar)
 
-            # Will get a mypy error here until
-            # https://github.com/python/typeshed/pull/1082 gets synced into
-            # mypy and a new mypy release comes out
-            basic_handler = urllib.request.HTTPBasicAuthHandler(manager)  # type: ignore # noqa
-            digest_handler = urllib.request.HTTPDigestAuthHandler(manager)  # type: ignore # noqa
+            basic_handler = urllib.request.HTTPBasicAuthHandler(manager)
+            digest_handler = urllib.request.HTTPDigestAuthHandler(manager)
 
             opener = urllib.request.build_opener(basic_handler, digest_handler,
                                                  cookie_handler)

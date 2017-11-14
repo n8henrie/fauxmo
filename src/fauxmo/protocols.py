@@ -3,7 +3,7 @@
 import asyncio
 import uuid
 from email.utils import formatdate
-from typing import AnyStr, cast, Iterable
+from typing import AnyStr, cast, Iterable, Tuple
 
 from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
@@ -26,7 +26,7 @@ class Fauxmo(asyncio.Protocol):
         self.name = name
         self.serial = make_serial(name)
         self.plugin = plugin
-        self.transport = None  # type: asyncio.Transport
+        self.transport: asyncio.Transport = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """Accept an incoming TCP connection.
@@ -150,7 +150,6 @@ class SSDPServer(asyncio.DatagramProtocol):
                      search request is received.
         """
         self.devices = list(devices or ())
-        self.transport = None  # type: asyncio.DatagramTransport
 
     def add_device(self, name: str, ip_address: str, port: int) -> None:
         """Keep track of a list of devices for logging and shutdown.
@@ -175,7 +174,10 @@ class SSDPServer(asyncio.DatagramProtocol):
         """
         self.transport = cast(asyncio.DatagramTransport, transport)
 
-    def datagram_received(self, data: AnyStr, addr: str) -> None:
+    # Hopefully should be fixed if PR merged:
+    # https://github.com/python/typeshed/pull/1740
+    def datagram_received(self, data: AnyStr,  # type: ignore
+                          addr: Tuple[str, int]) -> None:
         """Check incoming UDP data for requests for Wemo devices.
 
         Args:
@@ -189,7 +191,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                                    b'urn:Belkin:device:**']):
             self.respond_to_search(addr)
 
-    def respond_to_search(self, addr: str) -> None:
+    def respond_to_search(self, addr: Tuple[str, int]) -> None:
         """Build and send an appropriate response to an SSDP search request.
 
         Args:
