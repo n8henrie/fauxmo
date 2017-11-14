@@ -6,7 +6,6 @@ from typing import Iterator
 
 import httpbin
 import pytest
-
 from fauxmo import fauxmo
 
 
