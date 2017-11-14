@@ -290,3 +290,27 @@ Content-Length: 299
 </s:Body>
 </s:Envelope>
 ```
+
+I think I have a good idea what the Fauxmo response should look like, thanks to
+help from:
+
+- [u/romanpet](https://www.reddit.com/r/homeautomation/comments/79wrl7/can_anybody_with_an_echo_a_wemo_and_wireshark/dp6akcc/)
+- https://github.com/go-home-iot/belkin/blob/7b62ec854e9510f4857bb9eceeb8fef3d8b55fb4/device.go
+
+
+```
+POST /upnp/control/basicevent1 HTTP/1.1
+Host: 192.168.27.31:12345
+Accept: */*
+Content-type: text/xml; charset="utf-8"
+SOAPACTION: "urn:Belkin:service:basicevent:1#GetBinaryState"
+Content-Length: 299
+
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<s:Body>
+<u:GetBinaryStateResponse xmlns:u="urn:Belkin:service:basicevent:1">
+<BinaryState>0</BinaryState>
+</u:GetBinaryStateResponse>
+</s:Body>
+</s:Envelope>
+```
