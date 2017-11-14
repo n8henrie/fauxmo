@@ -10,7 +10,14 @@
                     "on_cmd": "http://127.0.0.1:8000/get?switch=on",
                     "off_cmd": "http://127.0.0.1:8000/get?switch=off",
                     "method": "GET",
-                    "name": "fake switch one"
+                    "name": "fake switch one",
+                    "state_cmd": "http://127.0.0.1:8000/anything",
+                    "state_method": "POST",
+                    "state_data": {
+                        "get_switch_state": "please"
+                    },
+                    "state_response_on": "please",
+                    "state_response_off": "thank you"
                 },
                 {
                     "port": 12346,

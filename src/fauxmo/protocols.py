@@ -87,13 +87,14 @@ class Fauxmo(asyncio.Protocol):
         self.transport.close()
 
     def handle_action(self, msg: str) -> None:
-        """Execute `on` or `off` method of `plugin`.
+        """Execute `on`, `off`, or `get_state` method of plugin.
 
         Args:
             msg: Body of the Echo's HTTP request to trigger an action
 
         """
         success = False
+        soap_message = ''
 
         command_format = ('SOAPACTION: '
                           '"urn:Belkin:service:basicevent:1#{}BinaryState"'
@@ -103,10 +104,26 @@ class Fauxmo(asyncio.Protocol):
             logger.debug(f"Attempting to get state for {self.plugin}")
 
             try:
-                success = self.plugin.get_state()
+                state = self.plugin.get_state()
             except AttributeError:
                 logger.warning(f"Plugin {self.plugin.__module__} has not "
-                                "implemented a `get_state` method.")
+                               "implemented a `get_state` method.")
+            else:
+                success = True
+                state_int = int(state.lower() == "on")
+                soap_message = (
+                        '<s:Envelope '
+                        'xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" '
+                        's:encodingStyle='
+                        '"http://schemas.xmlsoap.org/soap/encoding/">'
+                        '<s:Body>'
+                        '<u:GetBinaryStateResponse '
+                        'xmlns:u="urn:Belkin:service:basicevent:1">'
+                        f'<BinaryState>{state_int}</BinaryState>'
+                        '</u:GetBinaryStateResponse>'
+                        '</s:Body>'
+                        '</s:Envelope>'
+                        )
 
         elif command_format("Set") in msg:
             if '<BinaryState>0</BinaryState>' in msg:
@@ -130,7 +147,10 @@ class Fauxmo(asyncio.Protocol):
                 'EXT:',
                 'SERVER: Unspecified, UPnP/1.0, Unspecified',
                 'X-User-Agent: Fauxmo',
-                'CONNECTION: close']) + 2 * '\r\n'
+                'CONNECTION: close'
+                '\r\n'
+                f'{soap_message}'
+                ])
             logger.debug(response)
             self.transport.write(response.encode())
         else:

@@ -56,3 +56,12 @@ class FauxmoPlugin(abc.ABC):
     def off(self) -> bool:
         """Run function when Alexa turns this Fauxmo device off."""
         pass
+
+    @abc.abstractmethod
+    def get_state(self) -> str:
+        """Run function when Alexa requests device state.
+
+        Should return "on" or "off" if it can be determined, or "unknown" if
+        there is no mechanism for determining the device state.
+        """
+        pass
