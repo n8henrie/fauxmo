@@ -32,3 +32,4 @@ docs/_build
 docs/md/
 .cache/
 .eggs/
+.mypy_cache
