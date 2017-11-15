@@ -58,21 +58,22 @@ class Fauxmo(asyncio.Protocol):
         """Create a response to the Echo's setup request."""
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
 
-        setup_xml = '\r\n'.join([
-            '<?xml version="1.0"?>',
-            '<root>',
-            '<device>',
-            '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>',
-            f'<friendlyName>{self.name}</friendlyName>',
-            '<manufacturer>Belkin International Inc.</manufacturer>',
-            '<modelName>Emulated Socket</modelName>',
-            '<modelNumber>3.1415</modelNumber>',
-            f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>',
-            '</device>',
-            '</root>']) + 2 * '\r\n'
-
         # Made as a separate string because it requires `len(setup_xml)`
-        setup_response = '\r\n'.join([
+        setup_xml = (
+            '<?xml version="1.0"?>'
+            '<root>'
+            '<device>'
+            '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>'
+            f'<friendlyName>{self.name}</friendlyName>'
+            '<manufacturer>Belkin International Inc.</manufacturer>'
+            '<modelName>Emulated Socket</modelName>'
+            '<modelNumber>3.1415</modelNumber>'
+            f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>'
+            '</device>'
+            '</root>'
+            )
+
+        setup_response = '\n'.join([
             'HTTP/1.1 200 OK',
             f'CONTENT-LENGTH: {len(setup_xml)}',
             'CONTENT-TYPE: text/xml',
@@ -80,7 +81,9 @@ class Fauxmo(asyncio.Protocol):
             'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
             'SERVER: Unspecified, UPnP/1.0, Unspecified',
             'X-User-Agent: Fauxmo',
-            'CONNECTION: close']) + 2 * '\r\n' + setup_xml
+            'CONNECTION: close\n',
+            f"{setup_xml}"
+            ])
 
         logger.debug(f"Fauxmo response to setup request:\n{setup_response}")
         self.transport.write(setup_response.encode())
@@ -96,14 +99,31 @@ class Fauxmo(asyncio.Protocol):
         logger.debug(f"Handling action for plugin type {self.plugin}")
 
         success = False
-        soap_message = ''
+        soap_format = (
+                '<s:Envelope '
+                'xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" '
+                's:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">'
+                '<s:Body>'
+                '<u:{action}BinaryStateResponse '
+                'xmlns:u="urn:Belkin:service:basicevent:1">'
+                '<BinaryState>{state_int}</BinaryState>'
+                '</u:{action}BinaryStateResponse>'
+                '</s:Body>'
+                '</s:Envelope>'
+                ).format
 
-        command_format = ('SOAPACTION: '
-                          '"urn:Belkin:service:basicevent:1#{}BinaryState"'
-                          .format)
+        command_format = (
+                'SOAPACTION: "urn:Belkin:service:basicevent:1#{}BinaryState"'
+                ).format
+
+        soap_message: str = None
+        action: str = None
+        state_int: int = None
 
         if command_format("Get") in msg:
             logger.info(f"Attempting to get state for {self.plugin.name}")
+
+            action = "Get"
 
             try:
                 state = self.plugin.get_state()
@@ -115,27 +135,18 @@ class Fauxmo(asyncio.Protocol):
 
                 success = True
                 state_int = int(state.lower() == "on")
-                soap_message = (
-                        '<s:Envelope '
-                        'xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" '
-                        's:encodingStyle='
-                        '"http://schemas.xmlsoap.org/soap/encoding/">'
-                        '<s:Body>'
-                        '<u:GetBinaryStateResponse '
-                        'xmlns:u="urn:Belkin:service:basicevent:1">'
-                        f'<BinaryState>{state_int}</BinaryState>'
-                        '</u:GetBinaryStateResponse>'
-                        '</s:Body>'
-                        '</s:Envelope>'
-                        )
 
         elif command_format("Set") in msg:
+            action = "Set"
+
             if '<BinaryState>0</BinaryState>' in msg:
                 logger.info(f"Attempting to turn off {self.plugin.name}")
+                state_int = 0
                 success = self.plugin.off()
 
             elif '<BinaryState>1</BinaryState>' in msg:
                 logger.info(f"Attempting to turn on {self.plugin.name}")
+                state_int = 1
                 success = self.plugin.on()
 
             else:
@@ -143,18 +154,18 @@ class Fauxmo(asyncio.Protocol):
 
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-            response = '\r\n'.join([
+            soap_message = soap_format(action=action, state_int=state_int)
+            response = '\n'.join([
                 'HTTP/1.1 200 OK',
-                'CONTENT-LENGTH: 0',
+                f'CONTENT-LENGTH: {len(soap_message)}',
                 'CONTENT-TYPE: text/xml charset="utf-8"',
                 f'DATE: {date_str}',
                 'EXT:',
                 'SERVER: Unspecified, UPnP/1.0, Unspecified',
                 'X-User-Agent: Fauxmo',
-                'CONNECTION: close'
-                '\r\n'
-                f'{soap_message}'
-                ]) + 2 * '\r\n'
+                'CONNECTION: close\n',
+                f'{soap_message}',
+                ])
             logger.debug(response)
             self.transport.write(response.encode())
         else:
@@ -231,7 +242,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
             location = f'http://{ip_address}:{port}/setup.xml'
             serial = make_serial(name)
-            response = '\r\n'.join([
+            response = '\n'.join([
                 'HTTP/1.1 200 OK',
                 'CACHE-CONTROL: max-age=86400',
                 f'DATE: {date_str}',
@@ -241,8 +252,8 @@ class SSDPServer(asyncio.DatagramProtocol):
                 f'01-NLS: {uuid.uuid4()}',
                 'SERVER: Unspecified, UPnP/1.0, Unspecified',
                 'ST: urn:Belkin:device:**',
-                f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**'
-                ]) + 2 * '\r\n'
+                f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**',
+                ]) + '\n\n'
 
             logger.debug(f"Sending response to {addr}:\n{response}")
             self.transport.sendto(response.encode(), addr)
