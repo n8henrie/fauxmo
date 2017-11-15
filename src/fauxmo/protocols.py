@@ -48,7 +48,7 @@ class Fauxmo(asyncio.Protocol):
 
         logger.debug(f"Received message:\n{msg}")
         if msg.startswith('GET /setup.xml HTTP/1.1'):
-            logger.debug("setup.xml requested by Echo")
+            logger.info("setup.xml requested by Echo")
             self.handle_setup()
 
         elif msg.startswith('POST /upnp/control/basicevent1 HTTP/1.1'):
@@ -93,6 +93,8 @@ class Fauxmo(asyncio.Protocol):
             msg: Body of the Echo's HTTP request to trigger an action
 
         """
+        logger.debug(f"Handling action for plugin type {self.plugin}")
+
         success = False
         soap_message = ''
 
@@ -101,7 +103,7 @@ class Fauxmo(asyncio.Protocol):
                           .format)
 
         if command_format("Get") in msg:
-            logger.debug(f"Attempting to get state for {self.plugin}")
+            logger.info(f"Attempting to get state for {self.plugin.name}")
 
             try:
                 state = self.plugin.get_state()
@@ -109,6 +111,8 @@ class Fauxmo(asyncio.Protocol):
                 logger.warning(f"Plugin {self.plugin.__module__} has not "
                                "implemented a `get_state` method.")
             else:
+                logger.info(f"{self.plugin.name} state: {state}")
+
                 success = True
                 state_int = int(state.lower() == "on")
                 soap_message = (
@@ -127,15 +131,15 @@ class Fauxmo(asyncio.Protocol):
 
         elif command_format("Set") in msg:
             if '<BinaryState>0</BinaryState>' in msg:
-                logger.debug(f"Attempting to turn off {self.plugin}")
+                logger.info(f"Attempting to turn off {self.plugin.name}")
                 success = self.plugin.off()
 
             elif '<BinaryState>1</BinaryState>' in msg:
-                logger.debug(f"Attempting to turn on {self.plugin}")
+                logger.info(f"Attempting to turn on {self.plugin.name}")
                 success = self.plugin.on()
 
             else:
-                logger.debug(f"Unrecognized request:\n{msg}")
+                logger.warning(f"Unrecognized request:\n{msg}")
 
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -150,11 +154,12 @@ class Fauxmo(asyncio.Protocol):
                 'CONNECTION: close'
                 '\r\n'
                 f'{soap_message}'
-                ])
+                ]) + 2 * '\r\n'
             logger.debug(response)
             self.transport.write(response.encode())
         else:
-            errmsg = f"Unable to complete command in {self.plugin}:\n{msg}"
+            errmsg = (f"Unable to complete command for {self.plugin.name}:\n"
+                      f"{msg}")
             logger.warning(errmsg)
         self.transport.close()
 
