@@ -296,8 +296,15 @@ without user plugins.
 
 ## Troubleshooting / FAQ
 
+Your first step in troubleshooting should probably be to "forget all devices"
+(which as been removed from the iOS app but is still available at
+[alexa.amazon.com](https://alexa.amazon.com)), re-discover devices, and make
+sure to refresh your device list (e.g. pull down on the "devices" tab in the
+iOS app, or just close out the app completely and re-open).
+
 - How can I increase my logging verbosity?
     - `-v[vv]`
+    - `-vv` (`logging.INFO`) is a good place to start when debugging
 - How can I ensure my config is valid JSON?
     - `python -m json.tool < config.json`
     - Use `jsonlint` or one of numerous online tools
@@ -311,6 +318,8 @@ without user plugins.
   Fauxmo?
     - Check out
       [`protocol_notes.md`](https://github.com/n8henrie/fauxmo/blob/master/protocol_notes.md)
+- Does Fauxmo work with non-Echo emulators like Alexa AVS or Echoism.io?
+    - [Apparently not.](https://github.com/n8henrie/fauxmo/issues/22)
 
 ### Installing Python 3.6 with [pyenv](https://github.com/pyenv/pyenv)
 
