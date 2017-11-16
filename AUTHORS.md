@@ -2,8 +2,8 @@
 
 ## Development Lead
 
-- Maker Musings <https://github.com/makermusings>
+- Nathan Henrie <nate@n8henrie.com>
 
 ## Contributors
 
-- Modifications by Nathan Henrie <nate@n8henrie.com>
+- Originally based on work by [Maker Musings](https://github.com/makermusings)
