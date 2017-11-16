@@ -1,7 +1,7 @@
 # Fauxmo README
 
-master: [![Build Status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=master)](https://travis-ci.org/n8henrie/fauxmo/branches)
-dev: [![Build Status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=dev)](https://travis-ci.org/n8henrie/fauxmo/branches)
+master: [![master branch build status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=master)](https://travis-ci.org/n8henrie/fauxmo/branches)
+dev: [![dev branch build status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=dev)](https://travis-ci.org/n8henrie/fauxmo/branches)
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
