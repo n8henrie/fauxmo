@@ -12,7 +12,9 @@ Contents:
     :glob:
     :maxdepth: 1
 
-    fauxmo
+    Readme <md/README>
+    Modules overview <modules>
+    *
     md/* 
 
 Indices and tables
