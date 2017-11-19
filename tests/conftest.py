@@ -1,5 +1,7 @@
 """conftest.py :: Setup fixtures for pytest."""
 
+import json
+import socket
 from multiprocessing import Process
 from time import sleep
 from typing import Iterator
@@ -17,11 +19,28 @@ def fauxmo_server() -> Iterator:
                      kwargs={'config_path_str': config_path_str},
                      daemon=True)
 
-    sleep(2)
-
     server.start()
 
-    sleep(2)
+    # Make sure the server is up and running before proceeding with more tests
+    with open("tests/test_config.json") as f:
+        config = json.load(f)
+    ip_address = config["FAUXMO"]["ip_address"]
+
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.connect((ip_address, 1900))
+
+        for retry in range(10):
+            try:
+                sock.sendall(b'"ssdp:discover" urn:Belkin:device:**')
+                sock.settimeout(0.1)
+                data = sock.recv(4096)
+            except ConnectionError:
+                print(f"Failed to set up fauxmo_server on try {retry}")
+                sleep(0.1)
+            else:
+                if b'Fauxmo' not in data:
+                    continue
+                break
 
     yield
 
@@ -29,24 +48,39 @@ def fauxmo_server() -> Iterator:
     server.join()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def simplehttpplugin_target() -> Iterator:
     """Simulate the endpoints triggered by RESTAPIPlugin."""
+    httpbin_address = ("127.0.0.1", 8000)
     fauxmo_device = Process(target=httpbin.core.app.run,
                             kwargs={
-                                "host": "127.0.0.1",
-                                "port": 8000,
+                                "host": httpbin_address[0],
+                                "port": httpbin_address[1],
                                 "threaded": True,
                                 },
                             daemon=True)
 
     fauxmo_device.start()
-    sleep(1)
+
+    for retry in range(10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            errno = sock.connect_ex(httpbin_address)
+
+            # Returns 0 if connect was successful
+            if errno:
+                print(f"Failed to set up simplehttpplugin on try {retry}")
+                print(f"errno: {errno}")
+                sleep(0.1)
+                continue
+
+            sock.sendall(b"GET / HTTP/1.0\r\n")
+            sock.shutdown(socket.SHUT_WR)
+            data = sock.recv(15)
+            if data != 'HTTP/1.0 200 OK':
+                continue
+            break
 
     yield
-
-    # Time to finish a request in process
-    sleep(1)
 
     fauxmo_device.terminate()
     fauxmo_device.join()
