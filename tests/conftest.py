@@ -35,8 +35,8 @@ def fauxmo_server() -> Iterator:
                 sock.settimeout(0.1)
                 data = sock.recv(4096)
             except ConnectionError:
-                print(f"Failed to set up fauxmo_server on try {retry}")
                 sleep(0.1)
+                continue
             else:
                 if b'Fauxmo' not in data:
                     continue
@@ -68,8 +68,6 @@ def simplehttpplugin_target() -> Iterator:
 
             # Returns 0 if connect was successful
             if errno:
-                print(f"Failed to set up simplehttpplugin on try {retry}")
-                print(f"errno: {errno}")
                 sleep(0.1)
                 continue
 
