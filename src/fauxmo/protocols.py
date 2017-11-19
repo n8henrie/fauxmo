@@ -250,7 +250,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                 f'LOCATION: {location}',
                 'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
                 f'01-NLS: {uuid.uuid4()}',
-                'SERVER: Unspecified, UPnP/1.0, Unspecified',
+                'SERVER: Fauxmo, UPnP/1.0, Unspecified',
                 'ST: urn:Belkin:device:**',
                 f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**',
                 ]) + '\n\n'
