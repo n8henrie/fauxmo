@@ -320,6 +320,8 @@ iOS app, or just close out the app completely and re-open).
       [`protocol_notes.md`](https://github.com/n8henrie/fauxmo/blob/master/protocol_notes.md)
 - Does Fauxmo work with non-Echo emulators like Alexa AVS or Echoism.io?
     - [Apparently not.](https://github.com/n8henrie/fauxmo/issues/22)
+- How do I find my Echo firmware version?
+    - https://alexa.amazon.com -> Settings -> [Device Name] -> Device Software Version
 
 ### Installing Python 3.6 with [pyenv](https://github.com/pyenv/pyenv)
 
