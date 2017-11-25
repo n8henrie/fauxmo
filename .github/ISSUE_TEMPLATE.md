@@ -24,6 +24,6 @@ Please make sure you've taken these steps before submitting a new issue:
 - [ ] Run Fauxmo in debug mode (`-vvv`) and include relevant output
 - [ ] Include your Fauxmo `config.json`
 - [ ] Search the existing (including closed) issues
-- [ ] Please used [codeblocks][1] around your debug output and config
+- [ ] Please use [codeblocks][1] around your debug output and config
 
 [1]: https://help.github.com/articles/creating-and-highlighting-code-blocks/
