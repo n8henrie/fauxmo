@@ -1,7 +1,7 @@
 - **Operating system and version**:
 - **Python version**:
 - **Fauxmo version** (`fauxmo --version`):
-- **Echo Firmware Version**: 
+- **[Echo Firmware Version](https://github.com/n8henrie/fauxmo/blob/dev/README.md#troubleshooting--faq)**: 
 
 ## My Issue
 
