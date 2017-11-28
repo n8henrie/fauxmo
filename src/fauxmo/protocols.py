@@ -1,6 +1,7 @@
 """protocols.py :: Provide asyncio protocols for UPnP and SSDP discovery."""
 
 import asyncio
+import random
 import uuid
 from email.utils import formatdate
 from typing import AnyStr, cast, Iterable, Tuple
@@ -257,6 +258,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
             logger.debug(f"Sending response to {addr}:\n{response}")
             self.transport.sendto(response.encode(), addr)
+        random.shuffle(self.devices)
 
     def connection_lost(self, exc: Exception) -> None:
         """Handle lost connections.
