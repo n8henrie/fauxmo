@@ -2,6 +2,7 @@
 
 import json
 import socket
+import time
 from multiprocessing import Process
 from typing import Iterator
 
@@ -34,6 +35,7 @@ def fauxmo_server() -> Iterator:
                 sock.settimeout(0.1)
                 data = sock.recv(4096)
             except (ConnectionError, socket.timeout):
+                time.sleep(0.1)
                 continue
             else:
                 if b'Fauxmo' not in data:
@@ -66,6 +68,7 @@ def simplehttpplugin_target() -> Iterator:
 
             # Returns 0 if connect was successful
             if errno:
+                time.sleep(0.1)
                 continue
 
             sock.sendall(b"GET / HTTP/1.0\r\n")
