@@ -3,7 +3,6 @@
 import json
 import socket
 from multiprocessing import Process
-from time import sleep
 from typing import Iterator
 
 import httpbin
@@ -34,8 +33,7 @@ def fauxmo_server() -> Iterator:
                 sock.sendall(b'"ssdp:discover" urn:Belkin:device:**')
                 sock.settimeout(0.1)
                 data = sock.recv(4096)
-            except ConnectionError:
-                sleep(0.1)
+            except (ConnectionError, socket.timeout):
                 continue
             else:
                 if b'Fauxmo' not in data:
@@ -68,7 +66,6 @@ def simplehttpplugin_target() -> Iterator:
 
             # Returns 0 if connect was successful
             if errno:
-                sleep(0.1)
                 continue
 
             sock.sendall(b"GET / HTTP/1.0\r\n")
