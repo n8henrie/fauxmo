@@ -1,6 +1,7 @@
 - **Operating system and version**:
 - **Python version**:
 - **Fauxmo version** (`fauxmo --version`):
+- **Echo device type** (e.g. Echo, Echo Plus, Dot): 
 - **[Echo Firmware Version](https://github.com/n8henrie/fauxmo/blob/dev/README.md#troubleshooting--faq)**: 
 
 ## My Issue
