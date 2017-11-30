@@ -224,8 +224,14 @@ class SSDPServer(asyncio.DatagramProtocol):
         logger.debug(f"Received data below from {addr}:")
         logger.debug(str(data))
 
-        if all(b in data for b in [b'"ssdp:discover"',
-                                   b'urn:Belkin:device:**']):
+        discover_patterns = [
+                b'ST: urn:Belkin:device:**',
+                b'ST: upnp:rootdevice',
+                b'ST: ssdp:all',
+                ]
+
+        if b'MAN: "ssdp:discover"' in data and \
+                any(pattern in data for pattern in discover_patterns):
             self.respond_to_search(addr)
 
     def respond_to_search(self, addr: Tuple[str, int]) -> None:
