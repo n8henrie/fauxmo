@@ -247,8 +247,9 @@ class SSDPServer(asyncio.DatagramProtocol):
                 b'ST: ssdp:all',
                 ]
 
-        if b'MAN: "ssdp:discover"' in data and \
-                any(pattern in data for pattern in discover_patterns):
+        discover_pattern = next((pattern for pattern in discover_patterns
+                                 if pattern in data), None)
+        if b'MAN: "ssdp:discover"' in data and discover_pattern:
             self.respond_to_search(addr)
 
     def respond_to_search(self, addr: Tuple[str, int]) -> None:
