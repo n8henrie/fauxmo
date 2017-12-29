@@ -277,7 +277,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                 f'01-NLS: {uuid.uuid4()}',
                 'SERVER: Fauxmo, UPnP/1.0, Unspecified',
                 'ST: urn:Belkin:device:**',
-                f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**',
+                f'USN: uuid:Socket-1_0-{serial}::upnp:rootdevice',
                 ]) + '\n\n'
 
             logger.debug(f"Sending response to {addr}:\n{response}")
