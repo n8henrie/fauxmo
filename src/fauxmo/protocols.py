@@ -51,8 +51,14 @@ class Fauxmo(asyncio.Protocol):
         if msg.startswith('GET /setup.xml HTTP/1.1'):
             logger.info("setup.xml requested by Echo")
             self.handle_setup()
-
+        elif '/eventservice.xml' in msg:
+            logger.info("eventservice.xml request by Echo")
+            self.handle_event()
+        elif '/metainfoservice.xml' in msg:
+            logger.info("metainfoservice.xml request by Echo")
+            self.handle_metainfo()
         elif msg.startswith('POST /upnp/control/basicevent1 HTTP/1.1'):
+            logger.info("request BasicEvent1")
             self.handle_action(msg)
 
     def handle_setup(self) -> None:
@@ -190,6 +196,80 @@ class Fauxmo(asyncio.Protocol):
             errmsg = (f"Unable to complete command for {self.plugin.name}:\n"
                       f"{msg}")
             logger.warning(errmsg)
+        self.transport.close()
+
+    def handle_metainfo(self) -> None:
+        metainfo = ('<scpd xmlns="urn:Belkin:service-1-0">'
+                    '<specVersion>'
+                    '<major>1</major>'
+                    '<minor>0</minor>'
+                    '</specVersion>'
+                    '<actionList>'
+                    '<action>'
+                    '<name>GetMetaInfo</name>'
+                    '<argumentList>'
+                    '<retval />'
+                    '<name>GetMetaInfo</name>'
+                    '<relatedStateVariable>MetaInfo</relatedStateVariable>'
+                    '<direction>in</direction>'
+                    '</argumentList>'
+                    '</action>'
+                    '</actionList>'
+                    '<serviceStateTable>'
+                    '<stateVariable sendEvents="yes">'
+                    '<name>MetaInfo</name>'
+                    '<dataType>string</dataType>'
+                    '<defaultValue>0</defaultValue>'
+                    '</stateVariable>'
+                    '</serviceStateTable>'
+                    '</scpd>\r\n\r\n')
+        logger.debug(f"Fauxmo response to setup request:\n{metainfo}")
+        self.transport.write(metainfo.encode())
+        self.transport.close()
+
+    def handle_event(self) -> None:
+        eventservice_xml = ('<scpd xmlns="urn:Belkin:service-1-0">'
+                            '<actionList>'
+                            '<action>'
+                            '<name>SetBinaryState</name>'
+                            '<argumentList>'
+                            '<argument>'
+                            '<retval/>'
+                            '<name>BinaryState</name>'
+                            '<relatedStateVariable>BinaryState</relatedStateVariable>'
+                            '<direction>in</direction>'
+                            '</argument>'
+                            '</argumentList>'
+                            '</action>'
+                            '<action>'
+                            '<name>GetBinaryState</name>'
+                            '<argumentList>'
+                            '<argument>'
+                            '<retval/>'
+                            '<name>BinaryState</name>'
+                            '<relatedStateVariable>BinaryState</relatedStateVariable>'
+                            '<direction>out</direction>'
+                            '</argument>'
+                            '</argumentList>'
+                            '</action>'
+                            '</actionList>'
+                            '<serviceStateTable>'
+                            '<stateVariable sendEvents="yes">'
+                            '<name>BinaryState</name>'
+                            '<dataType>Boolean</dataType>'
+                            '<defaultValue>0</defaultValue>'
+                            '</stateVariable>'
+                            '<stateVariable sendEvents="yes">'
+                            '<name>level</name>'
+                            '<dataType>string</dataType>'
+                            '<defaultValue>0</defaultValue>'
+                            '</stateVariable>'
+                            '</serviceStateTable>'
+                            '</scpd>\r\n\r\n'
+                            )
+
+        logger.debug(f"Fauxmo response to setup request:\n{eventservice_xml}")
+        self.transport.write(eventservice_xml.encode())
         self.transport.close()
 
 
