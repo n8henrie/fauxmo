@@ -366,3 +366,4 @@ fauxmo -c /path/to/config.json -vvv
 - <https://en.wikipedia.org/wiki/Universal_Plug_and_Play>
 - <http://www.makermusings.com/2015/07/19/home-automation-with-amazon-echo-apps-part-1>
 - <http://www.makermusings.com/2015/08/22/home-automation-with-amazon-echo-apps-part-2>
+- <https://www.rilhia.com/tutorials/using-upnp-enabled-devices-talend-belkin-wemo-switch>
