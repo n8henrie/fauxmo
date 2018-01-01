@@ -333,9 +333,10 @@ class SSDPServer(asyncio.DatagramProtocol):
         discover_pattern = next((pattern for pattern in discover_patterns
                                  if pattern in data), None)
         if b'MAN: "ssdp:discover"' in data and discover_pattern:
-            self.respond_to_search(addr)
+            self.respond_to_search(addr, discover_pattern.decode('utf8'))
 
-    def respond_to_search(self, addr: Tuple[str, int]) -> None:
+    def respond_to_search(self, addr: Tuple[str, int],
+                          discover_pattern: str) -> None:
         """Build and send an appropriate response to an SSDP search request.
 
         Args:
@@ -359,7 +360,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                 'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
                 f'01-NLS: {uuid.uuid4()}',
                 'SERVER: Fauxmo, UPnP/1.0, Unspecified',
-                'ST: urn:Belkin:device:**',
+                f'{discover_pattern}',
                 f'USN: uuid:Socket-1_0-{serial}::upnp:rootdevice',
                 ]) + '\n\n'
 
