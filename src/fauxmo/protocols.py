@@ -351,6 +351,9 @@ class SSDPServer(asyncio.DatagramProtocol):
 
             location = f'http://{ip_address}:{port}/setup.xml'
             serial = make_serial(name)
+            usn = (f'uuid:Socket-1_0-{serial}::'
+                   f'{discover_pattern.lstrip("ST: ")}')
+
             response = '\n'.join([
                 'HTTP/1.1 200 OK',
                 'CACHE-CONTROL: max-age=86400',
@@ -361,7 +364,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                 f'01-NLS: {uuid.uuid4()}',
                 'SERVER: Fauxmo, UPnP/1.0, Unspecified',
                 f'{discover_pattern}',
-                f'USN: uuid:Socket-1_0-{serial}::upnp:rootdevice',
+                f'USN: {usn}',
                 ]) + '\n\n'
 
             logger.debug(f"Sending response to {addr}:\n{response}")
