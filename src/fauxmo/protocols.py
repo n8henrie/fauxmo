@@ -51,8 +51,14 @@ class Fauxmo(asyncio.Protocol):
         if msg.startswith('GET /setup.xml HTTP/1.1'):
             logger.info("setup.xml requested by Echo")
             self.handle_setup()
-
+        elif '/eventservice.xml' in msg:
+            logger.info("eventservice.xml request by Echo")
+            self.handle_event()
+        elif '/metainfoservice.xml' in msg:
+            logger.info("metainfoservice.xml request by Echo")
+            self.handle_metainfo()
         elif msg.startswith('POST /upnp/control/basicevent1 HTTP/1.1'):
+            logger.info("request BasicEvent1")
             self.handle_action(msg)
 
     def handle_setup(self) -> None:
@@ -61,17 +67,34 @@ class Fauxmo(asyncio.Protocol):
 
         # Made as a separate string because it requires `len(setup_xml)`
         setup_xml = (
-            '<?xml version="1.0"?>'
-            '<root>'
-            '<device>'
-            '<deviceType>urn:Fauxmo:device:controllee:1</deviceType>'
-            f'<friendlyName>{self.name}</friendlyName>'
-            '<manufacturer>Belkin International Inc.</manufacturer>'
-            '<modelName>Emulated Socket</modelName>'
-            '<modelNumber>3.1415</modelNumber>'
-            f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>'
-            '</device>'
-            '</root>'
+                '<?xml version="1.0"?>'
+                '<root>'
+                '<specVersion><major>1</major><minor>0</minor></specVersion>'
+                '<device>'
+                '<deviceType>urn:Belkin:device:controllee:1</deviceType>'
+                f'<friendlyName>{self.name}</friendlyName>'
+                '<manufacturer>Belkin International Inc.</manufacturer>'
+                '<modelName>Emulated Socket</modelName>'
+                '<modelNumber>3.1415</modelNumber>'
+                f'<UDN>uuid:Socket-1_0-{self.serial}</UDN>'
+                '<serviceList>'
+                '<service>'
+                '<serviceType>urn:Belkin:service:basicevent:1</serviceType>'
+                '<serviceId>urn:Belkin:serviceId:basicevent1</serviceId>'
+                '<controlURL>/upnp/control/basicevent1</controlURL>'
+                '<eventSubURL>/upnp/event/basicevent1</eventSubURL>'
+                '<SCPDURL>/eventservice.xml</SCPDURL>'
+                '</service>'
+                '<service>'
+                '<serviceType>urn:Belkin:service:metainfo:1</serviceType>'
+                '<serviceId>urn:Belkin:serviceId:metainfo1</serviceId>'
+                '<controlURL>/upnp/control/metainfo1</controlURL>'
+                '<eventSubURL>/upnp/event/metainfo1</eventSubURL>'
+                '<SCPDURL>/metainfoservice.xml</SCPDURL>'
+                '</service>'
+                '</serviceList>'
+                '</device>'
+                '</root>'
             )
 
         setup_response = '\n'.join([
@@ -175,6 +198,83 @@ class Fauxmo(asyncio.Protocol):
             logger.warning(errmsg)
         self.transport.close()
 
+    def handle_metainfo(self) -> None:
+        """Respond to request for metadata."""
+        metainfo = ('<scpd xmlns="urn:Belkin:service-1-0">'
+                    '<specVersion>'
+                    '<major>1</major>'
+                    '<minor>0</minor>'
+                    '</specVersion>'
+                    '<actionList>'
+                    '<action>'
+                    '<name>GetMetaInfo</name>'
+                    '<argumentList>'
+                    '<retval />'
+                    '<name>GetMetaInfo</name>'
+                    '<relatedStateVariable>MetaInfo</relatedStateVariable>'
+                    '<direction>in</direction>'
+                    '</argumentList>'
+                    '</action>'
+                    '</actionList>'
+                    '<serviceStateTable>'
+                    '<stateVariable sendEvents="yes">'
+                    '<name>MetaInfo</name>'
+                    '<dataType>string</dataType>'
+                    '<defaultValue>0</defaultValue>'
+                    '</stateVariable>'
+                    '</serviceStateTable>'
+                    '</scpd>\r\n\r\n')
+        logger.debug(f"Fauxmo response to setup request:\n{metainfo}")
+        self.transport.write(metainfo.encode())
+        self.transport.close()
+
+    def handle_event(self) -> None:
+        """Respond to request for eventservice.xml."""
+        eventservice_xml = (
+                '<scpd xmlns="urn:Belkin:service-1-0">'
+                '<actionList>'
+                '<action>'
+                '<name>SetBinaryState</name>'
+                '<argumentList>'
+                '<argument>'
+                '<retval/>'
+                '<name>BinaryState</name>'
+                '<relatedStateVariable>BinaryState</relatedStateVariable>'
+                '<direction>in</direction>'
+                '</argument>'
+                '</argumentList>'
+                '</action>'
+                '<action>'
+                '<name>GetBinaryState</name>'
+                '<argumentList>'
+                '<argument>'
+                '<retval/>'
+                '<name>BinaryState</name>'
+                '<relatedStateVariable>BinaryState</relatedStateVariable>'
+                '<direction>out</direction>'
+                '</argument>'
+                '</argumentList>'
+                '</action>'
+                '</actionList>'
+                '<serviceStateTable>'
+                '<stateVariable sendEvents="yes">'
+                '<name>BinaryState</name>'
+                '<dataType>Boolean</dataType>'
+                '<defaultValue>0</defaultValue>'
+                '</stateVariable>'
+                '<stateVariable sendEvents="yes">'
+                '<name>level</name>'
+                '<dataType>string</dataType>'
+                '<defaultValue>0</defaultValue>'
+                '</stateVariable>'
+                '</serviceStateTable>'
+                '</scpd>\r\n\r\n'
+                )
+
+        logger.debug(f"Fauxmo response to setup request:\n{eventservice_xml}")
+        self.transport.write(eventservice_xml.encode())
+        self.transport.close()
+
 
 class SSDPServer(asyncio.DatagramProtocol):
     """UDP server that responds to the Echo's SSDP / UPnP requests."""
@@ -224,11 +324,19 @@ class SSDPServer(asyncio.DatagramProtocol):
         logger.debug(f"Received data below from {addr}:")
         logger.debug(str(data))
 
-        if all(b in data for b in [b'"ssdp:discover"',
-                                   b'urn:Belkin:device:**']):
-            self.respond_to_search(addr)
+        discover_patterns = [
+                b'ST: urn:Belkin:device:**',
+                b'ST: upnp:rootdevice',
+                b'ST: ssdp:all',
+                ]
 
-    def respond_to_search(self, addr: Tuple[str, int]) -> None:
+        discover_pattern = next((pattern for pattern in discover_patterns
+                                 if pattern in data), None)
+        if b'MAN: "ssdp:discover"' in data and discover_pattern:
+            self.respond_to_search(addr, discover_pattern.decode('utf8'))
+
+    def respond_to_search(self, addr: Tuple[str, int],
+                          discover_pattern: str) -> None:
         """Build and send an appropriate response to an SSDP search request.
 
         Args:
@@ -243,6 +351,9 @@ class SSDPServer(asyncio.DatagramProtocol):
 
             location = f'http://{ip_address}:{port}/setup.xml'
             serial = make_serial(name)
+            usn = (f'uuid:Socket-1_0-{serial}::'
+                   f'{discover_pattern.lstrip("ST: ")}')
+
             response = '\n'.join([
                 'HTTP/1.1 200 OK',
                 'CACHE-CONTROL: max-age=86400',
@@ -252,8 +363,8 @@ class SSDPServer(asyncio.DatagramProtocol):
                 'OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01',
                 f'01-NLS: {uuid.uuid4()}',
                 'SERVER: Fauxmo, UPnP/1.0, Unspecified',
-                'ST: urn:Belkin:device:**',
-                f'USN: uuid:Socket-1_0-{serial}::urn:Belkin:device:**',
+                f'{discover_pattern}',
+                f'USN: {usn}',
                 ]) + '\n\n'
 
             logger.debug(f"Sending response to {addr}:\n{response}")
