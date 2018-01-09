@@ -311,23 +311,30 @@ class SSDPServer(asyncio.DatagramProtocol):
         """
         self.transport = cast(asyncio.DatagramTransport, transport)
 
-    # Hopefully should be fixed if PR merged:
-    # https://github.com/python/typeshed/pull/1740
-    def datagram_received(self, data: AnyStr,  # type: ignore
-                          addr: Tuple[str, int]) -> None:
+    def datagram_received(self, data_: AnyStr, addr: Tuple[str, int]) -> None:
         """Check incoming UDP data for requests for Wemo devices.
 
+        #TODO
+        data_ is a workaround for AnyStr issue with casting (see
+        https://github.com/python/typeshed/issues/439). If
+        https://github.com/python/typeshed/pull/1819 is merged, fix this.
+
         Args:
-            data: Incoming data content
+            data_: Incoming data content
             addr: Address sending data
         """
+        if isinstance(data_, bytes):
+            data = data_.decode('utf8')
+        else:
+            data = data_
+
         logger.debug(f"Received data below from {addr}:")
-        logger.debug(str(data))
+        logger.debug(data)
 
         discover_patterns = [
-                b'ST: urn:Belkin:device:**',
-                b'ST: upnp:rootdevice',
-                b'ST: ssdp:all',
+                'ST: urn:Belkin:device:**',
+                'ST: upnp:rootdevice',
+                'ST: ssdp:all',
                 ]
 
         discover_pattern = next((pattern for pattern in discover_patterns
