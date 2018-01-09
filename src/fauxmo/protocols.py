@@ -339,11 +339,19 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         discover_pattern = next((pattern for pattern in discover_patterns
                                  if pattern in data), None)
-        if b'MAN: "ssdp:discover"' in data and discover_pattern:
-            self.respond_to_search(addr, discover_pattern.decode('utf8'))
+        if 'MAN: "ssdp:discover"' in data and discover_pattern:
+            mx = 0.
+            mx_line = next((line for line in str(data).splitlines()
+                            if line.startswith("MX: ")), None)
+            if mx_line:
+                mx_str = mx_line.split()[-1]
+                if mx_str.replace('.', '', 1).isnumeric():
+                    mx = float(mx_str)
+
+            self.respond_to_search(addr, discover_pattern, mx)
 
     def respond_to_search(self, addr: Tuple[str, int],
-                          discover_pattern: str) -> None:
+                          discover_pattern: str, mx: float = 0.) -> None:
         """Build and send an appropriate response to an SSDP search request.
 
         Args:
@@ -373,10 +381,17 @@ class SSDPServer(asyncio.DatagramProtocol):
                 f'{discover_pattern}',
                 f'USN: {usn}',
                 ]) + '\n\n'
+            asyncio.ensure_future(
+                    self._send_async_response(response.encode('utf8'), addr,
+                                              mx)
+                    )
 
-            logger.debug(f"Sending response to {addr}:\n{response}")
-            self.transport.sendto(response.encode(), addr)
-        random.shuffle(self.devices)
+    async def _send_async_response(self, response: bytes,
+                                   addr: Tuple[str, int],
+                                   mx: float = 0.) -> None:
+        logger.debug(f"Sending response to {addr} with mx {mx}:\n{response}")
+        asyncio.sleep(random.random() * mx)
+        self.transport.sendto(response, addr)
 
     def connection_lost(self, exc: Exception) -> None:
         """Handle lost connections.
