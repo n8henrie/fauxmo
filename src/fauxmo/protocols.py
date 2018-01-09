@@ -390,7 +390,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                                    addr: Tuple[str, int],
                                    mx: float = 0.) -> None:
         logger.debug(f"Sending response to {addr} with mx {mx}:\n{response}")
-        asyncio.sleep(random.random() * mx)
+        asyncio.sleep(random.random() * max(0, min(5, mx))
         self.transport.sendto(response, addr)
 
     def connection_lost(self, exc: Exception) -> None:
