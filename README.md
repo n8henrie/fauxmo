@@ -354,6 +354,10 @@ fauxmo -c /path/to/config.json -vvv
 "$(pyenv root)"/versions/3.6.1/bin/python3.6 -m fauxmo.cli -c config.json -vvv
 ```
 
+## Buy Me a Coffee
+
+[☕️](https://n8henrie.com/donate)
+
 ## Acknowledgements / Reading List
 
 - Tremendous thanks to @makermusings for [the original version of
