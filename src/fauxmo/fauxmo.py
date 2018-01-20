@@ -34,7 +34,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
         verbosity: Logging verbosity, defaults to 20
     """
     logger.setLevel(verbosity)
-    logger.info(f"Fauxmo {__version__}")
+    logger.info("Fauxmo {}".format(__version__))
     logger.debug(sys.version)
 
     if config_path_str:
@@ -43,7 +43,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
         for config_dir in ('.', "~/.fauxmo", "/etc/fauxmo"):
             config_path = pathlib.Path(config_dir) / 'config.json'
             if config_path.is_file():
-                logger.info(f"Using config: {config_path}")
+                logger.info("Using config: {}".format(config_path))
                 break
 
     try:
@@ -81,7 +81,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
     for plugin in plugins:
 
-        modname = f"{__package__}.plugins.{plugin.lower()}"
+        modname = "{}.plugins.{}".format(__package__, plugin.lower())
         try:
             module = importlib.import_module(modname)
 
@@ -91,16 +91,16 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
         PluginClass = getattr(module, plugin)  # noqa
         if not issubclass(PluginClass, FauxmoPlugin):
-            raise TypeError(f"Plugins must inherit from {repr(FauxmoPlugin)}")
+            raise TypeError("Plugins must inherit from {}".format(repr(FauxmoPlugin)))
 
         # Pass along variables defined at the plugin level that don't change
         # per device
         plugin_vars = {k: v for k, v in config['PLUGINS'][plugin].items()
                        if k not in {"DEVICES", "path"}}
-        logger.debug(f"plugin_vars: {repr(plugin_vars)}")
+        logger.debug("plugin_vars: {}".format(repr(plugin_vars)))
 
         for device in config['PLUGINS'][plugin]['DEVICES']:
-            logger.debug(f"device config: {repr(device)}")
+            logger.debug("device config: {}".format(repr(device)))
 
             # Ensure port is `int`, set it if not given (`None`) or 0
             device["port"] = int(device.get('port', 0)) or find_unused_port()
@@ -108,7 +108,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             try:
                 plugin = PluginClass(**plugin_vars, **device)
             except TypeError:
-                logger.error(f"Error in plugin {repr(PluginClass)}")
+                logger.error("Error in plugin {}".format(repr(PluginClass)))
                 raise
 
             fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
@@ -118,7 +118,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
             ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
 
-            logger.debug(f"Started fauxmo device: {repr(fauxmo.keywords)}")
+            logger.debug("Started fauxmo device: {}".format(repr(fauxmo.keywords)))
 
     logger.info("Starting UDP server")
 
@@ -143,7 +143,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     logger.debug("Shutdown starting...")
     transport.close()
     for idx, server in enumerate(servers):
-        logger.debug(f"Shutting down server {idx}...")
+        logger.debug("Shutting down server {}...".format(idx))
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()
