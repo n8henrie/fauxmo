@@ -90,7 +90,7 @@ contributing to development, clone the repo as per below)
    names in the web interface
 1. Test: "Alexa, turn on [the kitchen light]"
 
-### Set fauxmo to run automatically in the background
+### Set Fauxmo to run automatically in the background
 
 NB: As discussed in [#20](https://github.com/n8henrie/fauxmo/issues/20), the
 example files in `extras/` are *not* included when you install from PyPI\*
@@ -341,7 +341,7 @@ You can then install Fauxmo into Python 3.6 in a few ways, including:
 # Install with pip
 "$(pyenv root)"/versions/3.6.1/bin/python3.6 -m pip install fauxmo
 
-# Show full path to fauxmo console script
+# Show full path to Fauxmo console script
 pyenv which fauxmo
 
 # Run with included console script
