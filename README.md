@@ -328,9 +328,11 @@ iOS app, or just close out the app completely and re-open).
 ```bash
 sudo install -o $(whoami) -g $(whoami) -d /opt/pyenv
 git clone https://github.com/pyenv/pyenv /opt/pyenv
-echo 'export PYENV_ROOT="/opt/pyenv"' >> ~/.bashrc
-echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+cat <<'EOF' >> ~/.bashrc
+export PYENV_ROOT="/opt/pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+EOF
 source ~/.bashrc
 pyenv install 3.6.1
 ```
