@@ -3,6 +3,11 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.6 :: 20180212
+
+- Mostly changes to try to fix compatibility with newer generation Echos / Echo
+  Plus, see #38
+
 ## v0.4.5 :: 20171114
 
 - Support new GetBinaryState command (fixes n8henrie/fauxmo#31)
