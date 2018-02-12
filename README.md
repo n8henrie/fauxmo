@@ -28,6 +28,14 @@ version and willing to upgrade. Otherwise, check out the FAQ section at the
 bottom for tips on installing an older Fauxmo version (though note that I will
 not be continuing development or support for older versions).
 
+For what it's worth, if you're concerned about installing pyenv on a
+low-resource machine like the Raspberry Pi, I encourage you to [review my
+notes](https://n8henrie.com/2018/02/pyenv-size-and-python-36-speed-installation-time-on-raspberry-pi/)
+on the size and time required to install Python 3.6 with pyenv on a Raspberry
+Pi and the nontrivial improvement in speed (with a simple pystone benchmark)
+using an optimized pyenv-installed 3.6 as compared to the default Raspbian
+3.5.3.
+
 ## Terminology
 
 faux (`\ˈfō\`): imitation
