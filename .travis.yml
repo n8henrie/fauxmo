@@ -1,18 +1,22 @@
 language: python
 python:
-  - 3.6
-
+- 3.6
 addons:
   apt:
     packages:
-      - pandoc
-
+    - pandoc
 install: pip install tox
-
-# http://stackoverflow.com/a/42309035
 script:
-  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/')
-  - tox -e lint
-  - tox -e docs
-
+- tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/')
+- tox -e lint
+- tox -e docs
 after_failure: cat .tox/log/tox-*.log
+deploy:
+  provider: pypi
+  user: n8henrie
+  password:
+    secure: iKDzU6k+1MlQNKEnXutvA3eVOxTXdNoDPBlvQRwn72RGSIpNFA+GXWqKDuJ7mso5pX9MvUN1cMnuOARa6Xwy5Wgvu1JLI1plTCoiTrzztwxcb5ecDHd803cuME9OAXR3ZGAvkisP9CFarU/0yorSo0G695kthjaBVykJeAqlujiW9wvDy2DQs829WKJIdHHzs9fJktezljZrqyXXJjsaE67kAJkzdl7dnQknukEp26tPndwp/pR/rDseBfMupwZUG7FFdDwGelM2Z2pqKsiiwDlsTApt4w86Hh5np6bUrdlxHRKvXd5jtT6bsqR48GgA2pHmWkVfdlPEt3bdB9zqRo4oFyVpFtE1fMxhwDC8SqmlGiWifHt6Wb6uxY1E4mv3FDofL6bM3k88QxGG6CBhikdnWh2QFBJhT+nKkOhuYcIkimHaB3zjz+8+SV0rUDL7z/ziNXjNYRPE3Uma9LgFAzEhFuxa3RzF8Qjdu3yrlj1klLLQM1w/i6QRkHGIv92uYxhwcx77PXpP1uUCLKd5OwbDSSCfIJVJ/yA+tvpp9940YyyvpkBMR5Kq+UsrmjB4Cd7brd0CiW59ZpMJT6AVaJ6GDiH8IVo/KePSWe2ZjxIpfAHJYKp12H1YXd+1QxJ1pn5FYMX3OrTD/OkJxCf3uUk+jgvV6kGaIfZZC11CLz4=
+  distributions: sdist bdist_wheel
+  on:
+    branch: master
+    tags: true
