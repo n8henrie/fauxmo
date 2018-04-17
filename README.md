@@ -142,15 +142,14 @@ Fauxmo v0.4.0 implements a new and breaking change in the way Handlers were
 implemented in previous versions, which requires modification of the
 `config.json` file (as described below).
 
-A few plugins and the ABC from which the plugins are required to inherit are
-included and installed by default in the `fauxmo.plugins` package. The
+A few plugins and the ABC from which the plugins are required to inherit may
+be included and installed by default in the `fauxmo.plugins` package. Any
 pre-installed plugins, like the rest of the core Fauxmo code, have no third
 party dependencies.
 
-The pre-installed plugins include
+So far, the pre-installed plugins include:
 
 - `fauxmo.plugins.simplehttpplugin.SimpleHTTPPlugin`
-- `fauxmo.plugins.command_line.CommandLinePlugin`
 
 `SimpleHTTPPlugin` responds to Alexa's `on` and `off` commands by making
 requests to URL endpoints by way of
