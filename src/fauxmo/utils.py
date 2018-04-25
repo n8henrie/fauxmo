@@ -24,11 +24,14 @@ def get_local_ip(ip_address: str = None) -> str:
         logger.debug("Attempting to get IP address automatically")
 
         hostname = socket.gethostname()
-        ip_address = socket.gethostbyname(hostname)
+        try:
+            ip_address = socket.gethostbyname(hostname)
+        except socket.gaierror:
+            ip_address = 'unknown'
 
         # Workaround for Linux returning localhost
         # See: SO question #166506 by @UnkwnTech
-        if ip_address in ['127.0.1.1', '127.0.0.1', 'localhost']:
+        if ip_address in ['127.0.1.1', '127.0.0.1', 'localhost', 'unknown']:
             tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             tempsock.connect(('8.8.8.8', 0))
             ip_address = tempsock.getsockname()[0]
