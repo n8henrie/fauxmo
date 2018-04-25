@@ -128,26 +128,28 @@ class Fauxmo(asyncio.Protocol):
                 'xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" '
                 's:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">'
                 '<s:Body>'
-                '<u:{action}BinaryStateResponse '
+                '<u:{action}{action_type}Response '
                 'xmlns:u="urn:Belkin:service:basicevent:1">'
-                '<BinaryState>{state_int}</BinaryState>'
-                '</u:{action}BinaryStateResponse>'
+                '<{action_type}>{return_val}</{action_type}>'
+                '</u:{action}{action_type}Response>'
                 '</s:Body>'
                 '</s:Envelope>'
                 ).format
 
         command_format = (
-                'SOAPACTION: "urn:Belkin:service:basicevent:1#{}BinaryState"'
+                'SOAPACTION: "urn:Belkin:service:basicevent:1#{}"'
                 ).format
 
         soap_message: str = None
         action: str = None
-        state_int: int = None
+        action_type: str = None
+        return_val: str = None
 
-        if command_format("Get") in msg:
+        if command_format("GetBinaryState").casefold() in msg.casefold():
             logger.info(f"Attempting to get state for {self.plugin.name}")
 
             action = "Get"
+            action_type = "BinaryState"
 
             try:
                 state = self.plugin.get_state()
@@ -158,28 +160,37 @@ class Fauxmo(asyncio.Protocol):
                 logger.info(f"{self.plugin.name} state: {state}")
 
                 success = True
-                state_int = int(state.lower() == "on")
+                return_val = str(int(state.lower() == "on"))
 
-        elif command_format("Set") in msg:
+        elif command_format("SetBinaryState").casefold() in msg.casefold():
             action = "Set"
+            action_type = "BinaryState"
 
             if '<BinaryState>0</BinaryState>' in msg:
                 logger.info(f"Attempting to turn off {self.plugin.name}")
-                state_int = 0
+                return_val = "0"
                 success = self.plugin.off()
 
             elif '<BinaryState>1</BinaryState>' in msg:
                 logger.info(f"Attempting to turn on {self.plugin.name}")
-                state_int = 1
+                return_val = "1"
                 success = self.plugin.on()
 
             else:
                 logger.warning(f"Unrecognized request:\n{msg}")
 
+        elif command_format("GetFriendlyName").casefold() in msg.casefold():
+            action = "Get"
+            action_type = "FriendlyName"
+            return_val = self.plugin.name
+            success = True
+            logger.info(f"{self.plugin.name} returning friendly name")
+
         if success:
             date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-            soap_message = soap_format(action=action, state_int=state_int)
-            response = '\n'.join([
+            soap_message = soap_format(action=action, action_type=action_type,
+                                       return_val=return_val)
+            response = '\r\n'.join([
                 'HTTP/1.1 200 OK',
                 f'CONTENT-LENGTH: {len(soap_message)}',
                 'CONTENT-TYPE: text/xml charset="utf-8"',
@@ -187,7 +198,8 @@ class Fauxmo(asyncio.Protocol):
                 'EXT:',
                 'SERVER: Unspecified, UPnP/1.0, Unspecified',
                 'X-User-Agent: Fauxmo',
-                'CONNECTION: close\n',
+                'CONNECTION: close',
+                '',
                 f'{soap_message}',
                 ])
             logger.debug(response)
