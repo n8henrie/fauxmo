@@ -51,6 +51,33 @@ def test_turnon(fauxmo_server: pytest.fixture,
     assert resp.status_code == 200
 
 
+def test_getbinarystate(fauxmo_server: pytest.fixture,
+                simplehttpplugin_target: pytest.fixture) -> None:
+    """Test TCP server's "GetBinaryState" action for SimpleHTTPPlugin."""
+    data = (b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"')
+
+    resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
+                         data=data)
+    assert resp.status_code == 200
+
+    root = etree.fromstring(resp.text)
+    val = root.find(".//BinaryState").text
+    assert val in ["0", "1"]
+
+
+def test_getfriendlyname(fauxmo_server: pytest.fixture,
+                simplehttpplugin_target: pytest.fixture) -> None:
+    """Test TCP server's "GetFriendlyName" action for SimpleHTTPPlugin."""
+    data = (b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"')
+
+    resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
+                         data=data)
+    assert resp.status_code == 200
+
+    root = etree.fromstring(resp.text)
+    assert root.find(".//FriendlyName").text == 'fake switch one'
+
+
 def test_old_config_fails() -> None:
     """Ensure the config for fauxmo < v0.4.0 fails with SystemExit."""
     with pytest.raises(SystemExit):
