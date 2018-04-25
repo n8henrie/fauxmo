@@ -52,7 +52,7 @@ def test_turnon(fauxmo_server: pytest.fixture,
 
 
 def test_getbinarystate(fauxmo_server: pytest.fixture,
-                simplehttpplugin_target: pytest.fixture) -> None:
+                        simplehttpplugin_target: pytest.fixture) -> None:
     """Test TCP server's "GetBinaryState" action for SimpleHTTPPlugin."""
     data = (b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"')
 
@@ -66,7 +66,7 @@ def test_getbinarystate(fauxmo_server: pytest.fixture,
 
 
 def test_getfriendlyname(fauxmo_server: pytest.fixture,
-                simplehttpplugin_target: pytest.fixture) -> None:
+                         simplehttpplugin_target: pytest.fixture) -> None:
     """Test TCP server's "GetFriendlyName" action for SimpleHTTPPlugin."""
     data = (b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"')
 
