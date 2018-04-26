@@ -21,7 +21,7 @@ flake8==3.5.0
 flask-cache==0.13.1
 flask-common==0.2.0
 flask-limiter==1.0.1
-flask==0.12.2
+flask==1.0
 greenlet==0.4.13
 gunicorn==19.7.1
 httpbin==0.6.2
