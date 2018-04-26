@@ -1,15 +1,9 @@
 import re
 from setuptools import setup, find_packages
 
-try:
-    import pypandoc
-    readme = pypandoc.convert('README.md', 'rst')
-    history = pypandoc.convert('CHANGELOG.md', 'rst')
-except ImportError:
-    with open('README.md') as readme_file, \
-            open('CHANGELOG.md') as history_file:
-        readme = readme_file.read()
-        history = history_file.read()
+with open('README.md') as readme_file, open('CHANGELOG.md') as history_file:
+    readme = readme_file.read()
+    history = history_file.read()
 
 with open('requirements-dev.txt') as dev_requirements_file:
     dev_requirements = dev_requirements_file.read().splitlines()
@@ -25,6 +19,7 @@ setup(
     version=__version__,
     description="Emulated Belkin WeMo devices that work with the Amazon Echo",
     long_description=readme + "\n\n" + history,
+    long_description_content_type='text/markdown',
     author="Nathan Henrie",
     author_email="nate@n8henrie.com",
     url="https://github.com/n8henrie/fauxmo",
