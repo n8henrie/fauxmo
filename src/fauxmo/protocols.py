@@ -4,7 +4,7 @@ import asyncio
 import random
 import uuid
 from email.utils import formatdate
-from typing import AnyStr, cast, Iterable, Tuple
+from typing import cast, Iterable, Text, Tuple, Union
 
 from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
@@ -311,22 +311,16 @@ class SSDPServer(asyncio.DatagramProtocol):
         """
         self.transport = cast(asyncio.DatagramTransport, transport)
 
-    def datagram_received(self, data_: AnyStr, addr: Tuple[str, int]) -> None:
+    def datagram_received(self, data: Union[bytes, Text],
+                          addr: Tuple[str, int]) -> None:
         """Check incoming UDP data for requests for Wemo devices.
 
-        #TODO
-        data_ is a workaround for AnyStr issue with casting (see
-        https://github.com/python/typeshed/issues/439). If
-        https://github.com/python/typeshed/pull/1819 is merged, fix this.
-
         Args:
-            data_: Incoming data content
+            data: Incoming data content
             addr: Address sending data
         """
-        if isinstance(data_, bytes):
-            data = data_.decode('utf8')
-        else:
-            data = data_
+        if isinstance(data, bytes):
+            data = data.decode('utf8')
 
         logger.debug(f"Received data below from {addr}:")
         logger.debug(data)
