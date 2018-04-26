@@ -11,11 +11,8 @@ except ImportError:
         readme = readme_file.read()
         history = history_file.read()
 
-with open('requirements-dev.txt') as dev_requirements_file, \
-        open('requirements-test.txt') as tests_requirements_file:
-    test_requirements = tests_requirements_file.read().splitlines()
+with open('requirements-dev.txt') as dev_requirements_file:
     dev_requirements = dev_requirements_file.read().splitlines()
-    dev_requirements.extend(test_requirements)
 
 version_regex = re.compile(r'__version__ = [\'\"]v((\d+\.?)+)[\'\"]')
 with open('src/fauxmo/__init__.py') as f:
@@ -45,7 +42,7 @@ setup(
         "dev": dev_requirements
     },
     test_suite="tests",
-    tests_require=test_requirements,
+    tests_require=dev_requirements,
     entry_points={'console_scripts': ['fauxmo=fauxmo.cli:cli']},
     python_requires=">=3.6",
 )
