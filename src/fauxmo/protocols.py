@@ -345,7 +345,8 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         discover_pattern = next((pattern for pattern in discover_patterns
                                  if pattern in data), None)
-        if 'MAN: "ssdp:discover"' in data and discover_pattern:
+        if 'man: "ssdp:discover"' in data.lower() and \
+                discover_pattern is not None:
             mx = 0.
             mx_line = next((line for line in str(data).splitlines()
                             if line.startswith("MX: ")), None)
