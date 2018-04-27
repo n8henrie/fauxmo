@@ -17,6 +17,8 @@ class Fauxmo(asyncio.Protocol):
     Aysncio protocol intended for use with BaseEventLoop.create_server.
     """
 
+    NEWLINE = '\r\n'
+
     def __init__(self, name: str, plugin: FauxmoPlugin) -> None:
         """Initialize a Fauxmo device.
 
@@ -97,7 +99,7 @@ class Fauxmo(asyncio.Protocol):
                 '</root>'
             )
 
-        setup_response = '\n'.join([
+        setup_response = (Fauxmo.NEWLINE).join([
             'HTTP/1.1 200 OK',
             f'CONTENT-LENGTH: {len(setup_xml)}',
             'CONTENT-TYPE: text/xml',
@@ -105,7 +107,7 @@ class Fauxmo(asyncio.Protocol):
             'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
             'SERVER: Unspecified, UPnP/1.0, Unspecified',
             'X-User-Agent: Fauxmo',
-            'CONNECTION: close\n',
+            f'CONNECTION: close{Fauxmo.NEWLINE}',
             f"{setup_xml}"
             ])
 
@@ -212,30 +214,32 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_metainfo(self) -> None:
         """Respond to request for metadata."""
-        metainfo = ('<scpd xmlns="urn:Belkin:service-1-0">'
-                    '<specVersion>'
-                    '<major>1</major>'
-                    '<minor>0</minor>'
-                    '</specVersion>'
-                    '<actionList>'
-                    '<action>'
-                    '<name>GetMetaInfo</name>'
-                    '<argumentList>'
-                    '<retval />'
-                    '<name>GetMetaInfo</name>'
-                    '<relatedStateVariable>MetaInfo</relatedStateVariable>'
-                    '<direction>in</direction>'
-                    '</argumentList>'
-                    '</action>'
-                    '</actionList>'
-                    '<serviceStateTable>'
-                    '<stateVariable sendEvents="yes">'
-                    '<name>MetaInfo</name>'
-                    '<dataType>string</dataType>'
-                    '<defaultValue>0</defaultValue>'
-                    '</stateVariable>'
-                    '</serviceStateTable>'
-                    '</scpd>\r\n\r\n')
+        metainfo = (
+                '<scpd xmlns="urn:Belkin:service-1-0">'
+                '<specVersion>'
+                '<major>1</major>'
+                '<minor>0</minor>'
+                '</specVersion>'
+                '<actionList>'
+                '<action>'
+                '<name>GetMetaInfo</name>'
+                '<argumentList>'
+                '<retval />'
+                '<name>GetMetaInfo</name>'
+                '<relatedStateVariable>MetaInfo</relatedStateVariable>'
+                '<direction>in</direction>'
+                '</argumentList>'
+                '</action>'
+                '</actionList>'
+                '<serviceStateTable>'
+                '<stateVariable sendEvents="yes">'
+                '<name>MetaInfo</name>'
+                '<dataType>string</dataType>'
+                '<defaultValue>0</defaultValue>'
+                '</stateVariable>'
+                '</serviceStateTable>'
+                '</scpd>'
+                ) + 2 * Fauxmo.NEWLINE
         logger.debug(f"Fauxmo response to setup request:\n{metainfo}")
         self.transport.write(metainfo.encode())
         self.transport.close()
@@ -280,8 +284,8 @@ class Fauxmo(asyncio.Protocol):
                 '<defaultValue>0</defaultValue>'
                 '</stateVariable>'
                 '</serviceStateTable>'
-                '</scpd>\r\n\r\n'
-                )
+                '</scpd>'
+                ) + 2 * Fauxmo.NEWLINE
 
         logger.debug(f"Fauxmo response to setup request:\n{eventservice_xml}")
         self.transport.write(eventservice_xml.encode())
@@ -376,7 +380,7 @@ class SSDPServer(asyncio.DatagramProtocol):
             usn = (f'uuid:Socket-1_0-{serial}::'
                    f'{discover_pattern.lstrip("ST: ")}')
 
-            response = '\n'.join([
+            response = (Fauxmo.NEWLINE).join([
                 'HTTP/1.1 200 OK',
                 'CACHE-CONTROL: max-age=86400',
                 f'DATE: {date_str}',
@@ -387,7 +391,7 @@ class SSDPServer(asyncio.DatagramProtocol):
                 'SERVER: Fauxmo, UPnP/1.0, Unspecified',
                 f'{discover_pattern}',
                 f'USN: {usn}',
-                ]) + '\n\n'
+                ]) + (2 * Fauxmo.NEWLINE)
             asyncio.ensure_future(
                     self._send_async_response(response.encode('utf8'), addr,
                                               mx)
