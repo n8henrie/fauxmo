@@ -55,6 +55,16 @@
                     "headers": {"x-ha-access": "your_hass_password"},
                     "on_data": {"entity_id": "switch.fake_hass_switch"},
                     "off_data": {"entity_id": "switch.fake_hass_switch"}
+                },
+                {
+                    "name": "test post with string instead of dict",
+                    "port": 12350,
+                    "on_cmd": "http://127.0.0.1:8000/post",
+                    "off_cmd": "http://127.0.0.1:8000/post",
+                    "method": "POST",
+                    "headers": {"x-ha-access": "your_hass_password"},
+                    "on_data": "ONSTRING",
+                    "off_data": "OFFSTRING"
                 }
             ]
         }

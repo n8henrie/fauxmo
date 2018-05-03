@@ -12,6 +12,7 @@ import http
 import urllib.parse
 import urllib.request
 from http.cookiejar import CookieJar
+from typing import Mapping, Union
 
 from fauxmo.plugins import FauxmoPlugin
 
@@ -45,11 +46,11 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             method: str = "GET",
             name: str,
             off_cmd: str,
-            off_data: dict = None,
+            off_data: Union[Mapping, str] = None,
             on_cmd: str,
-            on_data: dict = None,
+            on_data: Union[Mapping, str] = None,
             state_cmd: str = None,
-            state_data: dict = None,
+            state_data: Union[Mapping, str] = None,
             state_method: str = "GET",
             state_response_off: str = None,
             state_response_on: str = None,
@@ -86,9 +87,9 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         self.off_cmd = off_cmd
         self.state_cmd = state_cmd
 
-        self.on_data = on_data
-        self.off_data = off_data
-        self.state_data = state_data
+        self.on_data = self._to_bytes(on_data)
+        self.off_data = self._to_bytes(off_data)
+        self.state_data = self._to_bytes(state_data)
 
         self.state_response_on = state_response_on
         self.state_response_off = state_response_off
@@ -111,7 +112,15 @@ class SimpleHTTPPlugin(FauxmoPlugin):
 
         super().__init__(name=name, port=port)
 
-    def set_state(self, cmd: str, data: dict) -> bool:
+    @staticmethod
+    def _to_bytes(data: Union[Mapping, str]) -> bytes:
+        if isinstance(data, Mapping):
+            data = urllib.parse.urlencode(data)
+        if isinstance(data, str):
+            return data.encode('utf8')
+        return data
+
+    def set_state(self, cmd: str, data: bytes) -> bool:
         """Call HTTP method, for use by `functools.partialmethod`.
 
         Args:
@@ -122,13 +131,9 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             Boolean indicating whether it state was set successfully
 
         """
-        if data:
-            data_bytes = urllib.parse.urlencode(data).encode('utf8')
-        else:
-            data_bytes = None
         req = urllib.request.Request(
                 url=cmd,
-                data=data_bytes,
+                data=data,
                 headers=self.headers,
                 method=self.method
                 )
@@ -166,13 +171,9 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         if self.state_cmd is None:
             return "unknown"
 
-        if self.state_data:
-            data_bytes = urllib.parse.urlencode(self.state_data).encode('utf8')
-        else:
-            data_bytes = None
         req = urllib.request.Request(
                 url=self.state_cmd,
-                data=data_bytes,
+                data=self.state_data,
                 headers=self.headers,
                 method=self.state_method
                 )
