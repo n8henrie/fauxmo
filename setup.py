@@ -6,7 +6,10 @@ with open('README.md') as readme_file, open('CHANGELOG.md') as history_file:
     history = history_file.read()
 
 with open('requirements-dev.txt') as dev_requirements_file:
-    dev_requirements = dev_requirements_file.read().splitlines()
+    dev_requirements = [
+            line for line in dev_requirements_file.read().splitlines()
+            if not line.startswith('-i ')
+            ]
 
 version_regex = re.compile(r'__version__ = [\'\"]v((\d+\.?)+)[\'\"]')
 with open('src/fauxmo/__init__.py') as f:
