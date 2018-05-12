@@ -70,7 +70,6 @@ release: test-all dist
 	twine upload dist/*
 
 dist: clean docs
-	$(PYTHON) setup.py --long-description | rst2html.py --halt=2
 	$(PYTHON) setup.py sdist
 	$(PYTHON) setup.py bdist_wheel
 	ls -l dist
