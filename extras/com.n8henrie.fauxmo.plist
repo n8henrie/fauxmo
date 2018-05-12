@@ -13,7 +13,7 @@
         <string>com.n8henrie.fauxmo</string>
         <key>ProgramArguments</key>
         <array>
-            <string>/ABS/PATH/TO/fauxmo/venv/bin/fauxmo</string>
+            <string>/ABS/PATH/TO/fauxmo/.venv/bin/fauxmo</string>
             <string>-c</string>
             <string>/ABS/PATH/TO/fauxmo/config.json</string>
             <string>-v</string>

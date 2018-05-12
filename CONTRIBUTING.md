@@ -62,8 +62,8 @@ for local development.
     local development:
 
         $ cd fauxmo
-        $ python3 -m venv venv
-        $ source venv/bin/activate
+        $ python3 -m venv .venv
+        $ source ./.venv/bin/activate
         $ pip install -e .
 
 1.  Create a branch for local development:

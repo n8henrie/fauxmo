@@ -61,8 +61,8 @@ prior to installation: `pip install --upgrade pip`
 
 ### Simple install: From PyPI
 
-1. `python3 -m venv venv`
-1. `source venv/bin/activate`
+1. `python3 -m venv .venv`
+1. `source ./.venv/bin/activate`
 1. `python3 -m pip install fauxmo`
 1. Make a `config.json` based on
    [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
@@ -73,16 +73,16 @@ prior to installation: `pip install --upgrade pip`
 This is a good strategy for testing features in development -- for actually
 contributing to development, clone the repo as per below)
 
-1. `python3 -m venv venv`
-1. `source venv/bin/activate`
+1. `python3 -m venv .venv`
+1. `source ./.venv/bin/activate`
 1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git@dev`
 
 ### Install for development from GitHub
 
 1. `git clone https://github.com/n8henrie/fauxmo.git`
 1. `cd fauxmo`
-1. `python3 -m venv venv`
-1. `source venv/bin/activate`
+1. `python3 -m venv .venv`
+1. `source ./.venv/bin/activate`
 1. `pip install -e .[dev]`
 1. `cp config-sample.json config.json`
 1. Edit `config.json`

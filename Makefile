@@ -1,5 +1,6 @@
+VENV_PATH := ./.venv
 SHELL := /bin/bash
-PYTHON = venv/bin/python3
+PYTHON = $(VENV_PATH)/bin/python3
 PWD = $(shell pwd)
 GREP := $(shell command -v ggrep || command -v grep)
 SED := $(shell command -v gsed || command -v sed)
@@ -57,9 +58,9 @@ clean-docs:
 	rm -f docs/modules.rst
 
 docs: clean-docs
-	source venv/bin/activate && sphinx-apidoc -o docs/ src/fauxmo
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	source $(VENV_PATH)/bin/activate && sphinx-apidoc -o docs/ src/fauxmo
+	source $(VENV_PATH)/bin/activate && $(MAKE) -C docs clean
+	source $(VENV_PATH)/bin/activate && $(MAKE) -C docs html
 	-open docs/_build/html/index.html
 
 register: dist
