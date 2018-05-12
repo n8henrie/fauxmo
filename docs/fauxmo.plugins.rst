@@ -1,11 +1,11 @@
-fauxmo\.plugins package
-=======================
+fauxmo.plugins package
+======================
 
 Submodules
 ----------
 
-fauxmo\.plugins\.simplehttpplugin module
-----------------------------------------
+fauxmo.plugins.simplehttpplugin module
+--------------------------------------
 
 .. automodule:: fauxmo.plugins.simplehttpplugin
     :members:
