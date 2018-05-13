@@ -42,7 +42,7 @@ lint:
 	flake8 src/fauxmo tests
 
 test:
-	py.test tests
+	pytest tests
 
 test-all:
 	tox

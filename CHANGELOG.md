@@ -3,6 +3,25 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.7 :: 20180512
+
+- Minor dev-side changes
+    - Use pipenv for dev dependency management
+- Add utf-8 to readme parsing (5 days ago) (thanks
+     [@hestela](https://github.com/n8henrie/fauxmo/commits?author=hestela)!)
+     49d2c57
+- Change newline to `\r\n` in HTTP responses (thanks
+   [@GlennPegden2](https://github.com/GlennPegden2)) 239bc79
+- Match `MAN:` case insensitive (thanks [@wingett](https://github.com/wingett)) 8307096
+- Add GetBinaryState and GetFriendlyName commands including test cases (thanks
+  [@howdypierce](https://github.com/howdypierce)!) 71392de
+- Make comparison of the "SOAPACTION" header case-insensitive, per UPnP spec
+  (thanks [@howdypierce](https://github.com/howdypierce)!) a5cdf82
+- Add fallback for determining IP address when DNS resolution is a problem
+  (thanks [@howdypierce](https://github.com/howdypierce)!) c2d7f13
+- Bugfix: ~/.fauxmo/ not being read as a location for config file (thanks
+  [@howdypierce](https://github.com/howdypierce)!) c322c9b
+
 ## v0.4.6 :: 20180212
 
 - Mostly changes to try to fix compatibility with newer generation Echos / Echo
