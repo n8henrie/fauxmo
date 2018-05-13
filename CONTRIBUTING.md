@@ -21,7 +21,7 @@ If you are reporting a bug, please include:
 ### Fix Bugs
 
 Look through the GitHub issues for bugs. Anything tagged with "bug" is
-open to whoever wants to implement it.
+open to whoever wants to work on it.
 
 ### Implement Features
 
@@ -30,9 +30,9 @@ Look through the GitHub issues for features. Anything tagged with
 
 ### Write Documentation
 
-fauxmo could always use more documentation,
-whether as part of the official fauxmo docs,
-in docstrings, or even on the web in blog posts, articles, and such.
+Fauxmo could always use more documentation, whether as part of the official
+fauxmo docs, in docstrings, or even on the web in blog posts, articles, and
+such.
 
 ### Submit Feedback
 
@@ -47,6 +47,10 @@ If you are proposing a feature:
 -   Remember that this is a volunteer-driven project, and that
     contributions are welcome :)
 
+### Create a new Plugin
+
+Please refer to <https://github.com/n8henrie/fauxmo-plugins>
+
 ## Get Started!
 
 Ready to contribute? Here's how to set up fauxmo
@@ -55,37 +59,43 @@ for local development.
 1.  Fork the fauxmo repo on GitHub.
 1.  Clone your fork locally:
 
+        ```shell_session
         $ git clone git@github.com:your_name_here/fauxmo.git
+        ```
 
 1.  Install your local copy into a virtualenv. Assuming you have
-    virtualenvwrapper installed, this is how you set up your fork for
+    python >= 3.6 installed, this is how you set up your fork for
     local development:
 
+        ```shell_session
         $ cd fauxmo
-        $ python3 -m venv .venv
-        $ source ./.venv/bin/activate
-        $ pip install -e .
+        $ python3 -m venv venv
+        $ source venv/bin/activate
+        $ pip install -e .[dev]
+        ```
 
 1.  Create a branch for local development:
 
+        ```shell_session
         $ git checkout -b name-of-your-bugfix-or-feature
+        ```
 
     Now you can make your changes locally.
 
-1.  When you're done making changes, check that your changes pass flake8
-    and the tests, including testing other Python versions with tox:
+1.  When you're done making changes, check that your changes pass all tests
+    configured for each Python version with tox:
 
-        $ flake8 fauxmo tests
-        $ python3 setup.py test
+        ```shell_session
         $ tox
-
-    To get flake8 and tox, just pip install them into your virtualenv.
+        ```
 
 1.  Commit your changes and push your branch to GitHub:
 
+        ```shell_session
         $ git add .
         $ git commit -m "Your detailed description of your changes."
         $ git push origin name-of-your-bugfix-or-feature
+        ```
 
 1.  Submit a pull request through the GitHub website.
 
