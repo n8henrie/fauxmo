@@ -22,7 +22,7 @@ E.g.:
 ```bash
 git checkout -b <feature_branch> master
 git pull https://github.com/<user>/fauxmo.git <feature_branch>
-py.test tests/
+pytest tests/
 ```
 
 ## Other notes

@@ -104,4 +104,4 @@ Before you submit a pull request, check that it meets these guidelines:
 
 ## Tips
 
-To run a subset of tests: `py.test tests/test_your_test.py`
+To run a subset of tests: `pytest tests/test_your_test.py`
