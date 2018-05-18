@@ -70,7 +70,6 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
 
     """
     path = pathlib.Path(path_str).expanduser()
-    sys.path.append(str(path.parents[0]))
     spec = importlib.util.spec_from_file_location(modname, str(path))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
