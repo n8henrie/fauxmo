@@ -59,7 +59,6 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
     ssdp_server = SSDPServer()
     servers = []
-    plugin_instances = []
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -115,8 +114,8 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
             coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
+            server.fauxmoplugin = plugin
             servers.append(server)
-            plugin_instances.append(plugin)
 
             ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
 
@@ -146,11 +145,8 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     transport.close()
     for idx, server in enumerate(servers):
         logger.debug(f"Shutting down server {idx}...")
+        server.plugin.close()
         server.close()
         loop.run_until_complete(server.wait_closed())
-
-    for plugin in plugin_instances:
-        logger.debug(f"Shutting down plugin {plugin.name}...")
-        plugin.close()
 
     loop.close()
