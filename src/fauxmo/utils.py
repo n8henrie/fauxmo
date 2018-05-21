@@ -4,7 +4,6 @@ import importlib.util
 import pathlib
 import socket
 import struct
-import sys
 import uuid
 from types import ModuleType
 
