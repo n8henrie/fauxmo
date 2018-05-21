@@ -65,3 +65,7 @@ class FauxmoPlugin(abc.ABC):
         there is no mechanism for determining the device state.
         """
         pass
+
+    def close(self) -> None:
+        """Run when shutting down; allows plugin to clean up state."""
+        pass

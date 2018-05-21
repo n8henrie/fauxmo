@@ -104,3 +104,5 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
             assert state == "on"
         else:
             assert state == "unknown"
+
+        device.close()
