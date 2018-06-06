@@ -200,6 +200,10 @@ strongly recommend that you:
     manually install their dependencies into the appropriate environment, so
     it's important to let other users know exactly what versions you use.
 
+Be aware, when fauxmo loads a plugin, it will add the directory
+containing the plugin to the Python system path, so any other Python
+modules in this directory might be loaded by unscrupulous code.
+
 ### Notable plugin examples
 
 NB: You may need to *manually* install additional dependencies for these to
