@@ -214,7 +214,7 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_metainfo(self) -> None:
         """Respond to request for metadata."""
-        metainfo = (
+        metainfo_xml = (
                 '<scpd xmlns="urn:Belkin:service-1-0">'
                 '<specVersion>'
                 '<major>1</major>'
@@ -240,8 +240,22 @@ class Fauxmo(asyncio.Protocol):
                 '</serviceStateTable>'
                 '</scpd>'
                 ) + 2 * Fauxmo.NEWLINE
-        logger.debug(f"Fauxmo response to setup request:\n{metainfo}")
-        self.transport.write(metainfo.encode())
+
+        date_str = formatdate(timeval=None, localtime=False, usegmt=True)
+        meta_response = (Fauxmo.NEWLINE).join([
+            'HTTP/1.1 200 OK',
+            f'CONTENT-LENGTH: {len(metainfo_xml)}',
+            'CONTENT-TYPE: text/xml',
+            f'DATE: {date_str}',
+            'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
+            'SERVER: Unspecified, UPnP/1.0, Unspecified',
+            'X-User-Agent: Fauxmo',
+            f'CONNECTION: close{Fauxmo.NEWLINE}',
+            f"{metainfo_xml}"
+            ])
+
+        logger.debug(f"Fauxmo response to setup request:\n{meta_response}")
+        self.transport.write(meta_response.encode())
         self.transport.close()
 
     def handle_event(self) -> None:
@@ -287,8 +301,21 @@ class Fauxmo(asyncio.Protocol):
                 '</scpd>'
                 ) + 2 * Fauxmo.NEWLINE
 
-        logger.debug(f"Fauxmo response to setup request:\n{eventservice_xml}")
-        self.transport.write(eventservice_xml.encode())
+        date_str = formatdate(timeval=None, localtime=False, usegmt=True)
+        event_response = (Fauxmo.NEWLINE).join([
+            'HTTP/1.1 200 OK',
+            f'CONTENT-LENGTH: {len(eventservice_xml)}',
+            'CONTENT-TYPE: text/xml',
+            f'DATE: {date_str}',
+            'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
+            'SERVER: Unspecified, UPnP/1.0, Unspecified',
+            'X-User-Agent: Fauxmo',
+            f'CONNECTION: close{Fauxmo.NEWLINE}',
+            f"{eventservice_xml}"
+            ])
+
+        logger.debug(f"Fauxmo response to setup request:\n{event_response}")
+        self.transport.write(event_response.encode())
         self.transport.close()
 
 
