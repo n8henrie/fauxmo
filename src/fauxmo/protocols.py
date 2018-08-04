@@ -65,9 +65,6 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_setup(self) -> None:
         """Create a response to the Echo's setup request."""
-        date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-
-        # Made as a separate string because it requires `len(setup_xml)`
         setup_xml = (
                 '<?xml version="1.0"?>'
                 '<root>'
@@ -99,18 +96,7 @@ class Fauxmo(asyncio.Protocol):
                 '</root>'
             )
 
-        setup_response = (Fauxmo.NEWLINE).join([
-            'HTTP/1.1 200 OK',
-            f'CONTENT-LENGTH: {len(setup_xml)}',
-            'CONTENT-TYPE: text/xml',
-            f'DATE: {date_str}',
-            'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
-            'SERVER: Unspecified, UPnP/1.0, Unspecified',
-            'X-User-Agent: Fauxmo',
-            f'CONNECTION: close{Fauxmo.NEWLINE}',
-            f"{setup_xml}"
-            ])
-
+        setup_response = self.add_http_headers(setup_xml)
         logger.debug(f"Fauxmo response to setup request:\n{setup_response}")
         self.transport.write(setup_response.encode())
         self.transport.close()
@@ -189,21 +175,10 @@ class Fauxmo(asyncio.Protocol):
             logger.info(f"{self.plugin.name} returning friendly name")
 
         if success:
-            date_str = formatdate(timeval=None, localtime=False, usegmt=True)
             soap_message = soap_format(action=action, action_type=action_type,
                                        return_val=return_val)
-            response = '\r\n'.join([
-                'HTTP/1.1 200 OK',
-                f'CONTENT-LENGTH: {len(soap_message)}',
-                'CONTENT-TYPE: text/xml charset="utf-8"',
-                f'DATE: {date_str}',
-                'EXT:',
-                'SERVER: Unspecified, UPnP/1.0, Unspecified',
-                'X-User-Agent: Fauxmo',
-                'CONNECTION: close',
-                '',
-                f'{soap_message}',
-                ])
+
+            response = self.add_http_headers(soap_message)
             logger.debug(response)
             self.transport.write(response.encode())
         else:
@@ -241,19 +216,7 @@ class Fauxmo(asyncio.Protocol):
                 '</scpd>'
                 ) + 2 * Fauxmo.NEWLINE
 
-        date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-        meta_response = (Fauxmo.NEWLINE).join([
-            'HTTP/1.1 200 OK',
-            f'CONTENT-LENGTH: {len(metainfo_xml)}',
-            'CONTENT-TYPE: text/xml',
-            f'DATE: {date_str}',
-            'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
-            'SERVER: Unspecified, UPnP/1.0, Unspecified',
-            'X-User-Agent: Fauxmo',
-            f'CONNECTION: close{Fauxmo.NEWLINE}',
-            f"{metainfo_xml}"
-            ])
-
+        meta_response = self.add_http_headers(metainfo_xml)
         logger.debug(f"Fauxmo response to setup request:\n{meta_response}")
         self.transport.write(meta_response.encode())
         self.transport.close()
@@ -301,22 +264,30 @@ class Fauxmo(asyncio.Protocol):
                 '</scpd>'
                 ) + 2 * Fauxmo.NEWLINE
 
+        event_response = self.add_http_headers(eventservice_xml)
+        logger.debug(f"Fauxmo response to setup request:\n{event_response}")
+        self.transport.write(event_response.encode())
+        self.transport.close()
+
+    @staticmethod
+    def add_http_headers(xml: str) -> str:
+        """Add HTTP headers to an XML body.
+
+        Args:
+            xml: XML body that needs HTTP headers
+        """
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
-        event_response = (Fauxmo.NEWLINE).join([
+        return (Fauxmo.NEWLINE).join([
             'HTTP/1.1 200 OK',
-            f'CONTENT-LENGTH: {len(eventservice_xml)}',
+            f'CONTENT-LENGTH: {len(xml)}',
             'CONTENT-TYPE: text/xml',
             f'DATE: {date_str}',
             'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
             'SERVER: Unspecified, UPnP/1.0, Unspecified',
             'X-User-Agent: Fauxmo',
             f'CONNECTION: close{Fauxmo.NEWLINE}',
-            f"{eventservice_xml}"
+            f"{xml}"
             ])
-
-        logger.debug(f"Fauxmo response to setup request:\n{event_response}")
-        self.transport.write(event_response.encode())
-        self.transport.close()
 
 
 class SSDPServer(asyncio.DatagramProtocol):
