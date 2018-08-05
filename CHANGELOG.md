@@ -3,6 +3,17 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.8 :: 20180804
+
+- Add `.close()` method to `FauxmoPlugin`s, allowing for cleanup (thanks
+  [@howdypierce](https://github.com/howdypierce))
+  [discussion](https://github.com/n8henrie/fauxmo/issues/58), e907245
+- Append plugins directory to `sys.path` for more convenient loading of
+  additional modules (thanks [@howdypierce](https://github.com/howdypierce))
+  [discussion](https://github.com/n8henrie/fauxmo/issues/58), 03f2101
+- Add HTTP headers to `/eventservice.xml` and `/metainfoservice.xml` endpoints
+  5a53268
+
 ## v0.4.7 :: 20180512
 
 - Minor dev-side changes
@@ -12,7 +23,8 @@ more detail.
      49d2c57
 - Change newline to `\r\n` in HTTP responses (thanks
    [@GlennPegden2](https://github.com/GlennPegden2)) 239bc79
-- Match `MAN:` case insensitive (thanks [@wingett](https://github.com/wingett)) 8307096
+- Match `MAN:` case insensitive (thanks [@wingett](https://github.com/wingett))
+  8307096
 - Add GetBinaryState and GetFriendlyName commands including test cases (thanks
   [@howdypierce](https://github.com/howdypierce)!) 71392de
 - Make comparison of the "SOAPACTION" header case-insensitive, per UPnP spec
