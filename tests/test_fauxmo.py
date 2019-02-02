@@ -8,6 +8,7 @@ import pytest
 import requests
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
+from fauxmo.protocols import Fauxmo
 
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
@@ -106,3 +107,12 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
             assert state == "unknown"
 
         device.close()
+
+
+def test_content_length() -> None:
+    """Test `CONTENT-LENGTH` HTTP header with non-ascii characters.
+
+    https://github.com/n8henrie/fauxmo/issues/70
+    """
+    assert 'CONTENT-LENGTH: 3' in Fauxmo.add_http_headers("foo")
+    assert 'CONTENT-LENGTH: 4' in Fauxmo.add_http_headers("föo")

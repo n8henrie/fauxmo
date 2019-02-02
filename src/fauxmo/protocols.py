@@ -279,7 +279,7 @@ class Fauxmo(asyncio.Protocol):
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         return (Fauxmo.NEWLINE).join([
             'HTTP/1.1 200 OK',
-            f'CONTENT-LENGTH: {len(xml)}',
+            f'CONTENT-LENGTH: {len(xml.encode("utf8"))}',
             'CONTENT-TYPE: text/xml',
             f'DATE: {date_str}',
             'LAST-MODIFIED: Sat, 01 Jan 2000 00:01:15 GMT',
