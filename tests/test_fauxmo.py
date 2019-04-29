@@ -8,6 +8,7 @@ import pytest
 import requests
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
+from fauxmo.utils import get_unused_port
 
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
@@ -106,3 +107,9 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
             assert state == "unknown"
 
         device.close()
+
+def test_get_unused_port():
+    available_port = get_unused_port()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(('', available_port))
+        assert int(sock.getsockname()[1]) == available_port
