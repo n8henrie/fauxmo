@@ -8,6 +8,7 @@ import pytest
 import requests
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
+from fauxmo.utils import get_unused_port
 from fauxmo.protocols import Fauxmo
 
 
@@ -108,6 +109,7 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
 
         device.close()
 
+<<<<<<< HEAD
 
 def test_content_length() -> None:
     """Test `CONTENT-LENGTH` HTTP header with non-ascii characters.
@@ -116,3 +118,10 @@ def test_content_length() -> None:
     """
     assert 'CONTENT-LENGTH: 3' in Fauxmo.add_http_headers("foo")
     assert 'CONTENT-LENGTH: 4' in Fauxmo.add_http_headers("föo")
+=======
+def test_get_unused_port():
+    available_port = get_unused_port()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(('', available_port))
+        assert int(sock.getsockname()[1]) == available_port
+>>>>>>> issue-50 replacing test.support find_unused_port
