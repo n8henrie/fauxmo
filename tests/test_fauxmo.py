@@ -8,8 +8,8 @@ import pytest
 import requests
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
-from fauxmo.utils import get_unused_port
 from fauxmo.protocols import Fauxmo
+from fauxmo.utils import get_unused_port
 
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
