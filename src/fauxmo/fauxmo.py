@@ -12,12 +12,12 @@ import pathlib
 import signal
 import sys
 from functools import partial
-from test.support import find_unused_port
 
 from fauxmo import __version__, logger
 from fauxmo.plugins import FauxmoPlugin
 from fauxmo.protocols import Fauxmo, SSDPServer
-from fauxmo.utils import get_local_ip, make_udp_sock, module_from_file
+from fauxmo.utils import (get_local_ip, get_unused_port, make_udp_sock,
+                          module_from_file)
 
 
 def main(config_path_str: str = None, verbosity: int = 20) -> None:
@@ -103,7 +103,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             logger.debug(f"device config: {repr(device)}")
 
             # Ensure port is `int`, set it if not given (`None`) or 0
-            device["port"] = int(device.get('port', 0)) or find_unused_port()
+            device["port"] = int(device.get('port', 0)) or get_unused_port()
 
             try:
                 plugin = PluginClass(**plugin_vars, **device)

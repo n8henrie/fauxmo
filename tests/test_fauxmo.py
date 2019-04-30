@@ -9,6 +9,7 @@ import requests
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 from fauxmo.protocols import Fauxmo
+from fauxmo.utils import get_unused_port
 
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
@@ -113,6 +114,22 @@ def test_content_length() -> None:
     """Test `CONTENT-LENGTH` HTTP header with non-ascii characters.
 
     https://github.com/n8henrie/fauxmo/issues/70
+
     """
     assert 'CONTENT-LENGTH: 3' in Fauxmo.add_http_headers("foo")
     assert 'CONTENT-LENGTH: 4' in Fauxmo.add_http_headers("föo")
+
+
+def test_get_unused_port() -> None:
+    """
+    Test get_unused_port function in utils.py.
+
+    Checks to make sure the port returned by the function is actually available
+    after function is run.
+    Also ensures a socket can be successfully created with the given port.
+
+    """
+    available_port = get_unused_port()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(('', available_port))
+        assert int(sock.getsockname()[1]) == available_port
