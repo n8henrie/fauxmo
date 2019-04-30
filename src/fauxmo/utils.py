@@ -112,6 +112,7 @@ def get_unused_port() -> int:
 
     Returns:
         INT of available port number.
+
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(('', 0))
