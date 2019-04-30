@@ -28,13 +28,13 @@ def get_local_ip(ip_address: str = None) -> str:
         try:
             ip_address = socket.gethostbyname(hostname)
         except socket.gaierror:
-            ip_address = 'unknown'
+            ip_address = "unknown"
 
         # Workaround for Linux returning localhost
         # See: SO question #166506 by @UnkwnTech
-        if ip_address in ['127.0.1.1', '127.0.0.1', 'localhost', 'unknown']:
+        if ip_address in ["127.0.1.1", "127.0.0.1", "localhost", "unknown"]:
             tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            tempsock.connect(('8.8.8.8', 0))
+            tempsock.connect(("8.8.8.8", 0))
             ip_address = tempsock.getsockname()[0]
             tempsock.close()
 
@@ -99,21 +99,21 @@ def make_udp_sock() -> socket.socket:
 
     sock.bind(("", 1900))
 
-    group = socket.inet_aton('239.255.255.250')
-    mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+    group = socket.inet_aton("239.255.255.250")
+    mreq = struct.pack("4sL", group, socket.INADDR_ANY)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
     return sock
 
 
 def get_unused_port() -> int:
-    """
-    Temporarily binds a socket to a system assigned unused port.
+    """Temporarily binds a socket to an unused system assigned port.
 
     Returns:
-        INT of available port number.
+        Port number
 
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(('', 0))
-        return int(sock.getsockname()[1])
+        sock.bind(("", 0))
+        port = sock.getsockname()[1]
+        return port
