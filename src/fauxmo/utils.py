@@ -106,12 +106,13 @@ def make_udp_sock() -> socket.socket:
     return sock
 
 
-def get_unused_port() --> int:
+def get_unused_port() -> int:
     """
     Temporarily binds a socket to a system assigned unused port.
 
     Returns:
         INT of available port number.
+
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(('', 0))
