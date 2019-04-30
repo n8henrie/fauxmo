@@ -105,7 +105,8 @@ def make_udp_sock() -> socket.socket:
 
     return sock
 
-def get_unused_port():
+
+def get_unused_port() --> int:
     """
     Temporarily binds a socket to a system assigned unused port.
 
