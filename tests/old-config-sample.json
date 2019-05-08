@@ -1,7 +1,5 @@
 {
-    "FAUXMO": {
-        "ip_address": "auto"
-    },
+    "FAUXMO": {"ip_address": "auto"},
     "DEVICES": [
         {
             "port": 12340,

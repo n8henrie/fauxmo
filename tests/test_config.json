@@ -1,7 +1,5 @@
 {
-    "FAUXMO": {
-        "ip_address": "127.0.0.1"
-    },
+    "FAUXMO": {"ip_address": "127.0.0.1"},
     "PLUGINS": {
         "SimpleHTTPPlugin": {
             "DEVICES": [
@@ -13,9 +11,7 @@
                     "name": "fake switch one",
                     "state_cmd": "http://127.0.0.1:8000/anything",
                     "state_method": "POST",
-                    "state_data": {
-                        "get_switch_state": "please"
-                    },
+                    "state_data": {"get_switch_state": "please"},
                     "state_response_on": "please",
                     "state_response_off": "thank you"
                 },
