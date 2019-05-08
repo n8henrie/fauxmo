@@ -73,3 +73,17 @@ dist: clean docs
 	$(PYTHON) setup.py sdist
 	$(PYTHON) setup.py bdist_wheel
 	ls -l dist
+
+update-reqs: requirements-dev.txt
+	@$(GREP) --invert-match --no-filename '^#' requirements*.txt | \
+		$(SED) 's|==.*$$||g' | \
+		xargs ./.venv/bin/python -m pip install --upgrade; \
+		for reqfile in requirements*.txt; do \
+			echo "Updating $${reqfile}..."; \
+			./.venv/bin/python -c 'print("\n{:#^80}".format("  Updated reqs below  "))' >> "$${reqfile}"; \
+			for lib in $$(./.venv/bin/pip freeze --all --isolated --quiet | $(GREP) '=='); do \
+				if $(GREP) "^$${lib%%=*}" "$${reqfile}" >/dev/null; then \
+					echo "$${lib}" >> "$${reqfile}"; \
+				fi; \
+			done; \
+		done;
