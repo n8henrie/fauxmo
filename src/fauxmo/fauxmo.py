@@ -16,8 +16,12 @@ from functools import partial
 from fauxmo import __version__, logger
 from fauxmo.plugins import FauxmoPlugin
 from fauxmo.protocols import Fauxmo, SSDPServer
-from fauxmo.utils import (get_local_ip, get_unused_port, make_udp_sock,
-                          module_from_file)
+from fauxmo.utils import (
+    get_local_ip,
+    get_unused_port,
+    make_udp_sock,
+    module_from_file,
+)
 
 
 def main(config_path_str: str = None, verbosity: int = 20) -> None:
@@ -40,8 +44,8 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     if config_path_str:
         config_path = pathlib.Path(config_path_str)
     else:
-        for config_dir in ('.', "~/.fauxmo", "/etc/fauxmo"):
-            config_path = pathlib.Path(config_dir).expanduser() / 'config.json'
+        for config_dir in (".", "~/.fauxmo", "/etc/fauxmo"):
+            config_path = pathlib.Path(config_dir).expanduser() / "config.json"
             if config_path.is_file():
                 logger.info(f"Using config: {config_path}")
                 break
@@ -49,8 +53,10 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     try:
         config = json.loads(config_path.read_text())
     except FileNotFoundError:
-        logger.error("Could not find config file in default search path. Try "
-                     "specifying your file with `-c`.\n")
+        logger.error(
+            "Could not find config file in default search path. Try "
+            "specifying your file with `-c`.\n"
+        )
         raise
 
     # Every config should include a FAUXMO section
@@ -65,17 +71,19 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
     if verbosity < 20:
         loop.set_debug(True)
-        logging.getLogger('asyncio').setLevel(logging.DEBUG)
+        logging.getLogger("asyncio").setLevel(logging.DEBUG)
 
     try:
-        plugins = config['PLUGINS']
+        plugins = config["PLUGINS"]
     except KeyError:
         # Give a meaningful message without a nasty traceback if it looks like
         # user is running a pre-v0.4.0 config.
-        errmsg = ("`PLUGINS` key not found in your config.\n"
-                  "You may be trying to use an outdated config.\n"
-                  "If so, please review <https://github.com/n8henrie/fauxmo> "
-                  "and update your config for Fauxmo >= v0.4.0.")
+        errmsg = (
+            "`PLUGINS` key not found in your config.\n"
+            "You may be trying to use an outdated config.\n"
+            "If so, please review <https://github.com/n8henrie/fauxmo> "
+            "and update your config for Fauxmo >= v0.4.0."
+        )
         print(errmsg)
         sys.exit(1)
 
@@ -86,7 +94,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             module = importlib.import_module(modname)
 
         except ModuleNotFoundError:
-            path_str = config['PLUGINS'][plugin]['path']
+            path_str = config["PLUGINS"][plugin]["path"]
             module = module_from_file(modname, path_str)
 
         PluginClass = getattr(module, plugin)  # noqa
@@ -95,15 +103,18 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
         # Pass along variables defined at the plugin level that don't change
         # per device
-        plugin_vars = {k: v for k, v in config['PLUGINS'][plugin].items()
-                       if k not in {"DEVICES", "path"}}
+        plugin_vars = {
+            k: v
+            for k, v in config["PLUGINS"][plugin].items()
+            if k not in {"DEVICES", "path"}
+        }
         logger.debug(f"plugin_vars: {repr(plugin_vars)}")
 
-        for device in config['PLUGINS'][plugin]['DEVICES']:
+        for device in config["PLUGINS"][plugin]["DEVICES"]:
             logger.debug(f"device config: {repr(device)}")
 
             # Ensure port is `int`, set it if not given (`None`) or 0
-            device["port"] = int(device.get('port', 0)) or get_unused_port()
+            device["port"] = int(device.get("port", 0)) or get_unused_port()
 
             try:
                 plugin = PluginClass(**plugin_vars, **device)
@@ -123,17 +134,18 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
 
     logger.info("Starting UDP server")
 
-    listen = loop.create_datagram_endpoint(lambda: ssdp_server,
-                                           sock=make_udp_sock())
+    listen = loop.create_datagram_endpoint(
+        lambda: ssdp_server, sock=make_udp_sock()
+    )
     transport, _ = loop.run_until_complete(listen)
 
-    for signame in ('SIGINT', 'SIGTERM'):
+    for signame in ("SIGINT", "SIGTERM"):
         try:
             loop.add_signal_handler(getattr(signal, signame), loop.stop)
 
         # Workaround for Windows (https://github.com/n8henrie/fauxmo/issues/21)
         except NotImplementedError:
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 pass
             else:
                 raise

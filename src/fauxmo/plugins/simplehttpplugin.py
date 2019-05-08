@@ -40,24 +40,24 @@ class SimpleHTTPPlugin(FauxmoPlugin):
     """
 
     def __init__(
-            self,
-            *,
-            headers: dict = None,
-            method: str = "GET",
-            name: str,
-            off_cmd: str,
-            off_data: Union[Mapping, str] = None,
-            on_cmd: str,
-            on_data: Union[Mapping, str] = None,
-            state_cmd: str = None,
-            state_data: Union[Mapping, str] = None,
-            state_method: str = "GET",
-            state_response_off: str = None,
-            state_response_on: str = None,
-            password: str = None,
-            port: int,
-            user: str = None,
-            ) -> None:
+        self,
+        *,
+        headers: dict = None,
+        method: str = "GET",
+        name: str,
+        off_cmd: str,
+        off_data: Union[Mapping, str] = None,
+        on_cmd: str,
+        on_data: Union[Mapping, str] = None,
+        state_cmd: str = None,
+        state_data: Union[Mapping, str] = None,
+        state_method: str = "GET",
+        state_response_off: str = None,
+        state_response_on: str = None,
+        password: str = None,
+        port: int,
+        user: str = None,
+    ) -> None:
         """Initialize a SimpleHTTPPlugin instance.
 
         Keyword Args:
@@ -104,8 +104,9 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             basic_handler = urllib.request.HTTPBasicAuthHandler(manager)
             digest_handler = urllib.request.HTTPDigestAuthHandler(manager)
 
-            opener = urllib.request.build_opener(basic_handler, digest_handler,
-                                                 cookie_handler)
+            opener = urllib.request.build_opener(
+                basic_handler, digest_handler, cookie_handler
+            )
             self.urlopen = opener.open
         else:
             self.urlopen = urllib.request.urlopen
@@ -117,7 +118,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         if isinstance(data, Mapping):
             data = urllib.parse.urlencode(data)
         if isinstance(data, str):
-            return data.encode('utf8')
+            return data.encode("utf8")
         return data
 
     def set_state(self, cmd: str, data: bytes) -> bool:
@@ -132,11 +133,8 @@ class SimpleHTTPPlugin(FauxmoPlugin):
 
         """
         req = urllib.request.Request(
-                url=cmd,
-                data=data,
-                headers=self.headers,
-                method=self.method
-                )
+            url=cmd, data=data, headers=self.headers, method=self.method
+        )
 
         with self.urlopen(req) as resp:
             if isinstance(resp, http.client.HTTPResponse):
@@ -172,14 +170,14 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             return "unknown"
 
         req = urllib.request.Request(
-                url=self.state_cmd,
-                data=self.state_data,
-                headers=self.headers,
-                method=self.state_method
-                )
+            url=self.state_cmd,
+            data=self.state_data,
+            headers=self.headers,
+            method=self.state_method,
+        )
 
         with self.urlopen(req) as resp:
-            response_content = resp.read().decode('utf8')
+            response_content = resp.read().decode("utf8")
 
         if self.state_response_off in response_content:
             return "off"

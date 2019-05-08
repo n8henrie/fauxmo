@@ -17,7 +17,7 @@ import glob
 import shutil
 from recommonmark.parser import CommonMarkParser
 
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
@@ -38,35 +38,35 @@ import fauxmo  # noqa
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.5'
+needs_sphinx = "1.5"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-        'sphinx.ext.autodoc',
-        'sphinx.ext.viewcode',
-        'sphinx.ext.napoleon',
-        ]
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
+]
 
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.md'
+source_suffix = ".md"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'fauxmo'
-copyright = ', Nathan Henrie'
+project = "fauxmo"
+copyright = ", Nathan Henrie"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -89,7 +89,7 @@ release = fauxmo.__version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -107,7 +107,7 @@ exclude_patterns = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -124,7 +124,8 @@ pygments_style = 'sphinx'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
+
+    html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a
@@ -156,7 +157,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # here, relative to this directory. They are copied after the builtin
 # static files, so a file named "default.css" will overwrite the builtin
 # "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
@@ -202,7 +203,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'fauxmodoc'
+htmlhelp_basename = "fauxmodoc"
 
 
 # -- Options for LaTeX output ------------------------------------------
@@ -210,10 +211,8 @@ htmlhelp_basename = 'fauxmodoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }
@@ -222,9 +221,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'fauxmo.tex',
-     'fauxmo Documentation',
-     'Nathan Henrie', 'manual'),
+    ("index", "fauxmo.tex", "fauxmo Documentation", "Nathan Henrie", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -252,11 +249,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'fauxmo',
-     'fauxmo Documentation',
-     ['Nathan Henrie'], 1)
-]
+man_pages = [("index", "fauxmo", "fauxmo Documentation", ["Nathan Henrie"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -268,12 +261,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'fauxmo',
-     'fauxmo Documentation',
-     'Nathan Henrie',
-     'fauxmo',
-     'One line description of project.',
-     'Miscellaneous'),
+    (
+        "index",
+        "fauxmo",
+        "fauxmo Documentation",
+        "Nathan Henrie",
+        "fauxmo",
+        "One line description of project.",
+        "Miscellaneous",
+    )
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -288,15 +284,15 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
 
-source_parsers = {'.md': CommonMarkParser}
-source_suffix = ['.rst', '.md']
+source_parsers = {".md": CommonMarkParser}
+source_suffix = [".rst", ".md"]
 
 
 def setup(app):
     curdir = os.path.dirname(os.path.abspath(__file__))
-    if not os.path.isdir(os.path.join(curdir, 'md')):
-        os.mkdir(os.path.join(curdir, 'md'))
-    for old_mdfile in glob.glob(os.path.join(curdir, 'md/*.md')):
+    if not os.path.isdir(os.path.join(curdir, "md")):
+        os.mkdir(os.path.join(curdir, "md"))
+    for old_mdfile in glob.glob(os.path.join(curdir, "md/*.md")):
         os.remove(old_mdfile)
-    for new_mdfile in glob.glob(os.path.join(curdir, '../*.md')):
-        shutil.copy(new_mdfile, 'md/')
+    for new_mdfile in glob.glob(os.path.join(curdir, "../*.md")):
+        shutil.copy(new_mdfile, "md/")

@@ -14,7 +14,7 @@ from fauxmo.utils import get_unused_port
 
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     """Test device search request to UPnP / SSDP server."""
-    msg = b'MAN: "ssdp:discover"' + b'ST: urn:Belkin:device:**'
+    msg = b'MAN: "ssdp:discover"' + b"ST: urn:Belkin:device:**"
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -29,37 +29,43 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     sock.sendto(msg, addr)
     data = sock.recv(4096)
 
-    assert b'LOCATION: http://' in data
-    assert b'/setup.xml' in data
+    assert b"LOCATION: http://" in data
+    assert b"/setup.xml" in data
 
 
 def test_setup(fauxmo_server: pytest.fixture) -> None:
     """Test TCP server's `/setup.xml` endpoint."""
-    resp = requests.get('http://127.0.0.1:12345/setup.xml')
+    resp = requests.get("http://127.0.0.1:12345/setup.xml")
     assert resp.status_code == 200
 
     root = etree.fromstring(resp.text)
-    assert root.find(".//friendlyName").text == 'fake switch one'
+    assert root.find(".//friendlyName").text == "fake switch one"
 
 
-def test_turnon(fauxmo_server: pytest.fixture,
-                simplehttpplugin_target: pytest.fixture) -> None:
+def test_turnon(
+    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+) -> None:
     """Test TCP server's "on" action for SimpleHTTPPlugin."""
-    data = (b'SOAPACTION: "urn:Belkin:service:basicevent:1#SetBinaryState"'
-            b'<BinaryState>1</BinaryState>')
+    data = (
+        b'SOAPACTION: "urn:Belkin:service:basicevent:1#SetBinaryState"'
+        b"<BinaryState>1</BinaryState>"
+    )
 
-    resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
-                         data=data)
+    resp = requests.post(
+        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
+    )
     assert resp.status_code == 200
 
 
-def test_getbinarystate(fauxmo_server: pytest.fixture,
-                        simplehttpplugin_target: pytest.fixture) -> None:
+def test_getbinarystate(
+    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+) -> None:
     """Test TCP server's "GetBinaryState" action for SimpleHTTPPlugin."""
-    data = (b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"')
+    data = b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"'
 
-    resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
-                         data=data)
+    resp = requests.post(
+        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
+    )
     assert resp.status_code == 200
 
     root = etree.fromstring(resp.text)
@@ -67,17 +73,19 @@ def test_getbinarystate(fauxmo_server: pytest.fixture,
     assert val in ["0", "1"]
 
 
-def test_getfriendlyname(fauxmo_server: pytest.fixture,
-                         simplehttpplugin_target: pytest.fixture) -> None:
+def test_getfriendlyname(
+    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+) -> None:
     """Test TCP server's "GetFriendlyName" action for SimpleHTTPPlugin."""
-    data = (b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"')
+    data = b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"'
 
-    resp = requests.post('http://127.0.0.1:12345/upnp/control/basicevent1',
-                         data=data)
+    resp = requests.post(
+        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
+    )
     assert resp.status_code == 200
 
     root = etree.fromstring(resp.text)
-    assert root.find(".//FriendlyName").text == 'fake switch one'
+    assert root.find(".//FriendlyName").text == "fake switch one"
 
 
 def test_old_config_fails() -> None:
@@ -116,8 +124,8 @@ def test_content_length() -> None:
     https://github.com/n8henrie/fauxmo/issues/70
 
     """
-    assert 'CONTENT-LENGTH: 3' in Fauxmo.add_http_headers("foo")
-    assert 'CONTENT-LENGTH: 4' in Fauxmo.add_http_headers("föo")
+    assert "CONTENT-LENGTH: 3" in Fauxmo.add_http_headers("foo")
+    assert "CONTENT-LENGTH: 4" in Fauxmo.add_http_headers("föo")
 
 
 def test_get_unused_port() -> None:
@@ -131,5 +139,5 @@ def test_get_unused_port() -> None:
     """
     available_port = get_unused_port()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(('', available_port))
+        sock.bind(("", available_port))
         assert int(sock.getsockname()[1]) == available_port

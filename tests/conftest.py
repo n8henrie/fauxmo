@@ -15,9 +15,11 @@ from fauxmo import fauxmo
 def fauxmo_server() -> Iterator:
     """Create a Fauxmo server from test_config.json."""
     config_path_str = "tests/test_config.json"
-    server = Process(target=fauxmo.main,
-                     kwargs={'config_path_str': config_path_str},
-                     daemon=True)
+    server = Process(
+        target=fauxmo.main,
+        kwargs={"config_path_str": config_path_str},
+        daemon=True,
+    )
 
     server.start()
 
@@ -38,7 +40,7 @@ def fauxmo_server() -> Iterator:
                 time.sleep(0.1)
                 continue
             else:
-                if b'Fauxmo' not in data:
+                if b"Fauxmo" not in data:
                     continue
                 break
 
@@ -52,13 +54,15 @@ def fauxmo_server() -> Iterator:
 def simplehttpplugin_target() -> Iterator:
     """Simulate the endpoints triggered by RESTAPIPlugin."""
     httpbin_address = ("127.0.0.1", 8000)
-    fauxmo_device = Process(target=httpbin.core.app.run,
-                            kwargs={
-                                "host": httpbin_address[0],
-                                "port": httpbin_address[1],
-                                "threaded": True,
-                                },
-                            daemon=True)
+    fauxmo_device = Process(
+        target=httpbin.core.app.run,
+        kwargs={
+            "host": httpbin_address[0],
+            "port": httpbin_address[1],
+            "threaded": True,
+        },
+        daemon=True,
+    )
 
     fauxmo_device.start()
 
@@ -74,7 +78,7 @@ def simplehttpplugin_target() -> Iterator:
             sock.sendall(b"GET / HTTP/1.0\r\n")
             sock.shutdown(socket.SHUT_WR)
             data = sock.recv(15)
-            if data != 'HTTP/1.0 200 OK':
+            if data != "HTTP/1.0 200 OK":
                 continue
             break
 
