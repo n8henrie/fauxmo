@@ -2,7 +2,7 @@
 
 import json
 import socket
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree as ET  # noqa
 
 import pytest
 import requests
@@ -38,7 +38,7 @@ def test_setup(fauxmo_server: pytest.fixture) -> None:
     resp = requests.get("http://127.0.0.1:12345/setup.xml")
     assert resp.status_code == 200
 
-    root = etree.fromstring(resp.text)
+    root = ET.fromstring(resp.text)
     assert root.find(".//friendlyName").text == "fake switch one"
 
 
@@ -68,7 +68,7 @@ def test_getbinarystate(
     )
     assert resp.status_code == 200
 
-    root = etree.fromstring(resp.text)
+    root = ET.fromstring(resp.text)
     val = root.find(".//BinaryState").text
     assert val in ["0", "1"]
 
@@ -84,7 +84,7 @@ def test_getfriendlyname(
     )
     assert resp.status_code == 200
 
-    root = etree.fromstring(resp.text)
+    root = ET.fromstring(resp.text)
     assert root.find(".//FriendlyName").text == "fake switch one"
 
 
