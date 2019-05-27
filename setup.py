@@ -41,6 +41,7 @@ setup(
     classifiers=[
         "Natural Language :: English",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     extras_require={"dev": dev_requirements},
     test_suite="tests",

@@ -334,7 +334,7 @@ iOS app, or just close out the app completely and re-open).
 - How do I find my Echo firmware version?
     - https://alexa.amazon.com -> Settings -> [Device Name] -> Device Software Version
 
-### Installing Python 3.6 with [pyenv](https://github.com/pyenv/pyenv)
+### Installing Python 3.7 with [pyenv](https://github.com/pyenv/pyenv)
 
 ```bash
 sudo install -o $(whoami) -g $(whoami) -d /opt/pyenv
@@ -345,14 +345,14 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 EOF
 source ~/.bashrc
-pyenv install 3.6.1
+pyenv install 3.7.3
 ```
 
-You can then install Fauxmo into Python 3.6 in a few ways, including:
+You can then install Fauxmo into Python 3.7 in a few ways, including:
 
 ```bash
 # Install with pip
-"$(pyenv root)"/versions/3.6.1/bin/python3.6 -m pip install fauxmo
+"$(pyenv root)"/versions/3.7.3/bin/python3.7 -m pip install fauxmo
 
 # Show full path to Fauxmo console script
 pyenv which fauxmo
@@ -361,10 +361,10 @@ pyenv which fauxmo
 fauxmo -c /path/to/config.json -vvv
 
 # I recommend using the full path for use in start scripts (e.g. systemd, cron)
-"$(pyenv root)"/versions/3.6.1/bin/fauxmo -c /path/to/config.json -vvv
+"$(pyenv root)"/versions/3.7.3/bin/fauxmo -c /path/to/config.json -vvv
 
 # Alternatively, this also works (after `pip install`)
-"$(pyenv root)"/versions/3.6.1/bin/python3.6 -m fauxmo.cli -c config.json -vvv
+"$(pyenv root)"/versions/3.7.3/bin/python3.7 -m fauxmo.cli -c config.json -vvv
 ```
 
 ## Buy Me a Coffee

@@ -109,7 +109,7 @@ Before you submit a pull request, check that it meets these guidelines:
 1.  If the pull request adds functionality, the docs should be updated.
     Put your new functionality into a function with a docstring, and add
     the feature to the list in README.md
-1.  The pull request should work for Python 3.6. If I have included a
+1.  The pull request should work for Python 3.7. If I have included a
     `.travis.yml` file in the repo, check
     <https://travis-ci.org/n8henrie/fauxmo/pull_requests> and make sure that
     the tests pass for all supported Python versions.
