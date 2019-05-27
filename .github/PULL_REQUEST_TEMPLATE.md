@@ -1,3 +1,8 @@
+NB: *please* make an issue prior to embarking on any significant effort towards
+a pull request. This will serve as a unified place for discussion and hopefully
+make sure that the change seems reasonable to merge once its implementation is
+complete.
+
 ## Description
 
 A few sentences describing the overall goals of the pull request's commits.

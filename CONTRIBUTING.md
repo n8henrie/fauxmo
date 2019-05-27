@@ -56,6 +56,8 @@ Please refer to <https://github.com/n8henrie/fauxmo-plugins>
 Ready to contribute? Here's how to set up fauxmo
 for local development.
 
+1.  Start by making an issue to serve as a reference point for discussion
+    regarding the change being proposed.
 1.  Fork the fauxmo repo on GitHub.
 1.  Clone your fork locally:
 
@@ -103,6 +105,8 @@ for local development.
 
 Before you submit a pull request, check that it meets these guidelines:
 
+1.  Pull requests of any substance should reference an issue used for
+    discussion regarding the change being considered.
 1.  The style should pass `tox -e lint`, including docstrings, type hints, and
     `black --line-length=79 --target-version=py37` for overall formatting.
 1.  The pull request should include tests if I am using tests in the repo.
