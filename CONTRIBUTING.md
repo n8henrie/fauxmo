@@ -103,6 +103,8 @@ for local development.
 
 Before you submit a pull request, check that it meets these guidelines:
 
+1.  The style should pass `tox -e lint`, including docstrings, type hints, and
+    `black --line-length=79 --target-version=py37` for overall formatting.
 1.  The pull request should include tests if I am using tests in the repo.
 1.  If the pull request adds functionality, the docs should be updated.
     Put your new functionality into a function with a docstring, and add

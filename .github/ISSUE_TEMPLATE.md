@@ -1,3 +1,4 @@
+- Issues not following the template may be closed for that reason alone.
 - **Operating system and version**:
 - **Python version**:
 - **Fauxmo version** (`fauxmo --version`):
