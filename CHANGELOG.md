@@ -3,6 +3,15 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.4.9 :: 20190527
+
+- Add py37 support (including Travis workaround)
+- Fix bug in content-length calculation (thanks @tim15)
+- Replace `find_unused_port` with local function (thanks @schneideradam)
+- Use black for formatting
+- Update `config-sample.txt` for changes in [HomeAssistant
+  API](https://developers.home-assistant.io/docs/en/external_api_rest.html)
+
 ## v0.4.8 :: 20180804
 
 - Add `.close()` method to `FauxmoPlugin`s, allowing for cleanup (thanks
