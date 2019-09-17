@@ -35,7 +35,7 @@ installation; just read the warning and make a good decision. On OSX, use
 First, get the IP address of your Echo. If you don't know it:
 ```bash
 # Assuming your local subnet is 192.168.27.*
-sudo nmap -sP 192.168.27.1/24 | grep -i -B 2 F0:27:2D
+sudo nmap -sP 192.168.27.1/24 | grep -i -B 2 amazon
 ```
 You should get `Nmap scan report for 192.168.27.XXX` -- your Echo IP address.
 For the examples below, I'll use `192.168.27.100` as the Echo IP address, and
