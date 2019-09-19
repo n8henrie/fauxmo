@@ -32,18 +32,48 @@ def test_homeassistantplugin(mock: MagicMock) -> None:
 
         signal = HomeAssistantPlugin.service_map[device.domain.lower()]["on"]
         assert device.on() is True
-        assert mock.call_args[0][0].full_url == (
-            "http://localhost:8123/api/services/" f"{device.domain}/{signal}"
+        req = mock.call_args[0][0]
+        assert req.full_url == (
+            f"http://localhost:8123/api/services/{device.domain}/{signal}"
         )
+        assert (
+            req.data.decode()
+            == f'{{"entity_id": "{device_conf["entity_id"]}"}}'
+        )
+        assert req.headers == {
+            "Authorization": "Bearer abc123",
+            "Content-type": "application/json",
+        }
+        assert int(req.host.rsplit(":")[-1]) == plugin_vars["ha_port"]
+        assert req.get_method() == "POST"
 
         signal = HomeAssistantPlugin.service_map[device.domain.lower()]["off"]
         assert device.off() is True
-        assert mock.call_args[0][0].full_url == (
-            "http://localhost:8123/api/services/" f"{device.domain}/{signal}"
+        req = mock.call_args[0][0]
+        assert req.full_url == (
+            f"http://localhost:8123/api/services/{device.domain}/{signal}"
         )
+        assert (
+            req.data.decode()
+            == f'{{"entity_id": "{device_conf["entity_id"]}"}}'
+        )
+        assert req.headers == {
+            "Authorization": "Bearer abc123",
+            "Content-type": "application/json",
+        }
+        assert int(req.host.rsplit(":")[-1]) == plugin_vars["ha_port"]
+        assert req.get_method() == "POST"
 
         assert device.get_state() == "off"
+        req = mock.call_args[0][0]
         assert (
-            mock.call_args[0][0].full_url
+            req.full_url
             == f"http://localhost:8123/api/states/{device_conf['entity_id']}"
         )
+        assert req.data is None
+        assert req.headers == {
+            "Authorization": "Bearer abc123",
+            "Content-type": "application/json",
+        }
+        assert int(req.host.rsplit(":")[-1]) == plugin_vars["ha_port"]
+        assert req.get_method() == "GET"
