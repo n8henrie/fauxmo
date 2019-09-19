@@ -1,53 +1,51 @@
 """conftest.py :: Setup fixtures for pytest."""
 
-import json
 import socket
 import time
 from multiprocessing import Process
-from typing import Iterator
+from types import TracebackType
+from typing import Callable, Iterator, Optional, Type
 
 import httpbin
 import pytest
+
 from fauxmo import fauxmo
+from fauxmo.utils import get_local_ip
+
+
+class TestFauxmoServer:
+    """Runs Fauxmo in a separate thread."""
+
+    def __init__(self, config_path_str: str) -> None:
+        """Initialize test Fauxmo server with path to config."""
+        self.config_path_str = config_path_str
+
+    def __enter__(self) -> str:
+        """Start a TextFauxmoServer, returns the ip address it's running on."""
+        self.server = Process(
+            target=fauxmo.main,
+            kwargs={"config_path_str": self.config_path_str},
+            daemon=True,
+        )
+        self.server.start()
+        time.sleep(0.1)
+        return get_local_ip()
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[Exception],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        """Terminate the server and join the thread on exit."""
+        self.server.terminate()
+        self.server.join()
 
 
 @pytest.fixture(scope="session")
-def fauxmo_server() -> Iterator:
-    """Create a Fauxmo server from test_config.json."""
-    config_path_str = "tests/test_config.json"
-    server = Process(
-        target=fauxmo.main,
-        kwargs={"config_path_str": config_path_str},
-        daemon=True,
-    )
-
-    server.start()
-
-    # Make sure the server is up and running before proceeding with more tests
-    with open("tests/test_config.json") as f:
-        config = json.load(f)
-    ip_address = config["FAUXMO"]["ip_address"]
-
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.connect((ip_address, 1900))
-
-        for retry in range(10):
-            try:
-                sock.sendall(b'"ssdp:discover" urn:Belkin:device:**')
-                sock.settimeout(0.1)
-                data = sock.recv(4096)
-            except (ConnectionError, socket.timeout):
-                time.sleep(0.1)
-                continue
-            else:
-                if b"Fauxmo" not in data:
-                    continue
-                break
-
-    yield
-
-    server.terminate()
-    server.join()
+def fauxmo_server() -> Callable[[str], TestFauxmoServer]:
+    """Use a pytest fixture to provide the TestFauxmoServer context manager."""
+    return TestFauxmoServer
 
 
 @pytest.fixture(scope="session")

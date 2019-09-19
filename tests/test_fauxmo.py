@@ -26,8 +26,10 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     sock.settimeout(0.1)
 
     addr = ("239.255.255.250", 1900)
-    sock.sendto(msg, addr)
-    data = sock.recv(4096)
+
+    with fauxmo_server("tests/test_config.json"):
+        sock.sendto(msg, addr)
+        data = sock.recv(4096)
 
     assert b"LOCATION: http://" in data
     assert b"/setup.xml" in data
@@ -35,7 +37,8 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
 
 def test_setup(fauxmo_server: pytest.fixture) -> None:
     """Test TCP server's `/setup.xml` endpoint."""
-    resp = requests.get("http://127.0.0.1:12345/setup.xml")
+    with fauxmo_server("tests/test_config.json") as fauxmo_ip:
+        resp = requests.get(f"http://{fauxmo_ip}:12345/setup.xml")
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
@@ -51,9 +54,10 @@ def test_turnon(
         b"<BinaryState>1</BinaryState>"
     )
 
-    resp = requests.post(
-        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
-    )
+    with fauxmo_server("tests/test_config.json") as fauxmo_ip:
+        resp = requests.post(
+            f"http://{fauxmo_ip}:12345/upnp/control/basicevent1", data=data
+        )
     assert resp.status_code == 200
 
 
@@ -63,9 +67,10 @@ def test_getbinarystate(
     """Test TCP server's "GetBinaryState" action for SimpleHTTPPlugin."""
     data = b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"'
 
-    resp = requests.post(
-        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
-    )
+    with fauxmo_server("tests/test_config.json") as fauxmo_ip:
+        resp = requests.post(
+            f"http://{fauxmo_ip}:12345/upnp/control/basicevent1", data=data
+        )
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
@@ -79,9 +84,10 @@ def test_getfriendlyname(
     """Test TCP server's "GetFriendlyName" action for SimpleHTTPPlugin."""
     data = b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"'
 
-    resp = requests.post(
-        "http://127.0.0.1:12345/upnp/control/basicevent1", data=data
-    )
+    with fauxmo_server("tests/test_config.json") as fauxmo_ip:
+        resp = requests.post(
+            f"http://{fauxmo_ip}:12345/upnp/control/basicevent1", data=data
+        )
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
