@@ -1,0 +1,25 @@
+{
+  "FAUXMO": {
+    "ip_address": "auto"
+  },
+  "PLUGINS": {
+    "HomeAssistantPlugin": {
+      "ha_host": "localhost",
+      "ha_port": 8123,
+      "ha_protocol": "http",
+      "ha_token": "abc123",
+      "DEVICES": [
+        {
+          "name": "example Home Assistant device 1",
+          "port": 12345,
+          "entity_id": "switch.my_fake_switch"
+        },
+        {
+          "name": "example Home Assistant device 2",
+          "port": 12346,
+          "entity_id": "cover.my_fake_cover"
+        }
+      ]
+    }
+  }
+}
