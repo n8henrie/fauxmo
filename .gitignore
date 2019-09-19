@@ -35,3 +35,4 @@ docs/md/
 .mypy_cache
 .venv/
 .pytest_cache/
+pip-wheel-metadata
