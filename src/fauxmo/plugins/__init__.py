@@ -33,6 +33,7 @@ class FauxmoPlugin(abc.ABC):
         the passed in `port` value and generate their own port in a plugin,
         since the Fauxmo device determines its port from the plugin's instance
         attribute.
+
         """
         self._name = name
         self._port = port

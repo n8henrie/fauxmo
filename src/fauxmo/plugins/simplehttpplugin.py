@@ -78,6 +78,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             password: Password for HTTP authentication (basic or digest only)
             port: Port that this device will run on
             user: Username for HTTP authentication (basic or digest only)
+
         """
         self.method = method
         self.state_method = state_method

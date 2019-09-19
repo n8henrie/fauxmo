@@ -25,6 +25,7 @@ class Fauxmo(asyncio.Protocol):
         Args:
             name: How you want to call the device, e.g. "bedroom light"
             plugin: Fauxmo plugin
+
         """
         self.name = name
         self.serial = make_serial(name)
@@ -36,6 +37,7 @@ class Fauxmo(asyncio.Protocol):
 
         Args:
             transport: Passed in asyncio.Transport
+
         """
         peername = transport.get_extra_info("peername")
         logger.debug(f"Connection made with: {peername}")
@@ -46,6 +48,7 @@ class Fauxmo(asyncio.Protocol):
 
         Args:
             data: Incoming message, either setup request or action request
+
         """
         msg = data.decode()
 
@@ -280,6 +283,7 @@ class Fauxmo(asyncio.Protocol):
 
         Args:
             xml: XML body that needs HTTP headers
+
         """
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         return (Fauxmo.NEWLINE).join(
@@ -306,6 +310,7 @@ class SSDPServer(asyncio.DatagramProtocol):
         Args:
             devices: Iterable of devices to advertise when the Echo's SSDP
                      search request is received.
+
         """
         self.devices = list(devices or ())
 
@@ -316,6 +321,7 @@ class SSDPServer(asyncio.DatagramProtocol):
             name: Device name
             ip_address: IP address of device
             port: Port of device
+
         """
         device_dict = {"name": name, "ip_address": ip_address, "port": port}
         self.devices.append(device_dict)
@@ -325,6 +331,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         Args:
             transport: Incoming asyncio.DatagramTransport
+
         """
         self.transport = cast(asyncio.DatagramTransport, transport)
 
@@ -336,6 +343,7 @@ class SSDPServer(asyncio.DatagramProtocol):
         Args:
             data: Incoming data content
             addr: Address sending data
+
         """
         if isinstance(data, bytes):
             data = data.decode("utf8")
@@ -379,6 +387,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         Args:
             addr: Address sending search request
+
         """
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         for device in self.devices:
@@ -424,6 +433,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         Args:
             exc: Exception type
+
         """
         if exc:
             logger.warning(f"SSDPServer closed with exception: {exc}")

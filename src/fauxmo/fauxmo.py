@@ -36,6 +36,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
                          `config.json` in cwd, `~/.fauxmo/`, and
                          `/etc/fauxmo/`.
         verbosity: Logging verbosity, defaults to 20
+
     """
     logger.setLevel(verbosity)
     logger.info(f"Fauxmo {__version__}")
