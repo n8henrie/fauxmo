@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET  # noqa
 
 import pytest
 import requests
+
 from fauxmo import fauxmo
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 from fauxmo.protocols import Fauxmo

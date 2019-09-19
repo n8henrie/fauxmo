@@ -1,68 +1,90 @@
 {
-    "FAUXMO": {"ip_address": "127.0.0.1"},
-    "PLUGINS": {
-        "SimpleHTTPPlugin": {
-            "DEVICES": [
-                {
-                    "port": 12345,
-                    "on_cmd": "http://127.0.0.1:8000/get?switch=on",
-                    "off_cmd": "http://127.0.0.1:8000/get?switch=off",
-                    "method": "GET",
-                    "name": "fake switch one",
-                    "state_cmd": "http://127.0.0.1:8000/anything",
-                    "state_method": "POST",
-                    "state_data": {"get_switch_state": "please"},
-                    "state_response_on": "please",
-                    "state_response_off": "thank you"
-                },
-                {
-                    "port": 12346,
-                    "on_cmd": "http://127.0.0.1:8000/digest-auth/auth/fauxmouser/fauxmopass",
-                    "off_cmd": "http://127.0.0.1:8000/digest-auth/auth/fauxmouser/fauxmopass",
-                    "user": "fauxmouser",
-                    "password": "fauxmopass",
-                    "name": "fake Indigo switch"
-                },
-                {
-                    "port": 12347,
-                    "on_cmd": "http://127.0.0.1:8000/put",
-                    "off_cmd": "http://127.0.0.1:8000/put",
-                    "on_data": {"isOn": 1},
-                    "off_data": {"isOn": 0},
-                    "method": "PUT",
-                    "name": "fake Indigo switch"
-                },
-                {
-                    "name": "fake post request",
-                    "port": 12348,
-                    "on_cmd": "http://127.0.0.1:8000/post",
-                    "off_cmd": "http://127.0.0.1:8000/post",
-                    "method": "POST",
-                    "headers": {"x-ha-access": "your_hass_password"},
-                    "on_data": {"entity_id": "switch.fake_hass_switch"},
-                    "off_data": {"entity_id": "switch.fake_hass_switch"}
-                },
-                {
-                    "name": "test https request",
-                    "port": 12349,
-                    "on_cmd": "https://httpbin.org/post",
-                    "off_cmd": "https://httpbin.org/post",
-                    "method": "POST",
-                    "headers": {"x-ha-access": "your_hass_password"},
-                    "on_data": {"entity_id": "switch.fake_hass_switch"},
-                    "off_data": {"entity_id": "switch.fake_hass_switch"}
-                },
-                {
-                    "name": "test post with string instead of dict",
-                    "port": 12350,
-                    "on_cmd": "http://127.0.0.1:8000/post",
-                    "off_cmd": "http://127.0.0.1:8000/post",
-                    "method": "POST",
-                    "headers": {"x-ha-access": "your_hass_password"},
-                    "on_data": "ONSTRING",
-                    "off_data": "OFFSTRING"
-                }
-            ]
+  "FAUXMO": {
+    "ip_address": "auto"
+  },
+  "PLUGINS": {
+    "SimpleHTTPPlugin": {
+      "DEVICES": [
+        {
+          "port": 12345,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "fake switch one",
+          "state_cmd": "http://127.0.0.1:8000/anything",
+          "state_method": "POST",
+          "state_data": {
+            "get_switch_state": "please"
+          },
+          "state_response_on": "please",
+          "state_response_off": "thank you"
+        },
+        {
+          "port": 12346,
+          "on_cmd": "http://127.0.0.1:8000/digest-auth/auth/fauxmouser/fauxmopass",
+          "off_cmd": "http://127.0.0.1:8000/digest-auth/auth/fauxmouser/fauxmopass",
+          "user": "fauxmouser",
+          "password": "fauxmopass",
+          "name": "fake Indigo switch"
+        },
+        {
+          "port": 12347,
+          "on_cmd": "http://127.0.0.1:8000/put",
+          "off_cmd": "http://127.0.0.1:8000/put",
+          "on_data": {
+            "isOn": 1
+          },
+          "off_data": {
+            "isOn": 0
+          },
+          "method": "PUT",
+          "name": "fake Indigo switch"
+        },
+        {
+          "name": "fake post request",
+          "port": 12348,
+          "on_cmd": "http://127.0.0.1:8000/post",
+          "off_cmd": "http://127.0.0.1:8000/post",
+          "method": "POST",
+          "headers": {
+            "x-ha-access": "your_hass_password"
+          },
+          "on_data": {
+            "entity_id": "switch.fake_hass_switch"
+          },
+          "off_data": {
+            "entity_id": "switch.fake_hass_switch"
+          }
+        },
+        {
+          "name": "test https request",
+          "port": 12349,
+          "on_cmd": "https://httpbin.org/post",
+          "off_cmd": "https://httpbin.org/post",
+          "method": "POST",
+          "headers": {
+            "x-ha-access": "your_hass_password"
+          },
+          "on_data": {
+            "entity_id": "switch.fake_hass_switch"
+          },
+          "off_data": {
+            "entity_id": "switch.fake_hass_switch"
+          }
+        },
+        {
+          "name": "test post with string instead of dict",
+          "port": 12350,
+          "on_cmd": "http://127.0.0.1:8000/post",
+          "off_cmd": "http://127.0.0.1:8000/post",
+          "method": "POST",
+          "headers": {
+            "x-ha-access": "your_hass_password"
+          },
+          "on_data": "ONSTRING",
+          "off_data": "OFFSTRING"
         }
+      ]
     }
+  }
 }
