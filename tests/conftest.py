@@ -44,7 +44,7 @@ class TestFauxmoServer:
         self.server.join()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def fauxmo_server() -> Callable[[str], TestFauxmoServer]:
     """Use a pytest fixture to provide the TestFauxmoServer context manager."""
     return TestFauxmoServer
