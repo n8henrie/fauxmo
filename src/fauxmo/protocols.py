@@ -113,7 +113,6 @@ class Fauxmo(asyncio.Protocol):
         """
         logger.debug(f"Handling action for plugin type {self.plugin}")
 
-        success = False
         soap_format = (
             "<s:Envelope "
             'xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" '
@@ -135,6 +134,7 @@ class Fauxmo(asyncio.Protocol):
         action: str = None
         action_type: str = None
         return_val: str = None
+        success: bool = False
 
         if command_format("GetBinaryState").casefold() in msg.casefold():
             logger.info(f"Attempting to get state for {self.plugin.name}")
@@ -152,6 +152,7 @@ class Fauxmo(asyncio.Protocol):
             else:
                 logger.info(f"{self.plugin.name} state: {state}")
 
+            if state in ["off", "on"]:
                 success = True
                 return_val = str(int(state.lower() == "on"))
 

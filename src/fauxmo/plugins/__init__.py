@@ -1,6 +1,7 @@
 """fauxmo.plugins :: Provide ABC for Fauxmo plugins."""
 
 import abc
+from typing import Callable
 
 
 class FauxmoPlugin(abc.ABC):
@@ -34,9 +35,24 @@ class FauxmoPlugin(abc.ABC):
         since the Fauxmo device determines its port from the plugin's instance
         attribute.
 
+        The `_latest_action` attribute stores the most recent successful
+        action, which is set by the `__getattribute__` hackery for successful
+        `.on()` and `.off()` commands.
+
         """
         self._name = name
         self._port = port
+        self._latest_action = "off"
+
+    def __getattribute__(self, name: str) -> Callable:
+        """Intercept `.on()` and `.off()` to set `_latest_action` attribute."""
+        if name in ["on", "off"]:
+            success = object.__getattribute__(self, name)()
+            if success is True:
+                self._latest_action = name
+            return lambda: success
+        else:
+            return object.__getattribute__(self, name)
 
     @property
     def port(self) -> int:
@@ -63,10 +79,27 @@ class FauxmoPlugin(abc.ABC):
         """Run function when Alexa requests device state.
 
         Should return "on" or "off" if it can be determined, or "unknown" if
-        there is no mechanism for determining the device state.
+        there is no mechanism for determining the device state, in which case
+        Alexa will complain that the device is not responding.
+
+        If state cannot be determined, a plugin can opt into this
+        implementation, which falls back on the `_latest_action` attribute.
+        It is intentionally left as an abstract method so that plugins cannot
+        omit a `get_state` method completely, which could lead to unexpected
+        behavior; instead, they should explicitly `return super().get_state()`.
         """
-        pass
+        return self.latest_action
 
     def close(self) -> None:
         """Run when shutting down; allows plugin to clean up state."""
         pass
+
+    @property
+    def latest_action(self) -> str:
+        """Return latest action in read-only manner.
+
+        Must be a function instead of e.g. property because it overrides
+        `get_state`, and therefore must be callable.
+
+        """
+        return self._latest_action

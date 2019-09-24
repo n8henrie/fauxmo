@@ -56,6 +56,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         state_response_on: str = None,
         password: str = None,
         port: int,
+        use_fake_state: bool = False,
         user: str = None,
     ) -> None:
         """Initialize a SimpleHTTPPlugin instance.
@@ -73,10 +74,12 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             state_method: HTTP method to be used for `get_state()`
             state_response_off: If this string is in the response to state_cmd,
                                 the device is off.
-            state_response_on: If this string is in the response to state_cmd,
-                               the device is on.
             password: Password for HTTP authentication (basic or digest only)
             port: Port that this device will run on
+            use_fake_state: If `True`, override `get_state` to return the
+                            latest action as the device state. NB: The proper
+                            json boolean value for Python's `True` is `true`,
+                            not `True` or `"true"`.
             user: Username for HTTP authentication (basic or digest only)
 
         """
@@ -111,6 +114,8 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             self.urlopen = opener.open
         else:
             self.urlopen = urllib.request.urlopen
+
+        self.use_fake_state = use_fake_state
 
         super().__init__(name=name, port=port)
 
@@ -167,6 +172,9 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             "on", "off", or "unknown"
 
         """
+        if self.use_fake_state is True:
+            return super().get_state()
+
         if self.state_cmd is None:
             return "unknown"
 
