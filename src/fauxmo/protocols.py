@@ -142,15 +142,8 @@ class Fauxmo(asyncio.Protocol):
             action = "Get"
             action_type = "BinaryState"
 
-            try:
-                state = self.plugin.get_state()
-            except AttributeError:
-                logger.warning(
-                    f"Plugin {self.plugin.__module__} has not "
-                    "implemented a `get_state` method."
-                )
-            else:
-                logger.info(f"{self.plugin.name} state: {state}")
+            state = self.plugin.get_state().casefold()
+            logger.info(f"{self.plugin.name} state: {state}")
 
             if state in ["off", "on"]:
                 success = True
