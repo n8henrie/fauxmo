@@ -183,8 +183,7 @@ class Fauxmo(asyncio.Protocol):
             self.transport.write(response.encode())
         else:
             errmsg = (
-                f"Unable to complete command for {self.plugin.name}:\n"
-                f"{msg}"
+                f"Unable to complete command for {self.plugin.name}:\n{msg}"
             )
             logger.warning(errmsg)
         self.transport.close()
