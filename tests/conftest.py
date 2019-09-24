@@ -31,7 +31,7 @@ class TestFauxmoServer:
         local_ip = "unknown"
         while not local_ip[0].isdigit():
             local_ip = get_local_ip()
-        return get_local_ip()
+        return local_ip
 
     def __exit__(
         self,
