@@ -37,7 +37,14 @@ Example config:
             "port": 49915,
             "on_cmd": "touch testfile.txt",
             "off_cmd": "rm testfile.txt",
-            "state_cmd": "ls testfile.txt",
+            "state_cmd": "ls testfile.txt"
+        },
+        {
+            "name": "command with fake state",
+            "port": 49916,
+            "on_cmd": "touch testfile.txt",
+            "off_cmd": "rm testfile.txt",
+            "use_fake_state": true
         }
       ]
     }
@@ -62,6 +69,7 @@ class CommandLinePlugin(FauxmoPlugin):
         on_cmd: str,
         off_cmd: str,
         state_cmd: str = None,
+        use_fake_state: bool = False,
     ) -> None:
         """Initialize a CommandLinePlugin instance.
 
@@ -71,11 +79,17 @@ class CommandLinePlugin(FauxmoPlugin):
             on_cmd: Command to be called when turning device on
             off_cmd: Command to be called when turning device off
             state_cmd: Command to check device state (return code 0 == on)
+            use_fake_state: If `True`, override `get_state` to return the
+                            latest action as the device state. NB: The proper
+                            json boolean value for Python's `True` is `true`,
+                            not `True` or `"true"`.
 
         """
         self.on_cmd = on_cmd
         self.off_cmd = off_cmd
         self.state_cmd = state_cmd
+
+        self.use_fake_state = use_fake_state
 
         super().__init__(name=name, port=port)
 
@@ -124,6 +138,9 @@ class CommandLinePlugin(FauxmoPlugin):
             "on" or "off" if `state_cmd` is defined, "unknown" if undefined
 
         """
+        if self.use_fake_state is True:
+            return super().get_state()
+
         if self.state_cmd is None:
             return "unknown"
 
