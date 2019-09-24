@@ -14,7 +14,6 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
     SimpleHTTPPlugin's `on_cmd` and `off_cmd`, ensures these run and return
     200, which should make the `.on()` and `.off()` methods return True.
     """
-
     with open("tests/test_config.json") as conf_file:
         config = json.load(conf_file)
 
