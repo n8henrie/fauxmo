@@ -14,21 +14,19 @@ from fauxmo.utils import get_unused_port
 def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     """Test device search request to UPnP / SSDP server."""
     msg = b'MAN: "ssdp:discover"' + b"ST: urn:Belkin:device:**"
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    reuseport = getattr(socket, "SO_REUSEPORT", None)
-    if reuseport:
-        sock.setsockopt(socket.SOL_SOCKET, reuseport, 1)
-
-    sock.settimeout(0.5)
-
     addr = ("239.255.255.250", 1900)
 
     with fauxmo_server("tests/test_config.json"):
-        sock.sendto(msg, addr)
-        data = sock.recv(4096)
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            reuseport = getattr(socket, "SO_REUSEPORT", None)
+            if reuseport:
+                sock.setsockopt(socket.SOL_SOCKET, reuseport, 1)
+
+            sock.sendto(msg, addr)
+            data = sock.recv(4096)
 
     assert b"LOCATION: http://" in data
     assert b"/setup.xml" in data
