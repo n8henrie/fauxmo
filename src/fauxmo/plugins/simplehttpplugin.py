@@ -13,7 +13,9 @@ import urllib.parse
 import urllib.request
 from http.cookiejar import CookieJar
 from typing import Mapping, Union
+from urllib.error import HTTPError
 
+from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
 
 
@@ -142,9 +144,12 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             url=cmd, data=data, headers=self.headers, method=self.method
         )
 
-        with self.urlopen(req) as resp:
-            if isinstance(resp, http.client.HTTPResponse):
-                return resp.status in (200, 201)
+        try:
+            with self.urlopen(req) as resp:
+                if isinstance(resp, http.client.HTTPResponse):
+                    return resp.status in (200, 201)
+        except HTTPError as e:
+            logger.warning(f"Error with request to {cmd}: {e}")
         return False
 
     def on(self) -> bool:
