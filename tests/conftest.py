@@ -28,8 +28,8 @@ class TestFauxmoServer:
             daemon=True,
         )
         self.server.start()
-        local_ip = None
-        while local_ip is None:
+        local_ip = "unknown"
+        while not local_ip[0].isdigit():
             local_ip = get_local_ip()
         return get_local_ip()
 
