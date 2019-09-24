@@ -1,6 +1,5 @@
 """test_fauxmo.py :: Tests for `fauxmo` package."""
 
-import json
 import socket
 import xml.etree.ElementTree as ET  # noqa
 
@@ -8,7 +7,6 @@ import pytest
 import requests
 
 from fauxmo import fauxmo
-from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 from fauxmo.protocols import Fauxmo
 from fauxmo.utils import get_unused_port
 
@@ -99,30 +97,6 @@ def test_old_config_fails() -> None:
     """Ensure the config for fauxmo < v0.4.0 fails with SystemExit."""
     with pytest.raises(SystemExit):
         fauxmo.main(config_path_str="tests/old-config-sample.json")
-
-
-def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
-    """Test simplehttpplugin.
-
-    Uses the fauxmo_device fixture (runs httpbin) to emulate the *target* of
-    SimpleHTTPPlugin's `on_cmd` and `off_cmd`, ensures these run and return
-    200, which should make the `.on()` and `.off()` methods return True.
-    """
-    with open("tests/test_config.json") as conf_file:
-        config = json.load(conf_file)
-
-    for device_conf in config["PLUGINS"]["SimpleHTTPPlugin"]["DEVICES"]:
-        device = SimpleHTTPPlugin(**device_conf)
-        assert device.on() is True
-        assert device.off() is True
-
-        state = device.get_state()
-        if device.state_cmd is not None:
-            assert state == "on"
-        else:
-            assert state == "unknown"
-
-        device.close()
 
 
 def test_content_length() -> None:

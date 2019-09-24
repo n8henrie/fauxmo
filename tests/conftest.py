@@ -28,7 +28,9 @@ class TestFauxmoServer:
             daemon=True,
         )
         self.server.start()
-        time.sleep(0.1)
+        local_ip = None
+        while local_ip is None:
+            local_ip = get_local_ip()
         return get_local_ip()
 
     def __exit__(
@@ -50,7 +52,7 @@ def fauxmo_server() -> Callable[[str], TestFauxmoServer]:
 
 @pytest.fixture(scope="session")
 def simplehttpplugin_target() -> Iterator:
-    """Simulate the endpoints triggered by RESTAPIPlugin."""
+    """Simulate the endpoints triggered by SimpleHTTPPlugin."""
     httpbin_address = ("127.0.0.1", 8000)
     fauxmo_device = Process(
         target=httpbin.core.app.run,

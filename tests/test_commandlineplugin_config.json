@@ -1,32 +1,52 @@
 {
-    "FAUXMO": {
-        "ip_address": "auto"
-    },
-    "PLUGINS": {
-        "CommandLinePlugin": {
-            "path": "commandlineplugin.py",
-            "DEVICES": [
-                {
-                    "name": "test command line with true / on state",
-                    "port": 12345,
-                    "on_cmd": "true",
-                    "off_cmd": "false",
-                    "state_cmd": "true"
-                },
-                {
-                    "name": "test command line with false / off state",
-                    "port": 12346,
-                    "on_cmd": "true",
-                    "off_cmd": "false",
-                    "state_cmd": "false"
-                },
-                {
-                    "name": "test command with unknown state",
-                    "port": 12347,
-                    "on_cmd": "test 42 = 42",
-                    "off_cmd": "test 42 = 43"
-                }
-            ]
+  "FAUXMO": {
+    "ip_address": "auto"
+  },
+  "PLUGINS": {
+    "CommandLinePlugin": {
+      "DEVICES": [
+        {
+          "name": "test command line with true / on state",
+          "port": 12345,
+          "on_cmd": "true",
+          "off_cmd": "false",
+          "state_cmd": "true"
+        },
+        {
+          "name": "test command line with false / off state",
+          "port": 12346,
+          "on_cmd": "true",
+          "off_cmd": "false",
+          "state_cmd": "false"
+        },
+        {
+          "name": "test command with unknown state",
+          "port": 12347,
+          "on_cmd": "test 42 = 42",
+          "off_cmd": "test 42 = 43"
+        },
+        {
+          "name": "Ensure that state is unknown if no state_cmd and use_fake_state is false",
+          "port": 12348,
+          "on_cmd": "test 42 = 42",
+          "off_cmd": "test 42 = 43",
+          "use_fake_state": false
+        },
+        {
+          "name": "Ensure state turns on and off if use_fake_state is true",
+          "port": 12349,
+          "on_cmd": "test 42 = 42",
+          "off_cmd": "test 43 = 43",
+          "use_fake_state": true
+        },
+        {
+          "name": "Ensure state fails to turn on if use_fake_state is true and command fails",
+          "port": 12350,
+          "on_cmd": "test 42 = 43",
+          "off_cmd": "test 43 = 43",
+          "use_fake_state": true
         }
+      ]
     }
+  }
 }

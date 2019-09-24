@@ -1,0 +1,57 @@
+{
+  "FAUXMO": {
+    "ip_address": "auto"
+  },
+  "PLUGINS": {
+    "SimpleHTTPPlugin": {
+      "DEVICES": [
+        {
+          "port": 12345,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "Should return `\"unknown\"` since both state_responses will be present in the data returned from state_cmd",
+          "state_cmd": "http://127.0.0.1:8000/anything",
+          "state_method": "POST",
+          "use_fake_state": false,
+          "state_data": {
+            "get_switch_state": "please and thank you"
+          },
+          "state_response_on": "please",
+          "state_response_off": "thank you"
+        },
+        {
+          "port": 12346,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "This switch has no state config, so it should return 'unknown' for its state"
+        },
+        {
+          "port": 12347,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "Fake state should fail because it needs to be a boolean (`true`) not a string (`\"True\"`).",
+          "use_fake_state": "True"
+        },
+        {
+          "port": 12348,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "`use_fake_state` is true, so calls to `get_state` should return the last successfully completed action, or \"off\" if no action has yet been run",
+          "use_fake_state": true
+        },
+        {
+          "port": 12349,
+          "on_cmd": "http://127.0.0.1:8000/status/400",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "Test that the state does not change if the command fails",
+          "use_fake_state": true
+        }
+      ]
+    }
+  }
+}

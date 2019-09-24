@@ -53,6 +53,11 @@ def test_commandlineplugin_unit() -> None:
 
     for device_conf in config["PLUGINS"]["CommandLinePlugin"]["DEVICES"]:
         device = CommandLinePlugin(**device_conf)
+
+        # These will be tested below
+        if "fake_state" in device.name:
+            continue
+
         assert device.on() is True
         assert device.off() is False
 
@@ -64,3 +69,34 @@ def test_commandlineplugin_unit() -> None:
                 assert state == "on"
             elif "off state" in device.name:
                 assert state == "off"
+
+
+def test_commandlineplugin_fake_state() -> None:
+    """Test that commandlineplugin can return fake state."""
+    fake_state_success_count = 0
+    fake_state_failed_count = 0
+    with open(config_path_str) as f:
+        config = json.load(f)
+
+    for device_conf in config["PLUGINS"]["CommandLinePlugin"]["DEVICES"]:
+        device = CommandLinePlugin(**device_conf)
+        if device.use_fake_state is True:
+
+            assert device.get_state() == "off"
+            success = device.on()
+            if success is True:
+                fake_state_success_count += 1
+                assert device.get_state() == "on"
+            else:
+                fake_state_failed_count += 1
+                assert device.get_state() == "off"
+
+            success = device.off()
+            # if off fails it will be unknown if state should be on or off,
+            # depending on the success of the preceding `.on()`
+            if success is True:
+                fake_state_success_count += 1
+                assert device.get_state() == "off"
+
+    assert fake_state_success_count > 0
+    assert fake_state_failed_count > 0
