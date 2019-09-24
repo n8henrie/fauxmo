@@ -149,7 +149,9 @@ party dependencies.
 
 So far, the pre-installed plugins include:
 
-- `fauxmo.plugins.simplehttpplugin.SimpleHTTPPlugin`
+- [`fauxmo.plugins.simplehttpplugin.SimpleHTTPPlugin`](https://github.com/n8henrie/fauxmo/blob/master/src/fauxmo/plugins/simplehttpplugin.py)
+- [`fauxmo.plugins.commandlineplugin.CommandLinePlugin`](https://github.com/n8henrie/fauxmo/blob/master/src/fauxmo/plugins/commandlineplugin.py)
+- [`fauxmo.plugins.homeassistantplugin.HomeAssistantPlugin`](https://github.com/n8henrie/fauxmo/blob/master/src/fauxmo/plugins/homeassistantplugin.py)
 
 `SimpleHTTPPlugin` responds to Alexa's `on` and `off` commands by making
 requests to URL endpoints by way of
@@ -159,17 +161,18 @@ that provides a nice web interface for toggling switches, whose endpoints could
 be added as the `on_cmd` and `off_cmd` args to a `SimpleHTTPPlugin` instance
 to allow activation by way of Alexa -> Fauxmo.
 
-As of Fauxmo v0.4.5, `SimpleHTTPPlugin` also supports (and Fauxmo requires) a
-`get_state` method, which tells Alexa a device's state. If you don't have a way
-to determine devices state, just have your `get_state` method return
-`"unknown"`.
+As of Fauxmo v0.4.5, the `FauxmoPlugin` abstract base class (and therefore all
+derivate Fauxmo plugins) requires a `get_state` method, which tells Alexa a
+device's state. If you don't have a way to determine devices state, you can
+just have your `get_state` method return `"unknown"`, but please review the
+notes on `get_state` below.
 
-Please see details regarding `SimpleHTTPPlugin` configuration in the class's
-docstring, which I intend to continue as a convention for Fauxmo plugins.
-Users hoping to make more complicated requests may be interested in looking at
-`RESTAPIPlugin` in the
-[`fauxmo-plugins repository`](https://github.com/n8henrie/fauxmo-plugins),
-which uses Requests for a much friendlier API.
+Also, see details regarding plugin configuration in each class's docstring,
+which I intend to continue as a convention for Fauxmo plugins. Users hoping to
+make more complicated requests may be interested in looking at `RESTAPIPlugin`
+in the [`fauxmo-plugins
+repository`](https://github.com/n8henrie/fauxmo-plugins), which uses Requests
+for a much friendlier API.
 
 ### User plugins
 
@@ -185,9 +188,25 @@ To get started:
 1. Note the path to your plugin, which will need to be included in your
    `config.json` as `path` (absolute path recommended, `~` for homedir is
    okay).
-1. Write your class, which should at minimum:
+1. Write your class, which must at minimum:
     - inherit from `fauxmo.plugins.FauxmoPlugin`.
-    - provide the methods `on()` and `off()`.
+    - provide the methods `on()`, `off()`, and `get_state()`.
+        - Please note that unless the Echo has a way to determine the device
+          state, it will likely respond that your "device is not responding"
+          after you turn a device on (or in some cases off, or both), but it
+          should still be able to switch the device.
+        - If you want to ignore the actual device's state and just return the
+          last successful action as the current state (e.g. if `device.on()
+          succeeded then return `"on"`), your plugin can return
+          `super().get_state()` as its `get_state()` method. Some of the
+          included plugins can be configured to have this behavior using a
+          `use_fake_state` flag in their configuration (please look at the
+          documentation and source code of the plugins for further details).
+          Note that this means it won't update to reflect state changes that
+          occur outside of Fauxmo (e.g. manually flipping a switch, or toggling
+          with a different program), whereas a proper `get_state`
+          implementation may be able to do so.
+
 1. Any required settings will be read from your `config.json` and passed into
    your plugin as kwargs at initialization, see below.
 
@@ -201,8 +220,10 @@ strongly recommend that you:
     it's important to let other users know exactly what versions you use.
 
 Be aware, when fauxmo loads a plugin, it will add the directory
-containing the plugin to the Python system path, so any other Python
-modules in this directory might be loaded by unscrupulous code.
+containing the plugin to the Python path, so any other Python modules in this
+directory might be loaded by unscrupulous code. This behavior was adopted in
+part to facilitate installing any plugin dependencies in a way that will be
+available for import (e.g. `cd "$MYPLUGINPATH"; pip install -t $MYPLUGINDEPS`).
 
 ### Notable plugin examples
 
@@ -215,12 +236,8 @@ work -- look for the dependencies in the module level docstring.
         - Similar to `SimpleHTTPPlugin`, but uses
           [Requests](https://github.com/kennethreitz/requests) for a simpler
           API and easier modification.
-    - `HassAPIPlugin`
-        - Uses the [Home Assistant Python
-          API](https://home-assistant.io/developers/python_api/) to run
-          commands through a local or remote Home Assistance instance.
-    - `CommandLinePlugin`
-        - Run a shell command on the local machine.
+    - `MQTTPlugin`
+        - Trigger MQTT events with your Echo
     - User contributions of interesting plugins are more than welcome!
 
 ## Configuration
@@ -294,16 +311,54 @@ of the kwargs that `SimpleHTTPPlugin` accepts.
   `off`, respectively
 - `user` / `password`: Optional[str] -- Enables HTTP authentication (basic or
   digest only)
+- `use_fake_state`: Optional[bool] -- If `True`, override the plugin's
+  `get_state` method to return the latest successful action as the device
+  state. NB: The proper json boolean value for Python's `True` is `true`, not
+  `True` or `"true"`.
 
-## Security considerations
+## Security
 
-Because Fauxmo v0.4.0+ loads any user plugin specified in their config, it will
-run untested and potentially unsafe code. If an intruder were to have write
-access to your `config.json`, they could cause you all kinds of trouble. Then
-again, if they already have write access to your computer, you probably have
-bigger problems. Consider making your config.json `0600` for your user, or
-perhaps `0644 root:YourFauxmoUser`. Use Fauxmo at your own risk, with or
-without user plugins.
+I am not a technology professional and make no promises regarding the security
+of this software. Specifically, plugins such as `CommandLinePlugin` execute
+arbitrary code from your configuration without any validation. If your
+configuration can be tampered with, you're in for a bad time.
+
+That said, if your configuration can be tampered with (i.e. someone already has
+write access on your machine), then you likely have bigger problems.
+
+Regardless, a few reasonable precautions that I recommend:
+
+- run `fauxmo` in a virtulaenv, even without any dependencies
+- run `fauxmo` as a dedicated unprivileged user with its own group
+- remove write access from the `fauxmo` user and group for your config file and
+  any plugin files (perhaps `chmod 0640 config.json; chown me:fauxmo
+  config.json`)
+- consider using a firewall like `ufw`, but don't forget that you'll need to
+  open up ports for upnp (`1900`, UDP) and ports for all your devices that
+  you've configured (in `config.json`).
+
+For example, if I had 4 echo devices at 192.168.1.5, 192.168.1.10,
+192.168.1.15, and 192.168.1.20, and Fauxmo was configured with devices at each
+of port 12345-12350, to configure `ufw` I might run something like:
+
+```console
+$ for ip in 5 10 15 20; do
+    sudo ufw allow \
+        from 192.168.1."$ip" \
+        to any \
+        port 1900 \
+        proto udp \
+        comment "fauxmo upnp"
+    sudo ufw allow \
+        from 192.168.1."$ip" \
+        to any \
+        port 12345:12350 \
+        proto tcp \
+        comment "fauxmo devices"
+done
+```
+
+You use Fauxmo at your own risk, with or without user plugins.
 
 ## Troubleshooting / FAQ
 

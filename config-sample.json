@@ -21,7 +21,8 @@
                     "user": "this",
                     "password": "that",
                     "method": "PUT",
-                    "name": "fake Indigo switch"
+                    "name": "fake Indigo switch",
+                    "use_fake_state": true
                 },
                 {
                     "name": "fake home assistant switch via SimpleHTTPPlugin",
