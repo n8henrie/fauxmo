@@ -193,8 +193,12 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         with self.urlopen(req) as resp:
             response_content = resp.read().decode("utf8")
 
-        if self.state_response_off in response_content:
+        has_response_off = self.state_response_off in response_content
+        has_response_on = self.state_response_on in response_content
+        if has_response_off == has_response_on:
+            return "unknown"
+        elif has_response_off:
             return "off"
-        elif self.state_response_on in response_content:
+        elif has_response_on:
             return "on"
         return "unknown"
