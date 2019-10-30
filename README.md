@@ -196,7 +196,7 @@ To get started:
           after you turn a device on (or in some cases off, or both), but it
           should still be able to switch the device.
         - If you want to ignore the actual device's state and just return the
-          last successful action as the current state (e.g. if `device.on()
+          last successful action as the current state (e.g. if `device.on()`
           succeeded then return `"on"`), your plugin can return
           `super().get_state()` as its `get_state()` method. Some of the
           included plugins can be configured to have this behavior using a
