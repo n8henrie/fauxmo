@@ -42,20 +42,20 @@ def get_local_ip(ip_address: str = None) -> str:
     return ip_address
 
 
-def make_serial(name: str) -> str:
-    """Create a persistent UUID from the device name.
+def make_serial(identifier: str) -> str:
+    """Create a persistent UUID from an input string.
 
-    Returns a suitable UUID derived from `name`. Should remain static for a
-    given name.
+    Returns a suitable UUID derived from `identifier`. Should remain static for
+    a given input.
 
     Args:
-        name: Friendly device name (e.g. "living room light")
+        identifier: input string that will uniquely identify a device
 
     Returns:
         Persistent UUID as string
 
     """
-    return str(uuid.uuid3(uuid.NAMESPACE_X500, name))
+    return str(uuid.uuid3(uuid.NAMESPACE_X500, identifier))
 
 
 def module_from_file(modname: str, path_str: str) -> ModuleType:

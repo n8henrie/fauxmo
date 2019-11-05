@@ -78,6 +78,7 @@ class Fauxmo(asyncio.Protocol):
             "<manufacturer>Belkin International Inc.</manufacturer>"
             "<modelName>Emulated Socket</modelName>"
             "<modelNumber>3.1415</modelNumber>"
+            f"<serialNumber>{self.serial}</serialNumber>"
             f"<UDN>uuid:Socket-1_0-{self.serial}</UDN>"
             "<serviceList>"
             "<service>"
@@ -390,7 +391,7 @@ class SSDPServer(asyncio.DatagramProtocol):
             port = device.get("port")
 
             location = f"http://{ip_address}:{port}/setup.xml"
-            serial = make_serial(name)
+            serial = make_serial(f"{name}{location}")
             usn = (
                 f"uuid:Socket-1_0-{serial}::"
                 f'{discover_pattern.lstrip("ST: ")}'
