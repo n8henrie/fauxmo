@@ -3,6 +3,16 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.5.0 :: 20191212
+
+- Add py38 support
+- Add `use_fake_state` option to accommodate situations that state can't be
+  properly determined (thanks @johngo7470)
+- Bugfix: fix unexpected behavior with a switch's state logic was true for both
+  `on` and `off`
+- Migrated HomeAssistantPlugin and CommandLinePlugin from fauxmo-plugins repo
+- Update tests, pytest fixtures, and add some mocks
+
 ## v0.4.9 :: 20190527
 
 - Add py37 support (including Travis workaround)
