@@ -417,7 +417,7 @@ class SSDPServer(asyncio.DatagramProtocol):
     async def _send_async_response(
         self, response: bytes, addr: Tuple[str, int], mx: float = 0.0
     ) -> None:
-        logger.debug(f"Sending response to {addr} with mx {mx}:\n{response}")
+        logger.debug(f"Sending response to {addr} with mx {mx}:\n{response!r}")
         await asyncio.sleep(random.random() * max(0, min(5, mx)))
         self.transport.sendto(response, addr)
 
