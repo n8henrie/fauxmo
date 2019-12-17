@@ -47,7 +47,7 @@
           "off_cmd": "http://127.0.0.1:8000/post",
           "method": "POST",
           "headers": {
-            "x-ha-access": "your_hass_password"
+            "Authorization": "Bearer YourLongLivedAccessTokenHere"
           },
           "on_data": {
             "entity_id": "switch.fake_hass_switch"
@@ -63,7 +63,7 @@
           "off_cmd": "https://httpbin.org/post",
           "method": "POST",
           "headers": {
-            "x-ha-access": "your_hass_password"
+            "Authorization": "Bearer YourLongLivedAccessTokenHere"
           },
           "on_data": {
             "entity_id": "switch.fake_hass_switch"
@@ -79,7 +79,7 @@
           "off_cmd": "http://127.0.0.1:8000/post",
           "method": "POST",
           "headers": {
-            "x-ha-access": "your_hass_password"
+            "Authorization": "Bearer YourLongLivedAccessTokenHere"
           },
           "on_data": "ONSTRING",
           "off_data": "OFFSTRING"

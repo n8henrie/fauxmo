@@ -33,10 +33,9 @@ def get_local_ip(ip_address: str = None) -> str:
         # Workaround for Linux returning localhost
         # See: SO question #166506 by @UnkwnTech
         if ip_address in ["127.0.1.1", "127.0.0.1", "localhost", "unknown"]:
-            tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            tempsock.connect(("8.8.8.8", 0))
-            ip_address = tempsock.getsockname()[0]
-            tempsock.close()
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+                sock.connect(("8.8.8.8", 80))
+                ip_address = sock.getsockname()[0]
 
     logger.debug(f"Using IP address: {ip_address}")
     return ip_address

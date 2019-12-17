@@ -4,6 +4,7 @@ import json
 import socket
 import time
 from multiprocessing import Process
+from threading import Thread
 from types import TracebackType
 from typing import Callable, Iterator, Optional, Type
 
@@ -15,7 +16,12 @@ from fauxmo.utils import get_local_ip
 
 
 class TestFauxmoServer:
-    """Runs Fauxmo in a separate thread."""
+    """Runs Fauxmo in a separate thread.
+
+    A Process is used instead of a thread since there is no way to terminate a
+    server thread (which runs forever), so it is difficult to start and
+    terminate examples with different configurations.
+    """
 
     def __init__(self, config_path_str: str) -> None:
         """Initialize test Fauxmo server with path to config."""
@@ -30,7 +36,6 @@ class TestFauxmoServer:
         self.server = Process(
             target=fauxmo.main,
             kwargs={"config_path_str": self.config_path_str},
-            daemon=True,
         )
         self.server.start()
 
@@ -67,12 +72,13 @@ def fauxmo_server() -> Callable[[str], TestFauxmoServer]:
 def simplehttpplugin_target() -> Iterator:
     """Simulate the endpoints triggered by SimpleHTTPPlugin."""
     httpbin_address = ("127.0.0.1", 8000)
-    fauxmo_device = Process(
+    fauxmo_device = Thread(
         target=httpbin.core.app.run,
         kwargs={
             "host": httpbin_address[0],
             "port": httpbin_address[1],
             "threaded": True,
+            "debug": False,
         },
         daemon=True,
     )
@@ -87,8 +93,4 @@ def simplehttpplugin_target() -> Iterator:
             time.sleep(0.1)
             continue
         break
-
     yield
-
-    fauxmo_device.terminate()
-    fauxmo_device.join()

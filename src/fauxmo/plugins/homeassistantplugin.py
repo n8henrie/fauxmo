@@ -1,8 +1,12 @@
 """Fauxmo plugin to interact with Home Assistant devices.
 
-One simple way to find your entity_id is to use curl and pipe to grep or jq:
+One simple way to find your entity_id is to use curl and pipe to grep or jq.
+Note that modern versions of home-assistant require you to create and include a
+long-lived access token, which you can generate in the web interface at the
+`/profile` endpoint.
 
-    curl -s http://IP:PORT/api/states | jq
+    curl --silent --header "Authorization: Bearer YourTokenHere" \
+            http://IP:PORT/api/states | jq
 
 NB: This is just a special case of the RESTAPIPlugin (or even SimpleHTTPPlugin,
 see `config-sample.json` in the main Fauxmo repo), but it makes config
