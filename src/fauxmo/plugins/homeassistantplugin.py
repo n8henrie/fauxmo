@@ -53,7 +53,9 @@ Example config:
 import json
 import urllib.parse
 import urllib.request
+from collections import defaultdict
 from http.client import HTTPResponse
+from typing import Dict
 
 from fauxmo.plugins import FauxmoPlugin
 
@@ -65,17 +67,14 @@ class HomeAssistantPlugin(FauxmoPlugin):
     toggle these with the Echo.
     """
 
-    service_map = {
-        "cover": {
-            "on": "open_cover",
-            "off": "close_cover",
-            "on_state": "open",
-            "off_state": "closed",
-        },
-        "homeassistant": {"on": "turn_on", "off": "turn_off"},
-        "light": {"on": "turn_on", "off": "turn_off"},
-        "media_player": {"on": "turn_on", "off": "turn_off"},
-        "switch": {"on": "turn_on", "off": "turn_off"},
+    service_map: Dict[str, Dict[str, str]] = defaultdict(
+        lambda: {"on": "turn_on", "off": "turn_off"}
+    )
+    service_map["cover"] = {
+        "on": "open_cover",
+        "off": "close_cover",
+        "on_state": "open",
+        "off_state": "closed",
     }
 
     def __init__(
