@@ -1,12 +1,12 @@
 """Fauxmo plugin that runs a command on the local machine.
 
 Runs a `shlex`ed command using `subprocess.run`, keeping the default of
-`shell=False`. This is probaby frought with security concerns, which is why
-this plugin is not included by default in `fauxmo.plugins`. By installing or
-using it, you acknowledge that it could run commands from your config.json that
-could lead to data compromise, corruption, loss, etc. Consider making your
-config.json read-only. If there are parts of this you don't understand, you
-should probably not use this plugin.
+`shell=False`. Caveat emptor: there may be major security risks to running this
+plugin, as it enables Fauxmo to run semi-arbitrary code, depending on your
+configuration. By enabling or using it, you acknowledge that it could run
+commands from your config.json that could lead to data compromise, corruption,
+loss, etc. Consider making your config.json read-only. If there are parts of
+this you don't understand, you should probably not use this plugin.
 
 If the command runs with a return code of 0, Alexa should respond prompty
 "Okay" or something that indicates it seems to have worked. If the command has
