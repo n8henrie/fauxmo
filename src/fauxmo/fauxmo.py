@@ -112,10 +112,10 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
         logger.debug(f"plugin_vars: {repr(plugin_vars)}")
 
         for device in config["PLUGINS"][plugin]["DEVICES"]:
-            logger.debug(f"device config: {repr(device)}")
-
             # Ensure port is `int`, set it if not given (`None`) or 0
             device["port"] = int(device.get("port", 0)) or get_unused_port()
+
+            logger.debug(f"device config: {repr(device)}")
 
             try:
                 plugin = PluginClass(**plugin_vars, **device)
