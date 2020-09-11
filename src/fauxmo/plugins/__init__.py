@@ -103,3 +103,8 @@ class FauxmoPlugin(abc.ABC):
 
         """
         return self._latest_action
+
+    def __repr__(self) -> str:
+        """Provide a default human-readable representation of the plugin."""
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self.__dict__.items())
+        return f"{self.__class__.__name__}({attrs})"
