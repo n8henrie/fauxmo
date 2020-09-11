@@ -31,7 +31,6 @@ Example config:
             "ha_port": 8123,
             "ha_protocol": "http",
             "ha_token": "abc123",
-            "path": "/path/to/homeassistantplugin.py",
             "DEVICES": [
                 {
                     "name": "example Home Assistant device 1",
