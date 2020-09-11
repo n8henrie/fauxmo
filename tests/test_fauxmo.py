@@ -1,6 +1,7 @@
 """test_fauxmo.py :: Tests for `fauxmo` package."""
 
 import socket
+import typing as t
 import xml.etree.ElementTree as ET  # noqa
 
 import pytest
@@ -11,7 +12,7 @@ from fauxmo.protocols import Fauxmo
 from fauxmo.utils import get_unused_port
 
 
-def test_udp_search(fauxmo_server: pytest.fixture) -> None:
+def test_udp_search(fauxmo_server: t.Callable) -> None:
     """Test device search request to UPnP / SSDP server."""
     msg = b'MAN: "ssdp:discover"' + b"ST: urn:Belkin:device:**"
     addr = ("239.255.255.250", 1900)
@@ -32,7 +33,7 @@ def test_udp_search(fauxmo_server: pytest.fixture) -> None:
     assert b"/setup.xml" in data
 
 
-def test_setup(fauxmo_server: pytest.fixture) -> None:
+def test_setup(fauxmo_server: t.Callable) -> None:
     """Test TCP server's `/setup.xml` endpoint."""
     with fauxmo_server("tests/test_config.json") as fauxmo_ip:
         resp = requests.get(f"http://{fauxmo_ip}:12345/setup.xml")
@@ -43,7 +44,7 @@ def test_setup(fauxmo_server: pytest.fixture) -> None:
 
 
 def test_turnon(
-    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+    fauxmo_server: t.Callable, simplehttpplugin_target: t.Callable
 ) -> None:
     """Test TCP server's "on" action for SimpleHTTPPlugin."""
     data = (
@@ -59,7 +60,7 @@ def test_turnon(
 
 
 def test_getbinarystate(
-    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+    fauxmo_server: t.Callable, simplehttpplugin_target: t.Callable
 ) -> None:
     """Test TCP server's "GetBinaryState" action for SimpleHTTPPlugin."""
     data = b'Soapaction: "urn:Belkin:service:basicevent:1#GetBinaryState"'
@@ -76,7 +77,7 @@ def test_getbinarystate(
 
 
 def test_getfriendlyname(
-    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+    fauxmo_server: t.Callable, simplehttpplugin_target: t.Callable
 ) -> None:
     """Test TCP server's "GetFriendlyName" action for SimpleHTTPPlugin."""
     data = b'soapaction: "urn:Belkin:service:basicevent:1#GetFriendlyName"'

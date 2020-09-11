@@ -12,7 +12,7 @@ import http
 import urllib.parse
 import urllib.request
 from http.cookiejar import CookieJar
-from typing import Mapping, Union
+from typing import Callable, Mapping, Union
 from urllib.error import HTTPError
 
 from fauxmo import logger
@@ -100,6 +100,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         self.state_response_on = state_response_on
         self.state_response_off = state_response_off
 
+        self.urlopen: Callable
         if user and password:
             manager = urllib.request.HTTPPasswordMgrWithDefaultRealm()
             manager.add_password(None, (on_cmd, off_cmd), user, password)

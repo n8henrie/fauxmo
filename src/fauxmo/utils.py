@@ -6,6 +6,7 @@ import socket
 import struct
 import sys
 import uuid
+from importlib.abc import Loader
 from types import ModuleType
 
 from fauxmo import logger
@@ -72,7 +73,10 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
     sys.path.append(str(path.parents[0]))
     spec = importlib.util.spec_from_file_location(modname, str(path))
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore
+    if isinstance(spec.loader, Loader):
+        spec.loader.exec_module(module)
+    else:
+        raise ValueError(f"{spec.loader} is not a Loader")
     return module
 
 

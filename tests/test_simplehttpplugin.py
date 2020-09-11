@@ -1,13 +1,12 @@
 """test_simplehttpplugin.py :: Tests for SimpleHTTPPlugin."""
 
 import json
-
-import pytest
+import typing as t
 
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 
 
-def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
+def test_simplehttpplugin(simplehttpplugin_target: t.Callable) -> None:
     """Test simplehttpplugin.
 
     Uses the fauxmo_device fixture (runs httpbin) to emulate the *target* of
@@ -32,7 +31,7 @@ def test_simplehttpplugin(simplehttpplugin_target: pytest.fixture) -> None:
 
 
 def test_simplehttpplugin_state(
-    fauxmo_server: pytest.fixture, simplehttpplugin_target: pytest.fixture
+    fauxmo_server: t.Callable, simplehttpplugin_target: t.Callable
 ) -> None:
     """Test simplehttpplugin's handling of state.
 

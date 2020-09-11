@@ -5,6 +5,7 @@ For testing purposes, `on_cmd`s will run without error (return code 0) and
 """
 
 import json
+import typing as t
 
 import pytest
 import requests
@@ -15,7 +16,7 @@ from fauxmo.plugins.commandlineplugin import CommandLinePlugin
 config_path_str = "tests/test_commandlineplugin_config.json"
 
 
-def test_commandlineplugin_integration(fauxmo_server: pytest.fixture) -> None:
+def test_commandlineplugin_integration(fauxmo_server: t.Callable) -> None:
     """Test "on" and "off" actions for CommandLinePlugin.
 
     This test uses requests to `post` a value to a Fauxmo device that

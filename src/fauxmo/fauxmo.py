@@ -126,7 +126,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
             coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
-            server.fauxmoplugin = plugin  # type: ignore
+            setattr(server, "fauxmoplugin", plugin)
             servers.append(server)
 
             ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
@@ -158,7 +158,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     transport.close()
     for idx, server in enumerate(servers):
         logger.debug(f"Shutting down server {idx}...")
-        server.fauxmoplugin.close()  # type: ignore
+        getattr(server, "fauxmoplugin").close()
         server.close()
         loop.run_until_complete(server.wait_closed())
 
