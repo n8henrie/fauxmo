@@ -1,7 +1,7 @@
 # Fauxmo README
 
-master: [![master branch build status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=master)](https://travis-ci.org/n8henrie/fauxmo/branches)
-dev: [![dev branch build status](https://travis-ci.org/n8henrie/fauxmo.svg?branch=dev)](https://travis-ci.org/n8henrie/fauxmo/branches)
+master: [![master branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
+dev: [![dev branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=dev)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
@@ -83,7 +83,7 @@ contributing to development, clone the repo as per below)
 1. `cd fauxmo`
 1. `python3 -m venv .venv`
 1. `source ./.venv/bin/activate`
-1. `pip install -e .[dev]`
+1. `pip install -e .[dev,test]`
 1. `cp config-sample.json config.json`
 1. Edit `config.json`
 1. `fauxmo [-v]`
