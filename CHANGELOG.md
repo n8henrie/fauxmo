@@ -3,9 +3,9 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
-## v0.5.1 :: 20210901
+## v0.5.1, v0.5.2 :: 20210901
 
-- Version bump to upload new pyproject.toml format to PyPI 
+- Version bumps to upload new pyproject.toml format to PyPI
 
 ## v0.5.0 :: 20191212
 
