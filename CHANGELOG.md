@@ -3,6 +3,10 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.5.1 :: 20210901
+
+- Version bump to upload new pyproject.toml format to PyPI 
+
 ## v0.5.0 :: 20191212
 
 - Add py38 support
