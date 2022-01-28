@@ -22,7 +22,7 @@ from fauxmo.plugins import FauxmoPlugin
 class SimpleHTTPPlugin(FauxmoPlugin):
     """Plugin for interacting with HTTP devices.
 
-    The Fauxmo class expects plguins to be instances of objects that inherit
+    The Fauxmo class expects plugins to be instances of objects that inherit
     from FauxmoPlugin and have on() and off() methods that return True on
     success and False otherwise. This class takes a mix of url, method, header,
     body, and auth data and makes REST calls to a device.
