@@ -85,6 +85,7 @@ class HomeAssistantPlugin(FauxmoPlugin):
         ha_port: int = 8123,
         ha_protocol: str = "http",
         ha_token: str = None,
+        domain: str = None,
     ) -> None:
         """Initialize a HomeAssistantPlugin instance.
 
@@ -94,15 +95,18 @@ class HomeAssistantPlugin(FauxmoPlugin):
             ha_port: Port number for HomeAssistant access
             ha_protocol: http or https
             ha_token: Long-lived HomeAssistant token
+            domain: Override the domain instead of guessing from `entity_id`
 
         """
         self.ha_url = f"{ha_protocol}://{ha_host}:{ha_port}"
 
         self.entity_id = entity_id
 
-        self.domain = self.entity_id.split(".")[0]
-        if self.domain == "group":
-            self.domain = "homeassistant"
+        if domain is None:
+            domain = self.entity_id.split(".")[0]
+            if domain == "group":
+                domain = "homeassistant"
+        self.domain = domain
 
         self.headers = {
             "Authorization": f"Bearer {ha_token}",

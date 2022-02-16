@@ -30,6 +30,12 @@ def test_homeassistantplugin(mock: MagicMock) -> None:
     for device_conf in config["PLUGINS"]["HomeAssistantPlugin"]["DEVICES"]:
         device = HomeAssistantPlugin(**{**plugin_vars, **device_conf})
 
+        specified_domain = device_conf.get("domain")
+        if specified_domain:
+            assert device.domain == specified_domain
+        else:
+            assert device.domain == device.entity_id.split(".")[0]
+
         signal = HomeAssistantPlugin.service_map[device.domain.lower()]["on"]
         assert device.on() is True
         req = mock.call_args[0][0]
