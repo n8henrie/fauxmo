@@ -7,7 +7,6 @@ from unittest.mock import MagicMock, patch
 
 from fauxmo.plugins.homeassistantplugin import HomeAssistantPlugin
 
-
 config_path_str = "tests/test_homeassistantplugin_config.json"
 
 
