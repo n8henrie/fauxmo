@@ -89,11 +89,11 @@ class HomeAssistantPlugin(FauxmoPlugin):
         """Initialize a HomeAssistantPlugin instance.
 
         Args:
-            ha_token: Long-lived HomeAssistant token
             entity_id: `entity_id` used by HomeAssistant
             ha_host: Host running HomeAssistant
             ha_port: Port number for HomeAssistant access
             ha_protocol: http or https
+            ha_token: Long-lived HomeAssistant token
 
         """
         self.ha_url = f"{ha_protocol}://{ha_host}:{ha_port}"
