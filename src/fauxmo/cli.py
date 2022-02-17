@@ -14,6 +14,7 @@ try:
 except ImportError:
     pass
 else:
+    logger.info("Using uvloop")
     uvloop.install()
 
 
