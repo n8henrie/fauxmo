@@ -9,6 +9,13 @@ import sys
 from fauxmo import __version__, logger
 from fauxmo.fauxmo import main
 
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    uvloop.install()
+
 
 def cli() -> None:
     """Parse command line options, provide entry point for console scripts."""

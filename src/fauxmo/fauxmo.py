@@ -61,7 +61,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     fauxmo_ip = get_local_ip(fauxmo_config.get("ip_address"))
 
     ssdp_server = SSDPServer()
-    servers = []
+    pluginservers = []
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -122,8 +122,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
             fauxmo = partial(Fauxmo, name=plugin.name, plugin=plugin)
             coro = loop.create_server(fauxmo, host=fauxmo_ip, port=plugin.port)
             server = loop.run_until_complete(coro)
-            setattr(server, "fauxmoplugin", plugin)
-            servers.append(server)
+            pluginservers.append((plugin, server))
 
             ssdp_server.add_device(plugin.name, fauxmo_ip, plugin.port)
 
@@ -152,9 +151,9 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     # Will not reach this part unless SIGINT or SIGTERM triggers `loop.stop()`
     logger.debug("Shutdown starting...")
     transport.close()
-    for idx, server in enumerate(servers):
+    for idx, (plugin, server) in enumerate(pluginservers):
         logger.debug(f"Shutting down server {idx}...")
-        getattr(server, "fauxmoplugin").close()
+        plugin.close()
         server.close()
         loop.run_until_complete(server.wait_closed())
 
