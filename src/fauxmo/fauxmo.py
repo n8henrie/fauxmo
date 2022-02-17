@@ -16,12 +16,8 @@ from functools import partial
 from fauxmo import __version__, logger
 from fauxmo.plugins import FauxmoPlugin
 from fauxmo.protocols import Fauxmo, SSDPServer
-from fauxmo.utils import (
-    get_local_ip,
-    get_unused_port,
-    make_udp_sock,
-    module_from_file,
-)
+from fauxmo.utils import (get_local_ip, get_unused_port, make_udp_sock,
+                          module_from_file)
 
 
 def main(config_path_str: str = None, verbosity: int = 20) -> None:
