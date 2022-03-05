@@ -3,6 +3,12 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.6.0 :: 20220304
+
+- Python 3.10
+- Add optional `uvloop` support (https://github.com/n8henrie/fauxmo/issues/112)
+- Add option to override `domain` to `homeassistantplugin.py` (https://github.com/n8henrie/fauxmo/issues/114)
+
 ## v0.5.1, v0.5.2 :: 20210901
 
 - Version bumps to upload new pyproject.toml format to PyPI

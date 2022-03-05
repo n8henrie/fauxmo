@@ -68,6 +68,12 @@ prior to installation: `pip install --upgrade pip`
    [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
 1. `fauxmo -c config.json [-v]`
 
+As of `v0.6.0`, you can *optionally* install `uvloop` for potentially better
+performance, which *might* be helpful if you have a large number of devices or
+a network with lots of broadcast mdns traffic. If it is present, `fauxmo` will
+take advantage. It is not terribly difficult to install `uvloop` but you are on
+your own: <https://github.com/MagicStack/uvloop>.
+
 ### Simple install of dev branch from GitHub
 
 This is a good strategy for testing features in development -- for actually
