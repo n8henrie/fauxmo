@@ -5,3 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 79
 target_version = ['py310']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+order_by_type = false
+line_length = 79
