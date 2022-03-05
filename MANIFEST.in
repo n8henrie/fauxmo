@@ -1,4 +1,4 @@
-include *.md LICENSE requirements*.txt config-sample.json
+include *.md LICENSE config-sample.json
 exclude config.json TODO.md
 
 graft src
