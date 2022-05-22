@@ -1,5 +1,7 @@
 """utils.py :: Holds utility functions for Fauxmo."""
 
+from __future__ import annotations
+
 import importlib.util
 import pathlib
 import socket
@@ -12,7 +14,7 @@ from types import ModuleType
 from fauxmo import logger
 
 
-def get_local_ip(ip_address: str = None) -> str:
+def get_local_ip(ip_address: str | None = None) -> str:
     """Attempt to get the local network-connected IP address.
 
     Args:
@@ -39,7 +41,7 @@ def get_local_ip(ip_address: str = None) -> str:
                 ip_address = sock.getsockname()[0]
 
     logger.debug(f"Using IP address: {ip_address}")
-    return ip_address
+    return str(ip_address)
 
 
 def make_serial(name: str) -> str:
@@ -72,6 +74,8 @@ def module_from_file(modname: str, path_str: str) -> ModuleType:
     path = pathlib.Path(path_str).expanduser()
     sys.path.append(str(path.parents[0]))
     spec = importlib.util.spec_from_file_location(modname, str(path))
+    if not spec:
+        raise ValueError(f"spec for {modname} not found at {path}")
     module = importlib.util.module_from_spec(spec)
     if isinstance(spec.loader, Loader):
         spec.loader.exec_module(module)

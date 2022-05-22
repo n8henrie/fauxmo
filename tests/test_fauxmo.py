@@ -40,7 +40,10 @@ def test_setup(fauxmo_server: t.Callable) -> None:
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
-    assert root.find(".//friendlyName").text == "fake switch one"
+
+    assert (
+        root.find(".//friendlyName").text == "fake switch one"  # type: ignore
+    )
 
 
 def test_turnon(
@@ -72,7 +75,7 @@ def test_getbinarystate(
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
-    val = root.find(".//BinaryState").text
+    val = root.find(".//BinaryState").text  # type: ignore
     assert val in ["0", "1"]
 
 
@@ -89,7 +92,9 @@ def test_getfriendlyname(
     assert resp.status_code == 200
 
     root = ET.fromstring(resp.text)
-    assert root.find(".//FriendlyName").text == "fake switch one"
+    assert (
+        root.find(".//FriendlyName").text == "fake switch one"  # type: ignore
+    )
 
 
 def test_old_config_fails() -> None:

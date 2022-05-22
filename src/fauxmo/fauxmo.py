@@ -4,6 +4,8 @@ Emulates a Belkin Wemo for interaction with an Amazon Echo. See README.md at
 <https://github.com/n8henrie/fauxmo>.
 """
 
+from __future__ import annotations
+
 import asyncio
 import importlib
 import json
@@ -24,7 +26,7 @@ from fauxmo.utils import (
 )
 
 
-def main(config_path_str: str = None, verbosity: int = 20) -> None:
+def main(config_path_str: str | None = None, verbosity: int = 20) -> None:
     """Run the main fauxmo process.
 
     Spawns a UDP server to handle the Echo's UPnP / SSDP device discovery
@@ -42,6 +44,7 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
     logger.info(f"Fauxmo {__version__}")
     logger.debug(sys.version)
 
+    config_path = None
     if config_path_str:
         config_path = pathlib.Path(config_path_str)
     else:
@@ -52,6 +55,8 @@ def main(config_path_str: str = None, verbosity: int = 20) -> None:
                 break
 
     try:
+        if not config_path:
+            raise FileNotFoundError
         config = json.loads(config_path.read_text())
     except FileNotFoundError:
         logger.error(

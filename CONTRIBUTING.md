@@ -66,7 +66,7 @@ for local development.
         ```
 
 1.  Install your local copy into a virtualenv. Assuming you have
-    python >= 3.6 installed, this is how you set up your fork for
+    python >= 3.7 installed, this is how you set up your fork for
     local development:
 
         ```shell_session

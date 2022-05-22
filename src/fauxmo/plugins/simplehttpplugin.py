@@ -9,10 +9,11 @@ advantage of Requests' rich API.
 """
 
 import http
+import typing as t
 import urllib.parse
 import urllib.request
+from collections.abc import Mapping
 from http.cookiejar import CookieJar
-from typing import Callable, Mapping, Union
 from urllib.error import HTTPError
 
 from fauxmo import logger
@@ -44,22 +45,22 @@ class SimpleHTTPPlugin(FauxmoPlugin):
     def __init__(
         self,
         *,
-        headers: dict = None,
+        headers: t.Optional[dict] = None,
         method: str = "GET",
         name: str,
         off_cmd: str,
-        off_data: Union[Mapping, str] = None,
+        off_data: t.Optional[t.Union[Mapping, str]] = None,
         on_cmd: str,
-        on_data: Union[Mapping, str] = None,
-        state_cmd: str = None,
-        state_data: Union[Mapping, str] = None,
+        on_data: t.Optional[t.Union[Mapping, str]] = None,
+        state_cmd: t.Optional[str] = None,
+        state_data: t.Optional[t.Union[Mapping, str]] = None,
         state_method: str = "GET",
-        state_response_off: str = None,
-        state_response_on: str = None,
-        password: str = None,
+        state_response_off: t.Optional[str] = None,
+        state_response_on: t.Optional[str] = None,
+        password: t.Optional[str] = None,
         port: int,
         use_fake_state: bool = False,
-        user: str = None,
+        user: t.Optional[str] = None,
     ) -> None:
         """Initialize a SimpleHTTPPlugin instance.
 
@@ -100,7 +101,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         self.state_response_on = state_response_on
         self.state_response_off = state_response_off
 
-        self.urlopen: Callable
+        self.urlopen: t.Callable
         if user and password:
             manager = urllib.request.HTTPPasswordMgrWithDefaultRealm()
             manager.add_password(None, (on_cmd, off_cmd), user, password)
@@ -123,14 +124,16 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         super().__init__(name=name, port=port)
 
     @staticmethod
-    def _to_bytes(data: Union[Mapping, str]) -> bytes:
+    def _to_bytes(
+        data: t.Optional[t.Union[Mapping, str]]
+    ) -> t.Optional[bytes]:
         if isinstance(data, Mapping):
             data = urllib.parse.urlencode(data)
         if isinstance(data, str):
             return data.encode("utf8")
         return data
 
-    def set_state(self, cmd: str, data: bytes) -> bool:
+    def set_state(self, cmd: str, data: t.Optional[bytes]) -> bool:
         """Call HTTP method, for use by `functools.partialmethod`.
 
         Args:
@@ -198,8 +201,8 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         has_response_on = self.state_response_on in response_content
         if has_response_off == has_response_on:
             return "unknown"
-        elif has_response_off:
+        if has_response_off:
             return "off"
-        elif has_response_on:
+        if has_response_on:
             return "on"
         return "unknown"

@@ -2,9 +2,10 @@
 
 import asyncio
 import random
+import typing as t
 import uuid
 from email.utils import formatdate
-from typing import cast, Iterable, Text, Tuple, Union
+from typing import cast
 
 from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
@@ -30,7 +31,7 @@ class Fauxmo(asyncio.Protocol):
         self.name = name
         self.serial = make_serial(name)
         self.plugin = plugin
-        self.transport: asyncio.Transport = None
+        self.transport: t.Optional[asyncio.Transport] = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """Accept an incoming TCP connection.
@@ -101,6 +102,10 @@ class Fauxmo(asyncio.Protocol):
 
         setup_response = self.add_http_headers(setup_xml)
         logger.debug(f"Fauxmo response to setup request:\n{setup_response}")
+
+        if not self.transport:
+            raise Exception("No transport")
+
         self.transport.write(setup_response.encode())
         self.transport.close()
 
@@ -112,6 +117,9 @@ class Fauxmo(asyncio.Protocol):
 
         """
         logger.debug(f"Handling action for plugin type {self.plugin}")
+
+        if not self.transport:
+            raise Exception("No transport")
 
         soap_format = (
             "<s:Envelope "
@@ -130,10 +138,10 @@ class Fauxmo(asyncio.Protocol):
             'SOAPACTION: "urn:Belkin:service:basicevent:1#{}"'
         ).format
 
-        soap_message: str = None
-        action: str = None
-        action_type: str = None
-        return_val: str = None
+        soap_message: t.Optional[str] = None
+        action: t.Optional[str] = None
+        action_type: t.Optional[str] = None
+        return_val: t.Optional[str] = None
         success: bool = False
 
         if command_format("GetBinaryState").casefold() in msg.casefold():
@@ -190,6 +198,9 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_metainfo(self) -> None:
         """Respond to request for metadata."""
+        if not self.transport:
+            raise Exception("No transport")
+
         metainfo_xml = (
             '<scpd xmlns="urn:Belkin:service-1-0">'
             "<specVersion>"
@@ -224,6 +235,9 @@ class Fauxmo(asyncio.Protocol):
 
     def handle_event(self) -> None:
         """Respond to request for eventservice.xml."""
+        if not self.transport:
+            raise Exception("No transport")
+
         eventservice_xml = (
             '<scpd xmlns="urn:Belkin:service-1-0">'
             "<actionList>"
@@ -297,7 +311,7 @@ class Fauxmo(asyncio.Protocol):
 class SSDPServer(asyncio.DatagramProtocol):
     """UDP server that responds to the Echo's SSDP / UPnP requests."""
 
-    def __init__(self, devices: Iterable[dict] = None) -> None:
+    def __init__(self, devices: t.Optional[t.Iterable[dict]] = None) -> None:
         """Initialize an SSDPServer instance.
 
         Args:
@@ -329,7 +343,7 @@ class SSDPServer(asyncio.DatagramProtocol):
         self.transport = cast(asyncio.DatagramTransport, transport)
 
     def datagram_received(
-        self, data: Union[bytes, Text], addr: Tuple[str, int]
+        self, data: t.Union[bytes, t.Text], addr: t.Tuple[str, int]
     ) -> None:
         """Check incoming UDP data for requests for Wemo devices.
 
@@ -374,7 +388,7 @@ class SSDPServer(asyncio.DatagramProtocol):
             self.respond_to_search(addr, discover_pattern, mx)
 
     def respond_to_search(
-        self, addr: Tuple[str, int], discover_pattern: str, mx: float = 0.0
+        self, addr: t.Tuple[str, int], discover_pattern: str, mx: float = 0.0
     ) -> None:
         """Build and send an appropriate response to an SSDP search request.
 
@@ -385,7 +399,7 @@ class SSDPServer(asyncio.DatagramProtocol):
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         for device in self.devices:
 
-            name = device.get("name")
+            name = device["name"]
             ip_address = device.get("ip_address")
             port = device.get("port")
 
@@ -415,13 +429,13 @@ class SSDPServer(asyncio.DatagramProtocol):
             )
 
     async def _send_async_response(
-        self, response: bytes, addr: Tuple[str, int], mx: float = 0.0
+        self, response: bytes, addr: t.Tuple[str, int], mx: float = 0.0
     ) -> None:
         logger.debug(f"Sending response to {addr} with mx {mx}:\n{response!r}")
         await asyncio.sleep(random.random() * max(0, min(5, mx)))
         self.transport.sendto(response, addr)
 
-    def connection_lost(self, exc: Exception) -> None:
+    def connection_lost(self, exc: t.Optional[Exception]) -> None:
         """Handle lost connections.
 
         Args:

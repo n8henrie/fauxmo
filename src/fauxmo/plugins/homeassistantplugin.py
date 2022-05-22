@@ -50,6 +50,7 @@ Example config:
 """
 
 import json
+import typing as t
 import urllib.parse
 import urllib.request
 from collections import defaultdict
@@ -84,8 +85,8 @@ class HomeAssistantPlugin(FauxmoPlugin):
         ha_host: str,
         ha_port: int = 8123,
         ha_protocol: str = "http",
-        ha_token: str = None,
-        domain: str = None,
+        ha_token: t.Optional[str] = None,
+        domain: t.Optional[str] = None,
     ) -> None:
         """Initialize a HomeAssistantPlugin instance.
 
@@ -133,8 +134,7 @@ class HomeAssistantPlugin(FauxmoPlugin):
         with urllib.request.urlopen(req) as r:
             if isinstance(r, HTTPResponse):
                 return r.status == 200
-            else:
-                return False
+            return False
 
     def on(self) -> bool:
         """Turn the Home Assistant device on.

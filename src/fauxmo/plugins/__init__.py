@@ -51,8 +51,7 @@ class FauxmoPlugin(abc.ABC):
             if success is True:
                 self._latest_action = name
             return lambda: success
-        else:
-            return object.__getattribute__(self, name)
+        return object.__getattribute__(self, name)
 
     @property
     def port(self) -> int:
@@ -67,12 +66,10 @@ class FauxmoPlugin(abc.ABC):
     @abc.abstractmethod
     def on(self) -> bool:
         """Run function when Alexa turns this Fauxmo device on."""
-        pass
 
     @abc.abstractmethod
     def off(self) -> bool:
         """Run function when Alexa turns this Fauxmo device off."""
-        pass
 
     @abc.abstractmethod
     def get_state(self) -> str:
@@ -92,7 +89,6 @@ class FauxmoPlugin(abc.ABC):
 
     def close(self) -> None:
         """Run when shutting down; allows plugin to clean up state."""
-        pass
 
     @property
     def latest_action(self) -> str:

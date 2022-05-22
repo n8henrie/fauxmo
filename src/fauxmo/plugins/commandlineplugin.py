@@ -54,6 +54,7 @@ Example config:
 
 import shlex
 import subprocess
+import typing as t
 
 from fauxmo.plugins import FauxmoPlugin
 
@@ -67,7 +68,7 @@ class CommandLinePlugin(FauxmoPlugin):
         port: int,
         on_cmd: str,
         off_cmd: str,
-        state_cmd: str = None,
+        state_cmd: t.Optional[str] = None,
         use_fake_state: bool = False,
     ) -> None:
         """Initialize a CommandLinePlugin instance.
