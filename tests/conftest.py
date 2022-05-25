@@ -1,12 +1,14 @@
 """conftest.py :: Setup fixtures for pytest."""
 
+from __future__ import annotations
+
 import json
 import socket
 import time
 from multiprocessing import Process
 from threading import Thread
 from types import TracebackType
-from typing import Callable, Iterator, Optional, Type
+from typing import Callable, Iterator, Type
 
 import httpbin
 import pytest
@@ -53,9 +55,9 @@ class TestFauxmoServer:
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[Exception],
-        traceback: Optional[TracebackType],
+        exc_type: Type[BaseException] | None,
+        exc_value: Exception | None,
+        traceback: TracebackType | None,
     ) -> None:
         """Terminate the server and join the thread on exit."""
         self.server.terminate()

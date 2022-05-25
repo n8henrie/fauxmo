@@ -49,8 +49,9 @@ Example config:
 ```
 """
 
+from __future__ import annotations
+
 import json
-import typing as t
 import urllib.parse
 import urllib.request
 from collections import defaultdict
@@ -85,8 +86,8 @@ class HomeAssistantPlugin(FauxmoPlugin):
         ha_host: str,
         ha_port: int = 8123,
         ha_protocol: str = "http",
-        ha_token: t.Optional[str] = None,
-        domain: t.Optional[str] = None,
+        ha_token: str | None = None,
+        domain: str | None = None,
     ) -> None:
         """Initialize a HomeAssistantPlugin instance.
 

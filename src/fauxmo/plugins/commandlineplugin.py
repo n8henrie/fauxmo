@@ -52,9 +52,10 @@ Example config:
 ```
 """
 
+from __future__ import annotations
+
 import shlex
 import subprocess
-import typing as t
 
 from fauxmo.plugins import FauxmoPlugin
 
@@ -68,7 +69,7 @@ class CommandLinePlugin(FauxmoPlugin):
         port: int,
         on_cmd: str,
         off_cmd: str,
-        state_cmd: t.Optional[str] = None,
+        state_cmd: str | None = None,
         use_fake_state: bool = False,
     ) -> None:
         """Initialize a CommandLinePlugin instance.

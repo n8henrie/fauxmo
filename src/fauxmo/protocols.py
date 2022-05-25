@@ -1,5 +1,7 @@
 """protocols.py :: Provide asyncio protocols for UPnP and SSDP discovery."""
 
+from __future__ import annotations
+
 import asyncio
 import random
 import typing as t
@@ -31,7 +33,7 @@ class Fauxmo(asyncio.Protocol):
         self.name = name
         self.serial = make_serial(name)
         self.plugin = plugin
-        self.transport: t.Optional[asyncio.Transport] = None
+        self.transport: asyncio.Transport | None = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """Accept an incoming TCP connection.
@@ -138,10 +140,10 @@ class Fauxmo(asyncio.Protocol):
             'SOAPACTION: "urn:Belkin:service:basicevent:1#{}"'
         ).format
 
-        soap_message: t.Optional[str] = None
-        action: t.Optional[str] = None
-        action_type: t.Optional[str] = None
-        return_val: t.Optional[str] = None
+        soap_message: str | None = None
+        action: str | None = None
+        action_type: str | None = None
+        return_val: str | None = None
         success: bool = False
 
         if command_format("GetBinaryState").casefold() in msg.casefold():
@@ -311,7 +313,7 @@ class Fauxmo(asyncio.Protocol):
 class SSDPServer(asyncio.DatagramProtocol):
     """UDP server that responds to the Echo's SSDP / UPnP requests."""
 
-    def __init__(self, devices: t.Optional[t.Iterable[dict]] = None) -> None:
+    def __init__(self, devices: t.Iterable[dict] | None = None) -> None:
         """Initialize an SSDPServer instance.
 
         Args:
@@ -435,7 +437,7 @@ class SSDPServer(asyncio.DatagramProtocol):
         await asyncio.sleep(random.random() * max(0, min(5, mx)))
         self.transport.sendto(response, addr)
 
-    def connection_lost(self, exc: t.Optional[Exception]) -> None:
+    def connection_lost(self, exc: Exception | None) -> None:
         """Handle lost connections.
 
         Args:

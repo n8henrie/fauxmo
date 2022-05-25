@@ -8,6 +8,8 @@ RESTAPIPlugin in `https://github.com/n8henrie/fauxmo-plugins/`, which takes
 advantage of Requests' rich API.
 """
 
+from __future__ import annotations
+
 import http
 import typing as t
 import urllib.parse
@@ -45,22 +47,22 @@ class SimpleHTTPPlugin(FauxmoPlugin):
     def __init__(
         self,
         *,
-        headers: t.Optional[dict] = None,
+        headers: dict | None = None,
         method: str = "GET",
         name: str,
         off_cmd: str,
-        off_data: t.Optional[t.Union[Mapping, str]] = None,
+        off_data: t.Union[Mapping, str] | None = None,
         on_cmd: str,
-        on_data: t.Optional[t.Union[Mapping, str]] = None,
-        state_cmd: t.Optional[str] = None,
-        state_data: t.Optional[t.Union[Mapping, str]] = None,
+        on_data: t.Union[Mapping, str] | None = None,
+        state_cmd: str | None = None,
+        state_data: t.Union[Mapping, str] | None = None,
         state_method: str = "GET",
-        state_response_off: t.Optional[str] = None,
-        state_response_on: t.Optional[str] = None,
-        password: t.Optional[str] = None,
+        state_response_off: str | None = None,
+        state_response_on: str | None = None,
+        password: str | None = None,
         port: int,
         use_fake_state: bool = False,
-        user: t.Optional[str] = None,
+        user: str | None = None,
     ) -> None:
         """Initialize a SimpleHTTPPlugin instance.
 
@@ -124,16 +126,14 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         super().__init__(name=name, port=port)
 
     @staticmethod
-    def _to_bytes(
-        data: t.Optional[t.Union[Mapping, str]]
-    ) -> t.Optional[bytes]:
+    def _to_bytes(data: t.Union[Mapping, str] | None) -> bytes | None:
         if isinstance(data, Mapping):
             data = urllib.parse.urlencode(data)
         if isinstance(data, str):
             return data.encode("utf8")
         return data
 
-    def set_state(self, cmd: str, data: t.Optional[bytes]) -> bool:
+    def set_state(self, cmd: str, data: bytes | None) -> bool:
         """Call HTTP method, for use by `functools.partialmethod`.
 
         Args:
