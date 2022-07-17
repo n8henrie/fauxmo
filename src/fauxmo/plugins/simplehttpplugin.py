@@ -178,6 +178,10 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             "on", "off", or "unknown"
 
         """
+        
+        import time
+        time.sleep(2) # Ugly hack from GD that makes ti work much more reliably with Alexa after turn-on
+        
         if self.use_fake_state is True:
             return super().get_state()
 
