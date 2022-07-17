@@ -1,5 +1,11 @@
 # Fauxmo README
 
+Forked from [n8henrie/fauxmo](https://github.com/n8henrie/fauxmo)
+
+This fork fixes a problem where an Alex device turns on a device and then fails to get a suitable response, and reports an annoying error.  
+This is probably due to a race condition on the Raspberry Pi.    I did not file a pull request since the solution (in /plugins/simplehttpplugin.py )
+is so abysmally ugly and warrants a better solution.
+
 master: [![master branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
 dev: [![dev branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=dev)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
 
