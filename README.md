@@ -428,6 +428,23 @@ fauxmo -c /path/to/config.json -vvv
 "$(pyenv root)"/versions/3.7.3/bin/python3.7 -m fauxmo.cli -c config.json -vvv
 ```
 
+## Docker (alpha)
+
+I'm not a heavy docker user, but I thought it might be helpful to also provide
+a docker image.
+
+The Dockerfile can be run locally from a copy of the repo; you'll obviously
+need to change `config-sample.json` to an absolute path to your `config.json`.
+
+```bash
+$ docker run --network=host --rm -it \
+    -v $(pwd)/config-sample.json:/etc/fauxmo/config.json:ro \
+    "$(docker build -q .)"
+```
+
+As far as I'm aware the `network=host` will be unavoidable due to the need to
+listen (and respond) to UPnP broadcasts.
+
 ## Buy Me a Coffee
 
 [☕️](https://n8henrie.com/donate)
