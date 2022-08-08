@@ -28,8 +28,7 @@ WORKDIR ${HOME}
 
 RUN python3 -m venv --system-site-packages "${VENV}" \
     && "${PYTHON}" -m pip install --upgrade pip \
-    && "${PYTHON}" -m pip install /app[test] \
-    && cd /app; "${PYTHON}" -m pytest /app/tests
+    && "${PYTHON}" -m pip install /app[test]
 
 ENV FAUXMO_PYTHON ${PYTHON}
 CMD ${FAUXMO_PYTHON} -m fauxmo.cli -vvv
