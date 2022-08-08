@@ -12,11 +12,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --gid "${GID}" "${USER}" \
-    && adduser \
+    && useradd \
         --shell /usr/sbin/nologin \
         --uid "${UID}" \
-        --ingroup "${USER}" \
-        --disabled-password \
+        --gid "${USER}" \
         "${USER}"
 
 COPY --chown=${USER} pyproject.toml setup.cfg README.md CHANGELOG.md /app/
