@@ -1,0 +1,8 @@
+*
+!pyproject.toml
+!setup.cfg
+!README.md
+!CHANGELOG.md
+!src
+!tests
+!config-sample.json
