@@ -16,10 +16,9 @@ the libraries have diverged substantially.
 The Amazon Echo is able to control certain types of home automation devices by
 voice. Fauxmo provides emulated Belkin Wemo devices that the Echo can turn on
 and off by voice, locally, and with minimal lag time. Currently these Fauxmo
-devices can be configured to make requests to an HTTP server or to a [Home
-Assistant](https://home-assistant.io) instance via [its Python
-API](https://home-assistant.io/developers/python_api/) and only require a JSON
-config file for setup.
+devices can be configured to make requests to an HTTP server such as [Home
+Assistant](https://home-assistant.io) or to run other commands locally on the
+device and only require a JSON config file for setup.
 
 As of version v0.4.0, Fauxmo uses several API features and f-strings that
 require Python 3.6+. I highly recommend looking into
@@ -65,7 +64,7 @@ prior to installation: `pip install --upgrade pip`
 1. `source ./.venv/bin/activate`
 1. `python3 -m pip install fauxmo`
 1. Make a `config.json` based on
-   [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
+   [`config-sample.json`][config-sample.json]
 1. `fauxmo -c config.json [-v]`
 
 As of `v0.6.0`, you can *optionally* install `uvloop` for potentially better
@@ -268,7 +267,7 @@ that order). The minimal configuration settings are:
         - `example_var1`: For convenience and to avoid redundancy, your plugin
           class can *optionally* use config variables at this level that
           will be shared for all `DEVICES` listed in the next section (e.g. an
-          api key that would be shared for all devices of this plugin type).
+          API key that would be shared for all devices of this plugin type).
           If provided, your plugin class must consume this variable in a custom
           `__init__`.
         - `DEVICES`: List of devices that will employ `ExamplePlugin`
@@ -297,11 +296,10 @@ plugin type. Under `DEVICES` it is a good idea to set a fixed, high, free
 `port` for each device, but if you don't set one, Fauxmo will try to pick a
 reasonable port automatically (though it will change for each run).
 
-Please see
-[`config-sample`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json)
-for a more concrete idea of the structure of the config file, using the
-built-in `SimpleHTTPPlugin` for demonstration purposes. Below is a description
-of the kwargs that `SimpleHTTPPlugin` accepts.
+Please see [`config-sample.json`][config-sample.json] for a more concrete idea
+of the structure of the config file, using the built-in `SimpleHTTPPlugin` for
+demonstration purposes. Below is a description of the kwargs that
+`SimpleHTTPPlugin` accepts.
 
 - `name`: What you want to call the device (how to activate by
   Echo)
@@ -462,3 +460,5 @@ listen (and respond) to UPnP broadcasts.
 - <http://www.makermusings.com/2015/07/19/home-automation-with-amazon-echo-apps-part-1>
 - <http://www.makermusings.com/2015/08/22/home-automation-with-amazon-echo-apps-part-2>
 - <https://www.rilhia.com/tutorials/using-upnp-enabled-devices-talend-belkin-wemo-switch>
+
+[config-sample.json]: https://github.com/n8henrie/fauxmo/blob/master/config-sample.json
