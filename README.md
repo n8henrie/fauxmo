@@ -459,6 +459,6 @@ listen (and respond) to UPnP broadcasts.
 - <https://en.wikipedia.org/wiki/Universal_Plug_and_Play>
 - <http://www.makermusings.com/2015/07/19/home-automation-with-amazon-echo-apps-part-1>
 - <http://www.makermusings.com/2015/08/22/home-automation-with-amazon-echo-apps-part-2>
-- <https://www.rilhia.com/tutorials/using-upnp-enabled-devices-talend-belkin-wemo-switch>
+- [https://www.rilhia.com/tutorials/using-upnp-enabled-devices-talend-belkin-wemo-switch](https://web.archive.org/web/20160419092252/https://www.rilhia.com/tutorials/using-upnp-enabled-devices-talend-belkin-wemo-switch)
 
 [config-sample.json]: https://github.com/n8henrie/fauxmo/blob/master/config-sample.json
