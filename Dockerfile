@@ -4,8 +4,6 @@ ARG USER=fauxmo
 ARG HOME=/home/${USER}
 ARG VENV=${HOME}/.venv
 ARG PYTHON=${VENV}/bin/python3
-ARG UID=10000
-ARG GID=10000
 
 RUN apt-get update \
     && apt-get install -y python3-uvloop \
