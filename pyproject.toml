@@ -1,13 +1,77 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>65", "setuptools_scm[toml]>=7"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 79
-target_version = ['py310']
+target_version = ['py311']
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 order_by_type = false
 line_length = 79
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "fauxmo.__version__"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+follow_imports = "silent"
+ignore_missing_imports = true
+python_version = "3.11"
+show_column_numbers = true
+warn_incomplete_stub = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[project]
+name = "fauxmo"
+urls = {homepage = "https://github.com/n8henrie/fauxmo"}
+dynamic = ["version", "readme"]
+license = { text = "MIT" }
+description = "Emulated Belkin WeMo devices that work with the Amazon Echo"
+authors = [{name = "Nathan Henrie", email = "nate@n8henrie.com"}]
+keywords = [ "fauxmo", "alexa", "amazon", "echo" ]
+classifiers = [
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = []
+
+[project.scripts]
+fauxmo = "fauxmo.cli:cli"
+
+[project.optional-dependencies]
+test = [
+    "black==22.3.0",
+    "flake8-docstrings==1.5.0",
+    "flake8-import-order==0.18.1",
+    "flake8==3.8.3",
+    "httpbin==0.7.0",
+    "isort==5.10.1",
+    "mypy==0.950",
+    "pep8-naming==0.11.1",
+    "pytest==7.0.1",
+    "requests==2.24.0",
+    "werkzeug==2.0.3",
+    "tox==3.20.0",
+]
+dev = [
+    "build==0.6.0.post1",
+    "recommonmark==0.6.0",
+    "Sphinx==3.2.1",
+    "sphinx_rtd_theme",
+    "twine==3.2.0",
+    "wheel==0.35.1",
+]
