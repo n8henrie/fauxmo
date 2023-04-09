@@ -16,7 +16,7 @@ RUN addgroup --gid "${GID}" "${USER}" \
         --gid "${USER}" \
         "${USER}"
 
-COPY --chown=${USER} pyproject.toml setup.cfg README.md CHANGELOG.md /app/
+COPY --chown=${USER} pyproject.toml README.md CHANGELOG.md /app/
 COPY --chown=${USER} src/ /app/src
 COPY --chown=${USER} tests/ /app/tests
 COPY --chown=${USER} config-sample.json /home/${USER}/.fauxmo/config-sample.json
