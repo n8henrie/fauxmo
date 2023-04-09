@@ -36,3 +36,4 @@ docs/md/
 .venv/
 .pytest_cache/
 pip-wheel-metadata
+/.env
