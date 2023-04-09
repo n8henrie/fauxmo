@@ -94,7 +94,6 @@ def main(config_path_str: str | None = None, verbosity: int = 20) -> None:
         sys.exit(1)
 
     for plugin in plugins:
-
         modname = f"{__package__}.plugins.{plugin.lower()}"
         try:
             module = importlib.import_module(modname)

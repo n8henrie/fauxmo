@@ -400,7 +400,6 @@ class SSDPServer(asyncio.DatagramProtocol):
         """
         date_str = formatdate(timeval=None, localtime=False, usegmt=True)
         for device in self.devices:
-
             name = device["name"]
             ip_address = device.get("ip_address")
             port = device.get("port")

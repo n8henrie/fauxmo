@@ -82,7 +82,6 @@ def test_commandlineplugin_fake_state() -> None:
     for device_conf in config["PLUGINS"]["CommandLinePlugin"]["DEVICES"]:
         device = CommandLinePlugin(**device_conf)
         if device.use_fake_state is True:
-
             assert device.get_state() == "off"
             success = device.on()
             if success is True:

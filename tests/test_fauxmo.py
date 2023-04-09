@@ -19,7 +19,6 @@ def test_udp_search(fauxmo_server: t.Callable) -> None:
 
     with fauxmo_server("tests/test_config.json"):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
             reuseport = getattr(socket, "SO_REUSEPORT", None)
