@@ -20,7 +20,8 @@ the long-lived tokens is available at
 https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token
 
 Example config:
-```
+
+```json
 {
     "FAUXMO": {
         "ip_address": "auto"

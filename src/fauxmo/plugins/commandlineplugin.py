@@ -23,7 +23,8 @@ using `os.system` instead of `subprocess.run`, but realize that this comes with
 substantial security risks that exceed my ability to explain.
 
 Example config:
-```
+
+```json
 {
   "FAUXMO": {
     "ip_address": "auto"
