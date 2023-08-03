@@ -14,14 +14,6 @@ a return code of anything other than 0, Alexa stalls for several seconds and
 subsequently reports that there was a problem (which should notify the user
 that something didn't go as planned).
 
-Note that `subprocess.run` as implemented in this plugin doesn't handle complex
-commands with pipes, redirection, or multiple statements joined by `&&`, `||`,
-`;`, etc., so you can't just use e.g. `"command that sometimes fails || true"`
-to avoid the delay and Alexa's response. If you really want to handle more
-complex commands, consider using this plugin as a template for another one
-using `os.system` instead of `subprocess.run`, but realize that this comes with
-substantial security risks that exceed my ability to explain.
-
 Example config:
 
 ```json
@@ -31,13 +23,15 @@ Example config:
   },
   "PLUGINS": {
     "CommandLinePlugin": {
+      "timeout": 5,
       "DEVICES": [
         {
             "name": "output stuff to a file",
             "port": 49915,
             "on_cmd": "touch testfile.txt",
             "off_cmd": "rm testfile.txt",
-            "state_cmd": "ls testfile.txt"
+            "state_cmd": "ls testfile.txt",
+            "timeout": 2
         },
         {
             "name": "command with fake state",
@@ -85,6 +79,7 @@ class CommandLinePlugin(FauxmoPlugin):
             off_cmd: Command to be called when turning device off
             state_cmd: Command to check device state (return code 0 == on)
             timeout: Timeout in seconds
+            shell: Whether or not to run the command with `shell=True`
             use_fake_state: If `True`, override `get_state` to return the
                             latest action as the device state. NB: The proper
                             json boolean value for Python's `True` is `true`,
