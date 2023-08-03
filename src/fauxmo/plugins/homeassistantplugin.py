@@ -59,6 +59,7 @@ from collections import defaultdict
 from http.client import HTTPResponse
 from typing import Dict
 
+from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
 
 
@@ -89,6 +90,7 @@ class HomeAssistantPlugin(FauxmoPlugin):
         ha_protocol: str = "http",
         ha_token: str | None = None,
         domain: str | None = None,
+        timeout: int | None = None,
     ) -> None:
         """Initialize a HomeAssistantPlugin instance.
 
@@ -99,11 +101,13 @@ class HomeAssistantPlugin(FauxmoPlugin):
             ha_protocol: http or https
             ha_token: Long-lived HomeAssistant token
             domain: Override the domain instead of guessing from `entity_id`
+            timeout: Timeout in seconds
 
         """
         self.ha_url = f"{ha_protocol}://{ha_host}:{ha_port}"
 
         self.entity_id = entity_id
+        self.timeout = timeout
 
         if domain is None:
             domain = self.entity_id.split(".")[0]
@@ -133,10 +137,14 @@ class HomeAssistantPlugin(FauxmoPlugin):
             data=json.dumps(data).encode("utf8"),
             method="POST",
         )
-        with urllib.request.urlopen(req) as r:
-            if isinstance(r, HTTPResponse):
-                return r.status == 200
-            return False
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                if isinstance(r, HTTPResponse):
+                    return r.status == 200
+        except TimeoutError as e:
+            logger.exception(e)
+
+        return False
 
     def on(self) -> bool:
         """Turn the Home Assistant device on.
@@ -162,6 +170,6 @@ class HomeAssistantPlugin(FauxmoPlugin):
         url = f"{self.ha_url}/api/states/{self.entity_id}"
 
         req = urllib.request.Request(url=url, headers=self.headers)
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=self.timeout) as r:
             response = r.read().decode("utf")
         return json.loads(response)["state"]

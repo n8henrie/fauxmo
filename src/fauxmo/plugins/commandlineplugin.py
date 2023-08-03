@@ -1,12 +1,12 @@
 """Fauxmo plugin that runs a command on the local machine.
 
-Runs a `shlex`ed command using `subprocess.run`, keeping the default of
-`shell=False`. Caveat emptor: there may be major security risks to running this
-plugin, as it enables Fauxmo to run semi-arbitrary code, depending on your
-configuration. By enabling or using it, you acknowledge that it could run
-commands from your config.json that could lead to data compromise, corruption,
-loss, etc. Consider making your config.json read-only. If there are parts of
-this you don't understand, you should probably not use this plugin.
+Runs a command using `subprocess.run`. Caveat emptor: there may be major
+security risks to running this plugin, as it enables Fauxmo to run
+semi-arbitrary code, depending on your configuration. By enabling or using it,
+you acknowledge that it could run commands from your config.json that could
+lead to data compromise, corruption, loss, etc. Consider making your
+config.json read-only. If there are parts of this you don't understand, you
+should probably not use this plugin.
 
 If the command runs with a return code of 0, Alexa should respond prompty
 "Okay" or something that indicates it seems to have worked. If the command has
@@ -58,6 +58,7 @@ from __future__ import annotations
 import shlex
 import subprocess
 
+from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
 
 
@@ -71,6 +72,8 @@ class CommandLinePlugin(FauxmoPlugin):
         on_cmd: str,
         off_cmd: str,
         state_cmd: str | None = None,
+        timeout: int | None = None,
+        shell: bool = False,
         use_fake_state: bool = False,
     ) -> None:
         """Initialize a CommandLinePlugin instance.
@@ -81,6 +84,7 @@ class CommandLinePlugin(FauxmoPlugin):
             on_cmd: Command to be called when turning device on
             off_cmd: Command to be called when turning device off
             state_cmd: Command to check device state (return code 0 == on)
+            timeout: Timeout in seconds
             use_fake_state: If `True`, override `get_state` to return the
                             latest action as the device state. NB: The proper
                             json boolean value for Python's `True` is `true`,
@@ -90,6 +94,8 @@ class CommandLinePlugin(FauxmoPlugin):
         self.on_cmd = on_cmd
         self.off_cmd = off_cmd
         self.state_cmd = state_cmd
+        self.shell = shell
+        self.timeout = timeout
 
         self.use_fake_state = use_fake_state
 
@@ -104,8 +110,16 @@ class CommandLinePlugin(FauxmoPlugin):
             True if command seems to have run without error
 
         """
-        shlexed_cmd = shlex.split(cmd)
-        process = subprocess.run(shlexed_cmd)
+        if not self.shell:
+            cmd = shlex.split(cmd)
+
+        try:
+            process = subprocess.run(cmd, timeout=self.timeout,
+                                        shell=self.shell)
+        except subprocess.TimeoutExpired as e:
+            logger.exception(e)
+            return False
+
         return process.returncode == 0
 
     def on(self) -> bool:

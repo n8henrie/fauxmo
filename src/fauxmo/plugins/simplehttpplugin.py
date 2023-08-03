@@ -61,6 +61,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         state_response_on: str | None = None,
         password: str | None = None,
         port: int,
+        timeout: int | None = None,
         use_fake_state: bool = False,
         user: str | None = None,
     ) -> None:
@@ -81,6 +82,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
                                 the device is off.
             password: Password for HTTP authentication (basic or digest only)
             port: Port that this device will run on
+            timeout: Timeout in seconds
             use_fake_state: If `True`, override `get_state` to return the
                             latest action as the device state. NB: The proper
                             json boolean value for Python's `True` is `true`,
@@ -91,6 +93,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         self.method = method
         self.state_method = state_method
         self.headers = headers or {}
+        self.timeout = timeout
 
         self.on_cmd = on_cmd
         self.off_cmd = off_cmd
@@ -149,11 +152,15 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         )
 
         try:
-            with self.urlopen(req) as resp:
+            with self.urlopen(req, timeout=self.timeout) as resp:
                 if isinstance(resp, http.client.HTTPResponse):
                     return resp.status in (200, 201)
+
         except HTTPError as e:
-            logger.warning(f"Error with request to {cmd}: {e}")
+            logger.warning(f"Error with request to {cmd}:")
+            logger.exception(e)
+        except TimeoutError as e:
+            logger.exception(e)
         return False
 
     def on(self) -> bool:
@@ -194,7 +201,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             method=self.state_method,
         )
 
-        with self.urlopen(req) as resp:
+        with self.urlopen(req, timeout=self.timeout) as resp:
             response_content = resp.read().decode("utf8")
 
         has_response_off = self.state_response_off in response_content
