@@ -55,6 +55,7 @@ from __future__ import annotations
 
 import shlex
 import subprocess
+import typing as t
 
 from fauxmo import logger
 from fauxmo.plugins import FauxmoPlugin
@@ -109,12 +110,15 @@ class CommandLinePlugin(FauxmoPlugin):
             True if command seems to have run without error
 
         """
+        # Workaround for type hints, as `shell=True` expects a string and
+        # `shell=False` expects a list
+        cmd_list: str | t.List[str] = cmd
         if not self.shell:
-            cmd = shlex.split(cmd)
+            cmd_list = shlex.split(cmd)
 
         try:
             process = subprocess.run(
-                cmd, timeout=self.timeout, shell=self.shell
+                cmd_list, timeout=self.timeout, shell=self.shell
             )
         except subprocess.TimeoutExpired as e:
             logger.exception(e)

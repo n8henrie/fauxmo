@@ -127,7 +127,7 @@ def get_unused_port() -> int:
         return port
 
 
-def validate_config(config: t.Dict[str, t.Union[str, int]]):
+def validate_config(config: t.Dict[str, t.Union[str, int]]) -> None:
     """Best effort configuration validation.
 
     Should emit warnings for possible errors and raise with a helpful message
