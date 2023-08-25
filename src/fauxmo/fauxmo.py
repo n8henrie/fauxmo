@@ -23,6 +23,7 @@ from fauxmo.utils import (
     get_unused_port,
     make_udp_sock,
     module_from_file,
+    validate_config,
 )
 
 
@@ -120,6 +121,8 @@ def main(config_path_str: str | None = None, verbosity: int = 20) -> None:
             device["port"] = int(device.get("port", 0)) or get_unused_port()
 
             logger.debug(f"device config: {repr(device)}")
+
+            validate_config(device)
 
             try:
                 plugin = PluginClass(**plugin_vars, **device)

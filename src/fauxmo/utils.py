@@ -7,6 +7,7 @@ import pathlib
 import socket
 import struct
 import sys
+import typing as t
 import uuid
 from importlib.abc import Loader
 from types import ModuleType
@@ -124,3 +125,11 @@ def get_unused_port() -> int:
         sock.bind(("", 0))
         port = sock.getsockname()[1]
         return port
+
+
+def validate_config(config: t.Dict[str, t.Union[str, int]]):
+    if config.get("use_fake_state") and not config.get("initial_state"):
+        warning = (
+            "consider setting `initial_state` for devices using fake state: %s"
+        )
+        logger.warning(warning, config)
