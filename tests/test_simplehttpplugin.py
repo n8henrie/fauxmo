@@ -3,6 +3,7 @@
 import json
 import typing as t
 
+import pytest
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 
 
@@ -40,8 +41,7 @@ def test_simplehttpplugin_state(
 
     """
     config_path_str = "tests/test_simplehttpplugin_config.json"
-    fake_state_success_count = 0
-    fake_state_failed_count = 0
+
     with open(config_path_str) as conf_file:
         config = json.load(conf_file)
 
@@ -49,9 +49,17 @@ def test_simplehttpplugin_state(
         device = SimpleHTTPPlugin(**device_conf)
 
         use_fake_state = device_conf.get("use_fake_state")
+        initial_state = device_conf.get("initial_state")
 
         if use_fake_state is True:
-            assert device.get_state() == "off"
+            if initial_state is None:
+                # If using fake state, user should configure an initial state
+                with pytest.raises(AttributeError):
+                    device.get_state()
+            else:
+                assert device.get_state() == initial_state
+
+        assert device.off(), "Unable to initialize state to `off`"
 
         success = device.on()
         state = device.get_state()
@@ -69,10 +77,8 @@ def test_simplehttpplugin_state(
         # Either state_cmd is implemented or use_fake_state is True, either
         # way `success` should indicate whether it worked
         elif success:
-            fake_state_success_count += 1
             assert state == "on"
         else:
-            fake_state_failed_count += 1
             assert state == "off"
 
         success = device.off()
@@ -87,5 +93,3 @@ def test_simplehttpplugin_state(
         # of success.
         elif success:
             assert state == "off"
-    assert fake_state_success_count > 0
-    assert fake_state_failed_count > 0

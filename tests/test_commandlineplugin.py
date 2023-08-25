@@ -74,29 +74,29 @@ def test_commandlineplugin_unit() -> None:
 
 def test_commandlineplugin_fake_state() -> None:
     """Test that commandlineplugin can return fake state."""
-    fake_state_success_count = 0
-    fake_state_failed_count = 0
     with open(config_path_str) as f:
         config = json.load(f)
 
     for device_conf in config["PLUGINS"]["CommandLinePlugin"]["DEVICES"]:
         device = CommandLinePlugin(**device_conf)
-        if device.use_fake_state is True:
+
+        if device.use_fake_state is not True:
+            continue
+
+        initial_state = device_conf.get("initial_state")
+
+        if initial_state is None:
+            # If using fake state, user should configure an initial state
+            with pytest.raises(AttributeError):
+                device.get_state()
+        else:
+            assert device.get_state() == initial_state
+
+        assert device.off(), "Unable to set state `off` for additional tests"
+        if device.on():
+            assert device.get_state() == "on"
+        else:
             assert device.get_state() == "off"
-            success = device.on()
-            if success is True:
-                fake_state_success_count += 1
-                assert device.get_state() == "on"
-            else:
-                fake_state_failed_count += 1
-                assert device.get_state() == "off"
 
-            success = device.off()
-            # if off fails it will be unknown if state should be on or off,
-            # depending on the success of the preceding `.on()`
-            if success is True:
-                fake_state_success_count += 1
-                assert device.get_state() == "off"
-
-    assert fake_state_success_count > 0
-    assert fake_state_failed_count > 0
+        if device.off():
+            assert device.get_state() == "off"

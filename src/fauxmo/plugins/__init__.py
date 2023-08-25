@@ -18,13 +18,17 @@ class FauxmoPlugin(abc.ABC):
     `super().__init__()`.
     """
 
-    def __init__(self, *, name: str, port: int) -> None:
+    def __init__(self, *, name: str, port: int, initial_state: str | None = None) -> None:
         """Initialize FauxmoPlugin.
 
         Keyword Args:
             name: Required, device name
             port: Required, port that the Fauxmo associated with this plugin
                   should run on
+            initial_state: Set the initial device state, valid values are "on"
+                  or "off" (case sensitive). Useful for devices that can't
+                  accurately report state on-the-fly, such as polling for state
+                  updates (e.g. mqtt) or with `use_fake_state`
 
         Note about `port`: if not given in config, it will be set to an
         apparently free port in `fauxmo.fauxmo` before FauxmoPlugin
@@ -42,7 +46,9 @@ class FauxmoPlugin(abc.ABC):
         """
         self._name = name
         self._port = port
-        self._latest_action = "off"
+
+        if initial_state in {"on", "off"}:
+            self._latest_action = initial_state
 
     def __getattribute__(self, name: str) -> Callable:
         """Intercept `.on()` and `.off()` to set `_latest_action` attribute."""

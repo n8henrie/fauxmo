@@ -211,6 +211,12 @@ To get started:
           occur outside of Fauxmo (e.g. manually flipping a switch, or toggling
           with a different program), whereas a proper `get_state`
           implementation may be able to do so.
+        - If using fake state or if your device cannot readily report its state
+          upon request (for example if you poll for state with a background
+          process like mqtt), you should also set an `initial_state` in your
+          config. As of August 2023, prior to adding a newly discovered device,
+          Alexa requests its state and will fail to add the device if it can't
+          report a state.
 
 1. Any required settings will be read from your `config.json` and passed into
    your plugin as kwargs at initialization, see below.
