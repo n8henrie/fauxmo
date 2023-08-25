@@ -66,7 +66,7 @@ for local development.
         ```
 
 1.  Install your local copy into a virtualenv. Assuming you have
-    python >= 3.7 installed, this is how you set up your fork for
+    python >= 3.8 installed, this is how you set up your fork for
     local development:
 
         ```shell_session
@@ -108,12 +108,12 @@ Before you submit a pull request, check that it meets these guidelines:
 1.  Pull requests of any substance should reference an issue used for
     discussion regarding the change being considered.
 1.  The style should pass `tox -e lint`, including docstrings, type hints, and
-    `black --line-length=79 --target-version=py37` for overall formatting.
+    `black --line-length=79 --target-version=py311` for overall formatting.
 1.  The pull request should include tests if I am using tests in the repo.
 1.  If the pull request adds functionality, the docs should be updated.
     Put your new functionality into a function with a docstring, and add
     the feature to the list in README.md
-1.  The pull request should work for Python 3.7. If I have included a
+1.  The pull request should work for Python 3.8. If I have included a
     `.travis.yml` file in the repo, check
     <https://travis-ci.org/n8henrie/fauxmo/pull_requests> and make sure that
     the tests pass for all supported Python versions.

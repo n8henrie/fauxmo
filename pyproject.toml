@@ -41,7 +41,6 @@ authors = [{name = "Nathan Henrie", email = "nate@n8henrie.com"}]
 keywords = [ "fauxmo", "alexa", "amazon", "echo" ]
 classifiers = [
     "Natural Language :: English",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
