@@ -109,8 +109,9 @@ class CommandLinePlugin(FauxmoPlugin):
             cmd = shlex.split(cmd)
 
         try:
-            process = subprocess.run(cmd, timeout=self.timeout,
-                                        shell=self.shell)
+            process = subprocess.run(
+                cmd, timeout=self.timeout, shell=self.shell
+            )
         except subprocess.TimeoutExpired as e:
             logger.exception(e)
             return False

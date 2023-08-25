@@ -18,7 +18,9 @@ class FauxmoPlugin(abc.ABC):
     `super().__init__()`.
     """
 
-    def __init__(self, *, name: str, port: int, initial_state: str | None = None) -> None:
+    def __init__(
+        self, *, name: str, port: int, initial_state: str | None = None
+    ) -> None:
         """Initialize FauxmoPlugin.
 
         Keyword Args:
