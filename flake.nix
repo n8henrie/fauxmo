@@ -60,6 +60,7 @@
                 isort
                 mypy
                 pep8-naming
+                pip
                 pytest
                 requests
                 tox
