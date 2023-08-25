@@ -4,6 +4,7 @@ import json
 import typing as t
 
 import pytest
+
 from fauxmo.plugins.simplehttpplugin import SimpleHTTPPlugin
 
 
