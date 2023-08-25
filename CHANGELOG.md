@@ -3,6 +3,24 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.7.0 :: 20230825
+
+- Add `initial_state` kwarg for plugins
+    - See notes for eb749275a06c443bf4c914c450f9717ee3c7f212
+- Python 3.11, drop official 3.7 support
+- Add a basic config validation function
+- Support config in `~/.config/fauxmo`
+- Framework for nix and docker support
+- Add timeouts to default plugins
+    - 2f9212b67dec62a4cc9c1609fbbe59dcea1c3d27
+    - Commands that block freeze *everything* due to the way asyncio works.
+      Highly recommended to leverage these timeouts for anything that may block
+- Add support `shell=True` commands
+    - Use at your own risk :)
+- Migrate setup.cfg to standalone pyproject.toml
+    - 09f80b364b85b327ab3f92c5e6f538b001a6becc
+- type hinting updates
+
 ## v0.6.0 :: 20220304
 
 - Python 3.10
