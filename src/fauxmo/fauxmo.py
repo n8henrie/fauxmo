@@ -48,7 +48,7 @@ def main(config_path_str: str | None = None, verbosity: int = 20) -> None:
     if config_path_str:
         config_path = pathlib.Path(config_path_str)
     else:
-        for config_dir in (".", "~/.fauxmo", "/etc/fauxmo"):
+        for config_dir in [".", "~/.config/fauxmo", "~/.fauxmo", "/etc/fauxmo"]:
             config_path = pathlib.Path(config_dir).expanduser() / "config.json"
             if config_path.is_file():
                 logger.info(f"Using config: {config_path}")

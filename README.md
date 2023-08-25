@@ -256,8 +256,8 @@ work -- look for the dependencies in the module level docstring.
 I recommend that you copy and modify
 [`config-sample.json`](https://github.com/n8henrie/fauxmo/blob/master/config-sample.json).
 Fauxmo will use whatever config file you specify with `-c` or will search for
-`config.json` in the current directory, `~/.fauxmo/`, and `/etc/fauxmo/` (in
-that order). The minimal configuration settings are:
+`config.json` in the current directory, `~/.config/fauxmo`, `~/.fauxmo/`, and
+`/etc/fauxmo/` (in that order). The minimal configuration settings are:
 
 - `FAUXMO`: General Fauxmo settings
     - `ip_address`: Optional[str] - Manually set the server's IP address.
