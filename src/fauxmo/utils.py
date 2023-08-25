@@ -128,6 +128,12 @@ def get_unused_port() -> int:
 
 
 def validate_config(config: t.Dict[str, t.Union[str, int]]):
+    """Best effort configuration validation.
+
+    Should emit warnings for possible errors and raise with a helpful message
+    for definite errors.
+
+    """
     if config.get("use_fake_state") and not config.get("initial_state"):
         warning = (
             "consider setting `initial_state` for devices using fake state: %s"
