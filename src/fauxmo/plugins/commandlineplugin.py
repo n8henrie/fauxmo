@@ -14,6 +14,10 @@ a return code of anything other than 0, Alexa stalls for several seconds and
 subsequently reports that there was a problem (which should notify the user
 that something didn't go as planned).
 
+TODO: Consider making this use `asyncio.subprocess` eventually, but that would
+require `run_cmd` to be an async function, which would then infect the rest of
+the app with `async`.
+
 Example config:
 
 ```json
