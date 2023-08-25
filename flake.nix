@@ -47,12 +47,25 @@
         # Provides GCC for building brotli
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc];
         buildInputs = with pkgs; [
-          # brotli
           python38
           python39
           python310
-          python311
-          python311Packages.tox
+          (python311.withPackages (
+            pp: (
+              with pp; [
+                black
+                flake8-docstrings
+                flake8-import-order
+                httpbin
+                isort
+                mypy
+                pep8-naming
+                pytest
+                requests
+                tox
+              ]
+            )
+          ))
         ];
       };
     });
