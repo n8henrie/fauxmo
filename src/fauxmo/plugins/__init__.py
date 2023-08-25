@@ -1,5 +1,7 @@
 """fauxmo.plugins :: Provide ABC for Fauxmo plugins."""
 
+from __future__ import annotations
+
 import abc
 from typing import Callable
 
