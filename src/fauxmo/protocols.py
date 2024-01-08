@@ -81,6 +81,7 @@ class Fauxmo(asyncio.Protocol):
             "<manufacturer>Belkin International Inc.</manufacturer>"
             "<modelName>Emulated Socket</modelName>"
             "<modelNumber>3.1415</modelNumber>"
+            f"<serialNumber>{self.serial}</serialNumber>"
             f"<UDN>uuid:Socket-1_0-{self.serial}</UDN>"
             "<serviceList>"
             "<service>"
@@ -362,6 +363,7 @@ class SSDPServer(asyncio.DatagramProtocol):
 
         discover_patterns = [
             "ST: urn:Belkin:device:**",
+            "ST: urn:Belkin:service:basicevent:1",
             "ST: upnp:rootdevice",
             "ST: ssdp:all",
         ]
