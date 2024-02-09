@@ -49,7 +49,7 @@
         {
           "name": "Test use_fake_test with an initial_state",
           "port": 12351,
-          "on_cmd": "test 42 = 43",
+          "on_cmd": "test 42 = 42",
           "off_cmd": "test 43 = 43",
           "use_fake_state": true,
           "initial_state": "on"
