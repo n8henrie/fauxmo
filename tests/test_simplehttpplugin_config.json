@@ -50,6 +50,15 @@
           "method": "GET",
           "name": "Test that the state does not change if the command fails",
           "use_fake_state": true
+        },
+        {
+          "port": 12350,
+          "on_cmd": "http://127.0.0.1:8000/get?switch=on",
+          "off_cmd": "http://127.0.0.1:8000/get?switch=off",
+          "method": "GET",
+          "name": "Test fake_state with an initial_state",
+          "use_fake_state": true,
+          "initial_state": "on"
         }
       ]
     }
