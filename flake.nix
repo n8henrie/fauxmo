@@ -51,7 +51,9 @@
           postVenvCreation = ''
             unset SOURCE_DATE_EPOCH
             pip install -e .[dev,test]
-            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+          '';
+          postShellHook = ''
+            export SSL_CERT_FILE=$NIX_SSL_CERT_FILE;
           '';
           buildInputs = with pkgs; [
             py
