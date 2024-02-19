@@ -94,13 +94,9 @@ def test_commandlineplugin_fake_state() -> None:
             state = device.get_state()
             assert state == conf_initial_state
 
-        if device.on():
-            assert device.get_state() == "on"
-        else:
-            assert device.get_state() == state
+        # Tests are arranged so that `on()` succeeds and `off()` fails
+        assert device.on()
+        assert device.get_state() == "on"
 
-        state = device.get_state()
-        if device.off():
-            assert device.get_state() == "off"
-        else:
-            assert device.get_state() == state
+        assert not device.off()
+        assert device.get_state() == "on"
