@@ -47,6 +47,9 @@
         py = pkgs.python311;
       in
         pkgs.mkShell {
+          # Provides GCC for building brotli
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc];
+
           venvDir = ".venv";
           postVenvCreation = ''
             unset SOURCE_DATE_EPOCH
