@@ -52,6 +52,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
         name: str,
         off_cmd: str,
         off_data: t.Union[Mapping, str] | None = None,
+        initial_state: str | None = None,
         on_cmd: str,
         on_data: t.Union[Mapping, str] | None = None,
         state_cmd: str | None = None,
@@ -73,6 +74,8 @@ class SimpleHTTPPlugin(FauxmoPlugin):
             name: Name of the device
             off_cmd: URL to be called when turning device off
             off_data: Optional POST data to turn device off
+            initial_state: If using fake state, set the initial state to this
+                           value.
             on_cmd: URL to be called when turning device on
             on_data: Optional POST data to turn device on
             state_cmd: URL to be called to determine device state
@@ -126,7 +129,7 @@ class SimpleHTTPPlugin(FauxmoPlugin):
 
         self.use_fake_state = use_fake_state
 
-        super().__init__(name=name, port=port)
+        super().__init__(name=name, port=port, initial_state=initial_state)
 
     @staticmethod
     def _to_bytes(data: t.Union[Mapping, str] | None) -> bytes | None:

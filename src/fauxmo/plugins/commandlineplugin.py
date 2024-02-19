@@ -70,6 +70,7 @@ class CommandLinePlugin(FauxmoPlugin):
         port: int,
         on_cmd: str,
         off_cmd: str,
+        initial_state: str | None = None,
         state_cmd: str | None = None,
         timeout: int | None = None,
         shell: bool = False,
@@ -82,6 +83,8 @@ class CommandLinePlugin(FauxmoPlugin):
             port: Port on which to run a specific CommandLinePlugin instance
             on_cmd: Command to be called when turning device on
             off_cmd: Command to be called when turning device off
+            initial_state: If using fake state, set the initial state to this
+                           value.
             state_cmd: Command to check device state (return code 0 == on)
             timeout: Timeout in seconds
             shell: Whether or not to run the command with `shell=True`
@@ -99,7 +102,7 @@ class CommandLinePlugin(FauxmoPlugin):
 
         self.use_fake_state = use_fake_state
 
-        super().__init__(name=name, port=port)
+        super().__init__(name=name, port=port, initial_state=initial_state)
 
     def run_cmd(self, cmd: str) -> bool:
         """Partialmethod to run command.
