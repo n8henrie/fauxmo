@@ -3,6 +3,14 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## v0.8.0 :: 20240219
+
+- Force keyword arguments in `CommandLinePlugin` as done elsewhere
+    - This is really the only cause of the "highest nonzero version number" bump
+- Fix plugins not passing `initial_state` to parent class (https://github.com/n8henrie/fauxmo/issues/122)
+- Tweaks to nix development environment
+- Add coverage testing to `tests/` to ensure all testing code paths are taken
+
 ## v0.7.0 :: 20230825
 
 - Add `initial_state` kwarg for plugins
