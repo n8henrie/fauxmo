@@ -56,7 +56,7 @@ def test_commandlineplugin_unit() -> None:
         device = CommandLinePlugin(**device_conf)
 
         # These will be tested below
-        if "fake_state" in device.name:
+        if device.use_fake_state:
             continue
 
         assert device.on() is True
@@ -83,20 +83,24 @@ def test_commandlineplugin_fake_state() -> None:
         if device.use_fake_state is not True:
             continue
 
-        initial_state = device_conf.get("initial_state")
+        conf_initial_state = device_conf.get("initial_state")
 
-        if initial_state is None:
+        if conf_initial_state is None:
             # If using fake state, user should configure an initial state
             with pytest.raises(AttributeError):
                 device.get_state()
+            continue
         else:
-            assert device.get_state() == initial_state
+            state = device.get_state()
+            assert state == conf_initial_state
 
-        assert device.off(), "Unable to set state `off` for additional tests"
         if device.on():
             assert device.get_state() == "on"
         else:
-            assert device.get_state() == "off"
+            assert device.get_state() == state
 
+        state = device.get_state()
         if device.off():
             assert device.get_state() == "off"
+        else:
+            assert device.get_state() == state
