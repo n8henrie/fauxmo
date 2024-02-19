@@ -66,6 +66,7 @@ class CommandLinePlugin(FauxmoPlugin):
 
     def __init__(
         self,
+        *,
         name: str,
         port: int,
         on_cmd: str,
