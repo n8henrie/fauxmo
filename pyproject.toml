@@ -54,6 +54,7 @@ fauxmo = "fauxmo.cli:cli"
 [project.optional-dependencies]
 test = [
     "black==23.1.0",
+    "coverage==7.4.1",
     "flake8-docstrings==1.7.0",
     "flake8-import-order==0.18.2",
     "flake8==6.0.0",
