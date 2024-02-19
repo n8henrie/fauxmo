@@ -71,11 +71,11 @@ class CommandLinePlugin(FauxmoPlugin):
         port: int,
         on_cmd: str,
         off_cmd: str,
-        initial_state: str | None = None,
         state_cmd: str | None = None,
         timeout: int | None = None,
         shell: bool = False,
         use_fake_state: bool = False,
+        initial_state: str | None = None,
     ) -> None:
         """Initialize a CommandLinePlugin instance.
 
