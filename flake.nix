@@ -43,31 +43,23 @@
         program = "${self.packages.${system}.${pname}}/bin/python -m ${pname}.cli";
       };
 
-      devShells.${system}.default = pkgs.mkShell {
-        # Provides GCC for building brotli
-        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc];
-        buildInputs = with pkgs; [
-          python38
-          python39
-          python310
-          (python311.withPackages (
-            pp: (
-              with pp; [
-                black
-                flake8-docstrings
-                flake8-import-order
-                httpbin
-                isort
-                mypy
-                pep8-naming
-                pip
-                pytest
-                requests
-                tox
-              ]
-            )
-          ))
-        ];
-      };
+      devShells.${system}.default = let
+        py = pkgs.python311;
+      in
+        pkgs.mkShell {
+          venvDir = ".venv";
+          postVenvCreation = ''
+            unset SOURCE_DATE_EPOCH
+            pip install -e .[dev,test]
+            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+          '';
+          buildInputs = with pkgs; [
+            py
+            py.pkgs.venvShellHook
+            python38
+            python39
+            python310
+          ];
+        };
     });
 }
