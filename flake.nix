@@ -1,7 +1,7 @@
 {
   description = "Flake for github.com/n8henrie/fauxmo";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/release-23.05";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/release-23.11";
 
   outputs = {
     self,
