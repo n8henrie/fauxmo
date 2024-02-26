@@ -21,28 +21,11 @@
       systems;
   in
     {
-      overlays.default = _: prev: rec {
-        python3 = let
-          packageOverrides = _: _: {
-            inherit (self.outputs.packages.${prev.system}) fauxmo;
-          };
-        in
-          prev.python3.override {
-            inherit packageOverrides;
-            self = python3;
-          };
+      overlays.default = _: prev: {
+        pythonPackagesExtensions =
+          prev.pythonPackagesExtensions
+          ++ [(py-final: _: {fauxmo = py-final.callPackage ./. {};})];
       };
-
-      #   pythonPackagesExtensions =
-      #     prev.pythonPackagesExtensions
-      #     ++ [
-      #       (
-      #         _: _: {
-      #           inherit (self.outputs.packages.${prev.system}) fauxmo;
-      #         }
-      #       )
-      #     ];
-      # };
     }
     // systemGen ({
       pkgs,
@@ -56,7 +39,7 @@
             self.outputs.packages.${system}.fauxmo
             uvloop
           ]);
-        fauxmo = pkgs.callPackage ./fauxmo.nix {};
+        fauxmo = pkgs.callPackage ./. {};
       };
 
       nixosModules = {
