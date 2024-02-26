@@ -8,63 +8,88 @@
     nixpkgs,
   }: let
     inherit (nixpkgs) lib;
-    pname = "fauxmo";
     systems = ["aarch64-darwin" "x86_64-linux" "aarch64-linux"];
     systemGen = attrs:
       builtins.foldl' (acc: system:
         lib.recursiveUpdate acc (attrs {
           inherit system;
-          pkgs = import nixpkgs {inherit system;};
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [self.outputs.overlays.default];
+          };
         })) {}
       systems;
   in
-    systemGen ({
+    {
+      overlays.default = _: prev: rec {
+        python3 = let
+          packageOverrides = _: _: {
+            inherit (self.outputs.packages.${prev.system}) fauxmo;
+          };
+        in
+          prev.python3.override {
+            inherit packageOverrides;
+            self = python3;
+          };
+      };
+
+      #   pythonPackagesExtensions =
+      #     prev.pythonPackagesExtensions
+      #     ++ [
+      #       (
+      #         _: _: {
+      #           inherit (self.outputs.packages.${prev.system}) fauxmo;
+      #         }
+      #       )
+      #     ];
+      # };
+    }
+    // systemGen ({
       pkgs,
       system,
     }: {
       formatter.${system} = pkgs.alejandra;
       packages.${system} = {
-        default = self.packages.${system}.${pname};
-        ${pname} = pkgs.python311.withPackages (ps:
+        default = self.outputs.packages.${system}.pythonWithFauxmo;
+        pythonWithFauxmo = pkgs.python3.withPackages (ps:
           with ps; [
+            self.outputs.packages.${system}.fauxmo
             uvloop
-            (buildPythonPackage {
-              inherit pname;
-              version = builtins.head (lib.findFirst (v: v != null) null (builtins.map (builtins.match "^__version__ = \"(.*)\"") (lib.splitString "\n" (builtins.readFile ./src/fauxmo/__init__.py))));
-              src = ./.;
-              format = "pyproject";
-              propagatedBuildInputs = [setuptools];
-            })
           ]);
+        fauxmo = pkgs.callPackage ./fauxmo.nix {};
+      };
+
+      nixosModules = {
+        default = self.outputs.nixosModules.fauxmo;
+        fauxmo = import ./module.nix;
       };
 
       apps.${system}.default = {
         type = "app";
-        program = "${self.packages.${system}.${pname}}/bin/python -m ${pname}.cli";
+        program = "${self.packages.${system}.default}/bin/python -m fauxmo.cli";
       };
 
-      devShells.${system}.default = let
-        py = pkgs.python311;
-      in
-        pkgs.mkShell {
-          # Provides GCC for building brotli
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc];
+      devShells.${system}.default = pkgs.mkShell {
+        # Provides GCC for building brotli
+        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc];
 
-          venvDir = ".venv";
-          postVenvCreation = ''
-            unset SOURCE_DATE_EPOCH
-            pip install -e .[dev,test]
-          '';
-          postShellHook = ''
-            export SSL_CERT_FILE=$NIX_SSL_CERT_FILE;
-          '';
-          buildInputs = with pkgs; [
-            py
-            py.pkgs.venvShellHook
-            python38
-            python39
-            python310
-          ];
-        };
+        venvDir = ".venv";
+        postVenvCreation = ''
+          unset SOURCE_DATE_EPOCH
+          pip install -e .[dev,test]
+        '';
+        postShellHook = ''
+          export SSL_CERT_FILE=$NIX_SSL_CERT_FILE;
+        '';
+        buildInputs = with pkgs; [
+          python38
+          python39
+          python310
+          python311
+          python311.pkgs.venvShellHook
+        ];
+      };
+
+      checks.${system}.integration = import ./integration_test.nix {inherit pkgs;};
     });
 }
