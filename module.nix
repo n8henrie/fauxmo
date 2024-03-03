@@ -82,5 +82,14 @@ in
         };
         wantedBy = ["multi-user.target"];
       };
+      users = mkIf (cfg.user == "fauxmo") {
+        users = {
+          fauxmo = {
+            isSystemUser = true;
+            group = "fauxmo";
+          };
+        };
+        groups.fauxmo = {};
+      };
     };
   }
