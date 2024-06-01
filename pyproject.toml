@@ -64,7 +64,7 @@ test = [
     "pep8-naming==0.13.3",
     "pytest==7.2.1",
     "requests==2.29.0",
-    "werkzeug==2.0.3",
+    "werkzeug==3.0.3",
     "tox==4.4.6",
 ]
 dev = [
