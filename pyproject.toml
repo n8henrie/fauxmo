@@ -63,7 +63,7 @@ test = [
     "mypy==1.0.1",
     "pep8-naming==0.13.3",
     "pytest==7.2.1",
-    "requests==2.29.0",
+    "requests==2.32.2",
     "werkzeug==2.0.3",
     "tox==4.4.6",
 ]
