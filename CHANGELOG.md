@@ -3,6 +3,10 @@
 Will not contain minor changes -- feel free to look through `git log` for
 more detail.
 
+## Unreleased
+
+- drop python 3.8, add 3.12 and 3.13
+
 ## v0.8.0 :: 20240219
 
 - Force keyword arguments in `CommandLinePlugin` as done elsewhere

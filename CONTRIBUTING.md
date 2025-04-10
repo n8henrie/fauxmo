@@ -65,9 +65,7 @@ for local development.
         $ git clone git@github.com:your_name_here/fauxmo.git
         ```
 
-1.  Install your local copy into a virtualenv. Assuming you have
-    python >= 3.8 installed, this is how you set up your fork for
-    local development:
+1.  Install your local copy into a virtualenv.
 
         ```shell_session
         $ cd fauxmo
