@@ -19,13 +19,13 @@ jobs:
           - "3.13"
 
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@latest
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: pip cache
-        uses: actions/cache@latest
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}

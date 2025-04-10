@@ -7,12 +7,12 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@latest
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@latest
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
     - name: Install dependencies
