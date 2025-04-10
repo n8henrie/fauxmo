@@ -1,7 +1,6 @@
 # Fauxmo README
 
 master: [![master branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
-dev: [![dev branch build status](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml/badge.svg?branch=dev)](https://github.com/n8henrie/fauxmo/actions/workflows/python-package.yml)
 
 Python 3 module that emulates Belkin WeMo devices for use with the Amazon Echo.
 
@@ -73,14 +72,14 @@ a network with lots of broadcast mdns traffic. If it is present, `fauxmo` will
 take advantage. It is not terribly difficult to install `uvloop` but you are on
 your own: <https://github.com/MagicStack/uvloop>.
 
-### Simple install of dev branch from GitHub
+### Simple install of master branch from GitHub
 
 This is a good strategy for testing features in development -- for actually
 contributing to development, clone the repo as per below)
 
 1. `python3 -m venv .venv`
 1. `source ./.venv/bin/activate`
-1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git@dev`
+1. `pip install [-e] git+https://github.com/n8henrie/fauxmo.git`
 
 ### Install for development from GitHub
 

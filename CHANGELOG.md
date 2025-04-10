@@ -6,6 +6,7 @@ more detail.
 ## Unreleased
 
 - drop python 3.8, add 3.12 and 3.13
+- get rid of `dev` branch, develop on master
 
 ## v0.8.0 :: 20240219
 
