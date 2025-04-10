@@ -1,14 +1,17 @@
-{ nixosTest, fauxmo }:
+{
+  fauxmo,
+  nixosTest,
+  overlay,
+}:
 nixosTest {
   name = "fauxmo-integration";
   nodes.system1 = {
     imports = [
       ./module.nix
     ];
+    nixpkgs.overlays = [ overlay ];
 
-    environment.systemPackages = [
-      fauxmo
-    ];
+    environment.systemPackages = [ fauxmo ];
 
     services.fauxmo = {
       enable = true;

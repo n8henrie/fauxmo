@@ -78,16 +78,10 @@
           ];
         };
 
-        checks.integration =
-          let
-            fauxmoPkgs = import nixpkgs {
-              inherit system;
-              overlays = [ self.outputs.overlays.default ];
-            };
-          in
-          fauxmoPkgs.callPackage ./integration_test.nix {
-            inherit (fauxmoPkgs.python3Packages) fauxmo;
-          };
+        checks.integration = pkgs.callPackage ./integration_test.nix {
+          inherit (self.outputs.packages.${system}) fauxmo;
+          overlay = self.outputs.overlays.default;
+        };
       }
     ));
 }
