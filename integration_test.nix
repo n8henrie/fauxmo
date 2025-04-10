@@ -1,18 +1,13 @@
-{pkgs, ...}:
-pkgs.nixosTest {
+{ nixosTest, fauxmo }:
+nixosTest {
   name = "fauxmo-integration";
   nodes.system1 = {
-    config,
-    pkgs,
-    options,
-    ...
-  }: {
     imports = [
       ./module.nix
     ];
 
     environment.systemPackages = [
-      pkgs.python3Packages.fauxmo
+      fauxmo
     ];
 
     services.fauxmo = {
